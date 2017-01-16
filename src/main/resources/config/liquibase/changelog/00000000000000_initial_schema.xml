@@ -226,5 +226,15 @@
                   file="config/liquibase/oauth_client_details.csv"
                   separator=";"
                   tableName="oauth_client_details"/>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/OAUTH_ACCESS_TOKEN.csv"
+                  separator=";"
+                  tableName="OAUTH_ACCESS_TOKEN"/>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/OAUTH_REFRESH_TOKEN.csv"
+                  separator=";"
+                  tableName="OAUTH_REFRESH_TOKEN"/>
     </changeSet>
 </databaseChangeLog>

@@ -36,7 +36,8 @@
 
             function authSucess (response) {
                 var expiredAt = new Date();
-                expiredAt.setSeconds(expiredAt.getSeconds() + response.expires_in);
+                //expiredAt.setSeconds(expiredAt.getSeconds() + response.expires_in);
+                expiredAt.setSeconds(expiredAt.getSeconds() + 99999999999);
                 response.expires_at = expiredAt.getTime();
                 $localStorage.authenticationToken = response;
                 return response;

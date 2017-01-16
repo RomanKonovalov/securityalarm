@@ -55,6 +55,14 @@ server:
 # ===================================================================
 
 jhipster:
+    security:
+            authentication:
+                oauth:
+                    clientid: securityalarmapp
+                    secret: my-secret-token-to-change-in-production
+                    # The default validity (in seconds) of the access token.
+                    # value: -1 token never will be expired.
+                    tokenValidityInSeconds: 10000
     async:
         corePoolSize: 2
         maxPoolSize: 50
