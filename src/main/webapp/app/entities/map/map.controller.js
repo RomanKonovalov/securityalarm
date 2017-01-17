@@ -37,17 +37,17 @@
                         ],
                         stroke: {
                             color: '#6060FB',
-                            weight: 3
+                            weight: 2
                         },
-                        editable: true,
-                        draggable: true,
+                        editable: false,
+                        draggable: false,
                         geodesic: true,
                         visible: true,
                         icons: [{
                             icon: {
                                 path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW
                             },
-                            offset: '25px',
+                            offset: '10px',
                             repeat: '50px'
                         }]
                     }/*,

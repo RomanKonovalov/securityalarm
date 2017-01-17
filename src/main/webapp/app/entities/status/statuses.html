@@ -20,6 +20,8 @@
                 <tr jh-sort="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
                     <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="deviceState"><span>Device State</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="latitude"><span>Latitude</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="longitude"><span>Longitude</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="createdDate"><span>Created Date</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="createdBy"><span>Created By</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th></th>
@@ -29,6 +31,8 @@
                 <tr ng-repeat="status in vm.statuses track by status.id">
                     <td><a ui-sref="status-detail({id:status.id})">{{status.id}}</a></td>
                     <td>{{status.deviceState}}</td>
+                    <td>{{status.latitude}}</td>
+                    <td>{{status.longitude}}</td>
                     <td>{{status.createdDate | date:'dd/MM/yy HH:mm'}}</td>
                     <td>{{status.createdBy}}</td>
                     <td class="text-right">

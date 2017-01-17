@@ -77,8 +77,8 @@ public class StatusResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static Status createEntity(EntityManager em) {
-        Status status = new Status()
-                .deviceState(DEFAULT_DEVICE_STATE);
+        Status status = new Status();
+        status.setDeviceState(DEFAULT_DEVICE_STATE);
         return status;
     }
 
@@ -172,8 +172,7 @@ public class StatusResourceIntTest {
 
         // Update the status
         Status updatedStatus = statusRepository.findOne(status.getId());
-        updatedStatus
-                .deviceState(UPDATED_DEVICE_STATE);
+        updatedStatus.setDeviceState(UPDATED_DEVICE_STATE);
 
         restStatusMockMvc.perform(put("/api/statuses")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)

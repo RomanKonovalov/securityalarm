@@ -21,6 +21,12 @@ public class Status extends AbstractAuditingEntity implements Serializable {
     @Column(name = "device_state")
     private String deviceState;
 
+    @Column(name = "latitude")
+    private float latitude;
+
+    @Column(name = "longitude")
+    private float longitude;
+
     public Long getId() {
         return id;
     }
@@ -33,39 +39,48 @@ public class Status extends AbstractAuditingEntity implements Serializable {
         return deviceState;
     }
 
-    public Status deviceState(String deviceState) {
-        this.deviceState = deviceState;
-        return this;
-    }
-
     public void setDeviceState(String deviceState) {
         this.deviceState = deviceState;
     }
 
+    public float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
         Status status = (Status) o;
-        if (status.id == null || id == null) {
-            return false;
-        }
-        return Objects.equals(id, status.id);
+
+        return id != null ? id.equals(status.id) : status.id == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "Status{" +
-            "deviceState='" + deviceState + '\'' +
+            "id=" + id +
+            ", deviceState='" + deviceState + '\'' +
+            ", latitude=" + latitude +
+            ", longitude=" + longitude +
             "} " + super.toString();
     }
 }

@@ -25,6 +25,12 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="device_state" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="latitude" type="float">
+                <constraints nullable="true" />
+            </column>
+            <column name="longitude" type="float">
                 <constraints nullable="true" />
             </column>
             <column name="created_by" type="varchar(50)">
