@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -41,6 +42,7 @@ public class StatusResource {
      * @return the ResponseEntity with status 201 (Created) and with body the new status, or with status 400 (Bad Request) if the status has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @Secured("ROLE_DEVICE")
     @PostMapping("/statuses")
     @Timed
     public ResponseEntity<Status> createStatus(@RequestBody Status status) throws URISyntaxException {
@@ -63,6 +65,7 @@ public class StatusResource {
      * or with status 500 (Internal Server Error) if the status couldnt be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
+    @Secured("ROLE_ADMIN")
     @PutMapping("/statuses")
     @Timed
     public ResponseEntity<Status> updateStatus(@RequestBody Status status) throws URISyntaxException {
@@ -99,6 +102,7 @@ public class StatusResource {
      * @param id the id of the status to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the status, or with status 404 (Not Found)
      */
+    @Secured("ROLE_ADMIN")
     @GetMapping("/statuses/{id}")
     @Timed
     public ResponseEntity<Status> getStatus(@PathVariable Long id) {
@@ -117,6 +121,7 @@ public class StatusResource {
      * @param id the id of the status to delete
      * @return the ResponseEntity with status 200 (OK)
      */
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/statuses/{id}")
     @Timed
     public ResponseEntity<Void> deleteStatus(@PathVariable Long id) {

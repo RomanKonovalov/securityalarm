@@ -1,2 +1,2 @@
 client_id;resource_ids;client_secret;scope;authorized_grant_types;web_server_redirect_uri;authorities;access_token_validity;refresh_token_validity;additional_information;autoapprove
-securityalarmapp;res_securityalarm;my-secret-token-to-change-in-production;read,write;password,refresh_token,authorization_code,implicit;;ROLE_ADMIN,ROLE_USER;-1;-1;{};true
+securityalarmapp;res_securityalarm;ntOjZl36SwcIAMdp;read,write;password,refresh_token,authorization_code,implicit;;ROLE_ADMIN,ROLE_USER;3600;2592000;{};true

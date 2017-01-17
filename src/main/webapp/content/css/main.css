@@ -329,6 +329,8 @@ ui bootstrap tweaks
     outline: none;
 }
 
+.angular-google-map-container { height: 600px; }
+
 
 
 /* jhipster-needle-css-add-main JHipster will add new css style */

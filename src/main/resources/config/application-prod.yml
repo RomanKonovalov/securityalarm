@@ -59,7 +59,7 @@ jhipster:
             timeToLiveInDays: 1461
     mail: # specific JHipster mail property, for standard properties see MailProperties
         from: securityalarm@localhost
-        baseUrl: http://my-server-url-to-change # Modify according to your server's URL
+        baseUrl: http://securityalarm-romif.rhcloud.com # Modify according to your server's URL
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
         jmx.enabled: true
         graphite:

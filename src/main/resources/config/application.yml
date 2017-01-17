@@ -57,12 +57,16 @@ server:
 jhipster:
     security:
             authentication:
+                users:
+                    - login: village
+                      password: wX4s7MXeky2K7C8k
+                      token: 6590abb5-57ef-44d9-a5cf-567cf3cd556e
+                    - login: car
+                      password: 4gAubmHmXH5M52MW
+                      token: a202ecec-38b7-4b1e-959d-2c1ea47faa7f
                 oauth:
                     clientid: securityalarmapp
-                    secret: my-secret-token-to-change-in-production
-                    # The default validity (in seconds) of the access token.
-                    # value: -1 token never will be expired.
-                    tokenValidityInSeconds: 10000
+                    secret: ntOjZl36SwcIAMdp
     async:
         corePoolSize: 2
         maxPoolSize: 50
