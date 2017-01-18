@@ -9,86 +9,8 @@
 
     function MapController ($scope, $state, uiGmapGoogleMapApi, Status, ParseLinks, AlertService, paginationConstants, pagingParams) {
 
-       // $scope.map = { center: { latitude: 53.878338, longitude: 30.365049 }, zoom: 15 };
-
-        $scope.map = {center: { latitude: 53.878338, longitude: 30.365049 }, zoom: 9, bounds: {}};
+        $scope.map = {center: { latitude: 53.878338, longitude: 30.365049 }, zoom: 12, bounds: {}, control: {}};
         $scope.polylines = [];
-        uiGmapGoogleMapApi.then(function() {
-                $scope.polylines = [
-                    {
-                        id: 1,
-                        path: [
-                            {
-                                latitude: 53.878338,
-                                longitude: 30.365049
-                            },
-                            {
-                                latitude: 53.8,
-                                longitude: 30.3
-                            },
-                            {
-                                latitude: 53.7,
-                                longitude: 30.2
-                            },
-                            {
-                                latitude: 53.6,
-                                longitude: 30.1
-                            }
-                        ],
-                        stroke: {
-                            color: '#6060FB',
-                            weight: 2
-                        },
-                        editable: false,
-                        draggable: false,
-                        geodesic: true,
-                        visible: true,
-                        icons: [{
-                            icon: {
-                                path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW
-                            },
-                            offset: '10px',
-                            repeat: '50px'
-                        }]
-                    }/*,
-                    {
-                        id: 2,
-                        path: [
-                            {
-                                latitude: 47,
-                                longitude: -74
-                            },
-                            {
-                                latitude: 32,
-                                longitude: -89
-                            },
-                            {
-                                latitude: 39,
-                                longitude: -122
-                            },
-                            {
-                                latitude: 62,
-                                longitude: -95
-                            }
-                        ],
-                        stroke: {
-                            color: '#6060FB',
-                            weight: 3
-                        },
-                        editable: true,
-                        draggable: true,
-                        geodesic: true,
-                        visible: true,
-                        icons: [{
-                            icon: {
-                                path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW
-                            },
-                            offset: '25px',
-                            repeat: '50px'
-                        }]
-                    }*/]
-            }
-        );
 
         var vm = this;
 
@@ -119,6 +41,41 @@
                 vm.queryCount = vm.totalItems;
                 vm.statuses = data;
                 vm.page = pagingParams.page;
+
+                uiGmapGoogleMapApi.then(function() {
+
+                    var bounds = new google.maps.LatLngBounds();
+                    for (var i in data) {
+                        if (data[i].latitude && data[i].longitude) {
+                            var position = new google.maps.LatLng(data[i].latitude, data[i].longitude);
+                            bounds.extend(position);
+                        }
+                    }
+
+                    $scope.map.control.getGMap().fitBounds(bounds);
+
+                    $scope.polylines = [
+                        {
+                            id: 1,
+                            path: data,
+                            stroke: {
+                                color: '#6060FB',
+                                weight: 2
+                            },
+                            editable: false,
+                            draggable: false,
+                            geodesic: true,
+                            visible: true,
+                            icons: [{
+                                icon: {
+                                    path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW
+                                },
+                                offset: '10px',
+                                repeat: '50px'
+                            }]
+                        }]
+                    }
+                );
             }
             function onError(error) {
                 AlertService.error(error.data.message);
