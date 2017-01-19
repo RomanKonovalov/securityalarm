@@ -5,9 +5,9 @@
         .module('securityalarmApp')
         .controller('MapController', MapController);
 
-    MapController.$inject = ['$scope', '$state', 'uiGmapGoogleMapApi', 'Status', 'AlertService', 'Principal'];
+    MapController.$inject = ['$scope', '$interval', 'uiGmapGoogleMapApi', 'Status', 'AlertService', 'Principal'];
 
-    function MapController ($scope, $state, uiGmapGoogleMapApi, Status,  AlertService, Principal) {
+    function MapController ($scope, $interval, uiGmapGoogleMapApi, Status,  AlertService, Principal) {
         $scope.map = {bounds: {}, control: {}};
 
         $scope.polylines = [];
@@ -26,6 +26,12 @@
         });
 
         loadAll();
+
+        var stop = $interval(loadAll, 60000);
+
+        $scope.$on('$destroy', function() {
+            $interval.cancel(stop);
+        });
 
         function loadAll () {
             Status.query({
@@ -56,7 +62,20 @@
                         }
                     }
 
-                    $scope.map.control.getGMap().fitBounds(bounds);
+                    //$scope.map.control.getGMap().fitBounds(bounds);
+
+                    $scope.map.bounds = {
+                        northeast: {
+                            latitude: bounds.getNorthEast().lat(),
+                            longitude: bounds.getNorthEast().lng()
+                        },
+                        southwest: {
+                            latitude: bounds.getSouthWest().lat(),
+                            longitude: bounds.getSouthWest().lng()
+                        }
+                    };
+
+                    //$scope.map.bounds = bounds;
 
                     $scope.polylines = [
                         {
