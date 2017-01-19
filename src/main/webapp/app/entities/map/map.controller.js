@@ -12,68 +12,72 @@
         $scope.map = {center: { latitude: 53.878338, longitude: 30.365049 }, zoom: 12, bounds: {}, control: {}};
         $scope.polylines = [];
 
+        $scope.marker = {};
+        $scope.marker.home = {
+            id: 0,
+            coords: {
+                latitude: 53.878338,
+                longitude: 30.365049
+            },
+            options: { draggable: false , title: 'Home'}
+        };
+
         var vm = this;
 
-        vm.loadPage = loadPage;
-        vm.predicate = pagingParams.predicate;
-        vm.reverse = pagingParams.ascending;
-        vm.transition = transition;
-        vm.itemsPerPage = paginationConstants.itemsPerPage;
 
         loadAll();
 
         function loadAll () {
             Status.query({
-                page: pagingParams.page - 1,
-                size: vm.itemsPerPage,
-                sort: sort()
+                page: 0,
+                size: 100,
+                sort: 'createdDate,desc'
             }, onSuccess, onError);
-            function sort() {
-                var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
-                if (vm.predicate !== 'id') {
-                    result.push('id');
-                }
-                return result;
-            }
-            function onSuccess(data, headers) {
-                vm.links = ParseLinks.parse(headers('link'));
-                vm.totalItems = headers('X-Total-Count');
-                vm.queryCount = vm.totalItems;
-                vm.statuses = data;
-                vm.page = pagingParams.page;
+
+            function onSuccess(data) {
 
                 uiGmapGoogleMapApi.then(function() {
 
-                    var bounds = new google.maps.LatLngBounds();
-                    for (var i in data) {
-                        if (data[i].latitude && data[i].longitude) {
-                            var position = new google.maps.LatLng(data[i].latitude, data[i].longitude);
-                            bounds.extend(position);
-                        }
-                    }
+                        var lastPosition = data.slice(-1).pop();
+                        $scope.map.center = {latitude: lastPosition.latitude, longitude: lastPosition.longitude};
 
-                    $scope.map.control.getGMap().fitBounds(bounds);
-
-                    $scope.polylines = [
-                        {
+                        $scope.marker.current = {
                             id: 1,
-                            path: data,
-                            stroke: {
-                                color: '#6060FB',
-                                weight: 2
-                            },
-                            editable: false,
-                            draggable: false,
-                            geodesic: true,
-                            visible: true,
-                            icons: [{
-                                icon: {
-                                    path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW
+                            coords: {latitude: lastPosition.latitude, longitude: lastPosition.longitude},
+                            options: { draggable: false , title: 'Current position'}
+                        };
+
+
+                        var bounds = new google.maps.LatLngBounds();
+                        for (var i in data) {
+                            if (data[i].latitude && data[i].longitude) {
+                                var position = new google.maps.LatLng(data[i].latitude, data[i].longitude);
+                                bounds.extend(position);
+                            }
+                        }
+
+                        $scope.map.control.getGMap().fitBounds(bounds);
+
+                        $scope.polylines = [
+                            {
+                                id: 1,
+                                path: data,
+                                stroke: {
+                                    color: '#6060FB',
+                                    weight: 2
                                 },
-                                offset: '10px',
-                                repeat: '50px'
+                                editable: false,
+                                draggable: false,
+                                geodesic: true,
+                                visible: true,
+                                icons: [{
+                                    icon: {
+                                        path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW
+                                    },
+                                    offset: '10px',
+                                    repeat: '50px'
+                                }]
                             }]
-                        }]
                     }
                 );
             }
@@ -82,17 +86,5 @@
             }
         }
 
-        function loadPage(page) {
-            vm.page = page;
-            vm.transition();
-        }
-
-        function transition() {
-            $state.transitionTo($state.$current, {
-                page: vm.page,
-                sort: vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc'),
-                search: vm.currentSearch
-            });
-        }
     }
 })();

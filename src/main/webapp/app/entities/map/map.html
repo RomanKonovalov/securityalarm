@@ -8,7 +8,12 @@
 
     <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" control="map.control">
         <ui-gmap-polyline ng-repeat="p in polylines" path="p.path" stroke="p.stroke" visible='p.visible'
-                          geodesic='p.geodesic' fit="false" editable="p.editable" draggable="p.draggable" icons='p.icons'></ui-gmap-polyline>
+                          geodesic='p.geodesic' fit="false" editable="p.editable" draggable="p.draggable" icons='p.icons'>
+        </ui-gmap-polyline>
+        <ui-gmap-marker coords="marker.home.coords" options="marker.home.options" idkey="marker.home.id">
+        </ui-gmap-marker>
+        <ui-gmap-marker coords="marker.current.coords" options="marker.current.options" idkey="marker.current.id">
+        </ui-gmap-marker>
     </ui-gmap-google-map>
 
 
