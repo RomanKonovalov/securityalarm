@@ -35,6 +35,12 @@
             <column name="email" type="varchar(100)">
                 <constraints unique="true" nullable="true"/>
             </column>
+            <column name="latitude" type="float">
+                <constraints nullable="true" />
+            </column>
+            <column name="longitude" type="float">
+                <constraints nullable="true" />
+            </column>
             <column name="activated" type="boolean" valueBoolean="false">
                 <constraints nullable="false" />
             </column>

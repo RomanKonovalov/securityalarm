@@ -8,6 +8,7 @@ import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.MailService;
 import com.romif.securityalarm.service.UserService;
+import com.romif.securityalarm.service.dto.LocationDTO;
 import com.romif.securityalarm.service.dto.UserDTO;
 import com.romif.securityalarm.web.rest.vm.ManagedUserVM;
 import org.junit.Before;
@@ -377,7 +378,8 @@ public class AccountResourceIntTest {
             "funky@example.com",    // e-mail
             true,                   // activated
             "en",                   // langKey
-            new HashSet<>(Arrays.asList(AuthoritiesConstants.USER))
+            new HashSet<>(Arrays.asList(AuthoritiesConstants.USER)),
+            new LocationDTO()
         );
 
         restUserMockMvc.perform(

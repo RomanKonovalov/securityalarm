@@ -37,6 +37,8 @@ public class UserDTO {
 
     private Set<String> authorities;
 
+    private LocationDTO location;
+
     public UserDTO() {
     }
 
@@ -44,11 +46,12 @@ public class UserDTO {
         this(user.getLogin(), user.getFirstName(), user.getLastName(),
             user.getEmail(), user.getActivated(), user.getLangKey(),
             user.getAuthorities().stream().map(Authority::getName)
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet()),
+            new LocationDTO(user.getLatitude(), user.getLongitude()));
     }
 
     public UserDTO(String login, String firstName, String lastName,
-        String email, boolean activated, String langKey, Set<String> authorities) {
+        String email, boolean activated, String langKey, Set<String> authorities, LocationDTO location) {
 
         this.login = login;
         this.firstName = firstName;
@@ -57,6 +60,7 @@ public class UserDTO {
         this.activated = activated;
         this.langKey = langKey;
         this.authorities = authorities;
+        this.location = location;
     }
 
     public String getLogin() {
@@ -73,6 +77,14 @@ public class UserDTO {
 
     public String getEmail() {
         return email;
+    }
+
+    public LocationDTO getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationDTO location) {
+        this.location = location;
     }
 
     public boolean isActivated() {

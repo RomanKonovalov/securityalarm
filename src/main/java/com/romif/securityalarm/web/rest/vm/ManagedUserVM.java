@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 
 import com.romif.securityalarm.domain.User;
+import com.romif.securityalarm.service.dto.LocationDTO;
 import com.romif.securityalarm.service.dto.UserDTO;
 import javax.validation.constraints.Size;
 
@@ -45,7 +46,7 @@ public class ManagedUserVM extends UserDTO {
     public ManagedUserVM(Long id, String login, String password, String firstName, String lastName,
                          String email, boolean activated, String langKey, Set<String> authorities,
                          String createdBy, ZonedDateTime createdDate, String lastModifiedBy, ZonedDateTime lastModifiedDate) {
-        super(login, firstName, lastName, email, activated, langKey, authorities);
+        super(login, firstName, lastName, email, activated, langKey, authorities, new LocationDTO());
         this.id = id;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
