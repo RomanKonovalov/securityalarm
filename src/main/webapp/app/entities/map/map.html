@@ -2,6 +2,30 @@
     <h2>Map</h2>
     <jhi-alert></jhi-alert>
 
+    <div class="row">
+        <div class="col-md-4">
+            <p class="input-group">
+                <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="startDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+            </p>
+        </div>
+
+        <div class="col-md-4">
+            <p class="input-group">
+                <input type="text" class="form-control" uib-datepicker-popup ng-model="endDate" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+            </p>
+        </div>
+        <div class="col-md-4">
+            <button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>
+        </div>
+    </div>
+
+
     <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" control="map.control">
         <ui-gmap-polyline ng-repeat="p in polylines" path="p.path" stroke="p.stroke" visible='p.visible'
                           geodesic='p.geodesic' fit="true" editable="p.editable" draggable="p.draggable" icons='p.icons'>
@@ -11,6 +35,4 @@
         <ui-gmap-marker coords="marker.current.coords" options="marker.current.options" idkey="marker.current.id">
         </ui-gmap-marker>
     </ui-gmap-google-map>
-
-
 </div>

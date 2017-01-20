@@ -8,6 +8,10 @@
         <dd>
             <span>{{vm.status.deviceState}}</span>
         </dd>
+        <ui-gmap-google-map ng-if="vm.status.latitude && vm.status.longitude" center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" control="map.control">
+            <ui-gmap-marker coords="marker.coords" options="marker.options" idkey="marker.id">
+            </ui-gmap-marker>
+        </ui-gmap-google-map>
     </dl>
 
     <button type="submit"
