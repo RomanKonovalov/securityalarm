@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,10 +89,12 @@ public class StatusResource {
      */
     @GetMapping("/statuses")
     @Timed
-    public ResponseEntity<List<Status>> getAllStatuses(@ApiParam Pageable pageable)
+    public ResponseEntity<List<Status>> getAllStatuses(@ApiParam Pageable pageable,
+                                                       @RequestParam(required = false) ZonedDateTime startDate,
+                                                       @RequestParam(required = false) ZonedDateTime endDate)
         throws URISyntaxException {
         log.debug("REST request to get a page of Statuses");
-        Page<Status> page = statusService.findAll(pageable);
+        Page<Status> page = statusService.findAll(pageable, startDate, endDate);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/statuses");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

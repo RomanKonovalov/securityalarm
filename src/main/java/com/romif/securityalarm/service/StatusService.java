@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ import java.util.List;
 public class StatusService {
 
     private final Logger log = LoggerFactory.getLogger(StatusService.class);
-    
+
     @Inject
     private StatusRepository statusRepository;
 
@@ -38,14 +39,27 @@ public class StatusService {
 
     /**
      *  Get all the statuses.
-     *  
+     *
      *  @param pageable the pagination information
      *  @return the list of entities
      */
-    @Transactional(readOnly = true) 
+    @Transactional(readOnly = true)
     public Page<Status> findAll(Pageable pageable) {
         log.debug("Request to get all Statuses");
         Page<Status> result = statusRepository.findAll(pageable);
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Status> findAll(Pageable pageable, ZonedDateTime startDate, ZonedDateTime endDate) {
+        log.debug("Request to get all Statuses");
+        Page<Status> result;
+        if (startDate != null && endDate != null) {
+            result = statusRepository.findByCreatedDateAfterAndCreatedDateBefore(startDate, endDate, pageable);
+        } else {
+            result = statusRepository.findAll(pageable);
+        }
+
         return result;
     }
 
@@ -55,7 +69,7 @@ public class StatusService {
      *  @param id the id of the entity
      *  @return the entity
      */
-    @Transactional(readOnly = true) 
+    @Transactional(readOnly = true)
     public Status findOne(Long id) {
         log.debug("Request to get Status : {}", id);
         Status status = statusRepository.findOne(id);

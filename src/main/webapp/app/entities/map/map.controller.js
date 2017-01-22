@@ -5,20 +5,41 @@
         .module('securityalarmApp')
         .controller('MapController', MapController);
 
-    MapController.$inject = ['$scope', '$interval', 'uiGmapGoogleMapApi', 'Status', 'AlertService', 'Principal'];
+    MapController.$inject = ['$scope', '$interval', 'uiGmapGoogleMapApi', 'Status', 'Account', 'AlertService', 'Principal','DateUtils'];
 
-    function MapController ($scope, $interval, uiGmapGoogleMapApi, Status,  AlertService, Principal) {
+    function MapController ($scope, $interval, uiGmapGoogleMapApi, Status, Account,  AlertService, Principal, DateUtils) {
 
-        $scope.startDate = new Date();
-        $scope.endDate = new Date();
         var limit = 100;
         loadAll();
 
+        var minDate = function (date) {
+            date.setHours(0,0,0,0);
+            return date;
+        };
+        var maxDate = function (date) {
+            date.setHours(23,59,59,99);
+            return date;
+        };
+
         $scope.today = function() {
-            $scope.startDate = new Date();
-            $scope.startDate.setHours(0,0,0,0);
-            $scope.endDate = new Date();
-            $scope.endDate.setHours(23,59,59,99);
+            $scope.startDate = minDate(new Date());
+            $scope.endDate = maxDate(new Date());
+            limit = 1000;
+            loadAll();
+        };
+
+        $scope.yesterday = function() {
+            $scope.startDate = minDate(new Date());
+            $scope.startDate.setDate($scope.startDate.getDate() - 1);
+            $scope.endDate = maxDate(new Date());
+            $scope.endDate.setDate($scope.endDate.getDate() - 1);
+            limit = 1000;
+            loadAll();
+        };
+
+        $scope.dateRangeChange = function () {
+            $scope.startDate = minDate($scope.startDate);
+            $scope.endDate = maxDate($scope.endDate);
             limit = 1000;
             loadAll();
         };
@@ -29,10 +50,6 @@
 
         $scope.open2 = function() {
             $scope.popup2.opened = true;
-        };
-
-        $scope.setDate = function(year, month, day) {
-            $scope.dt = new Date(year, month, day);
         };
 
         $scope.popup1 = {
@@ -47,18 +64,15 @@
 
         $scope.polylines = [];
 
+        var homePosition = { latitude: Account.location.latitude, longitude: Account.location.longitude };
+
         $scope.marker = {};
 
-        Principal.identity(false).then(function (account) {
-            $scope.marker.home = {
-                id: 0,
-                coords: {
-                    latitude: account.location.latitude,
-                    longitude: account.location.longitude
-                },
-                options: { draggable: false , title: 'Home'}
-            };
-        });
+        $scope.marker.home = {
+            id: 0,
+            coords: homePosition,
+            options: { draggable: false , title: 'Home'}
+        };
 
         var stop = $interval(loadAll, 60000);
 
@@ -71,27 +85,35 @@
                 page: 0,
                 size: limit,
                 sort: 'createdDate,desc',
-                startDate: $scope.startDate,
-                endDate: $scope.endDate
+                startDate: DateUtils.convertLocalDateToServer($scope.startDate),
+                endDate: DateUtils.convertLocalDateToServer($scope.endDate)
             }, onSuccess, onError);
 
             function onSuccess(data) {
 
-                $scope.startDate = new Date(data[data.length - 1].createdDate);
+                if (data.length ===0) {
+                    AlertService.warning('You don\'t have any records for this date range');
+                }
 
-                $scope.endDate = new Date(data[0].createdDate);
+                $scope.startDate = $scope.startDate || new Date(data[data.length - 1].createdDate);
+
+                $scope.endDate = $scope.endDate || new Date(data[0].createdDate);
 
                 uiGmapGoogleMapApi.then(function() {
 
-                    var lastPosition = data[0];
+                    var lastPosition = data[0] || homePosition;
 
                     $scope.map.center = { latitude: lastPosition.latitude, longitude: lastPosition.longitude };
 
-                    $scope.marker.current = {
+                    $scope.marker.current = !data[0] ? undefined : {
                         id: 1,
                         coords: {latitude: lastPosition.latitude, longitude: lastPosition.longitude},
                         options: { draggable: false , title: 'Current position'}
                     };
+
+                    $scope.marker.current.options = {
+                        icon:'//developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+                    }
 
                     var bounds = new google.maps.LatLngBounds();
                     for (var i in data) {
@@ -101,7 +123,7 @@
                         }
                     }
 
-                    $scope.map.bounds = {
+                    $scope.map.bounds = !data[0] ? undefined : {
                         northeast: {
                             latitude: bounds.getNorthEast().lat(),
                             longitude: bounds.getNorthEast().lng()
@@ -111,6 +133,8 @@
                             longitude: bounds.getSouthWest().lng()
                         }
                     };
+
+                    $scope.map.zoom = !data[0] ? 16 : undefined;
 
                     $scope.polylines = [
                         {
@@ -139,20 +163,6 @@
                 AlertService.error(error.data.message);
             }
         }
-
-        var geojson = {
-            "type": "FeatureCollection",
-            "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-
-            "features": [
-                { "type": "Feature", "properties": { "Name": " (А)", "description": "", "timestamp": "2016\/05\/01 10:25:11.961+00", "begin": null, "end": null, "altitudeMode": null, "tessellate": -1, "extrude": -1, "visibility": -1, "drawOrder": null, "icon": null }, "geometry": { "type": "Point", "coordinates": [ 30.365818, 53.87839, 157.300003051757812 ] } },
-                { "type": "Feature", "properties": { "Name": "", "description": "", "timestamp": null, "begin": "2016\/05\/01 10:25:11.961+00", "end": "2016\/05\/01 12:06:41.376+00", "altitudeMode": null, "tessellate": -1, "extrude": -1, "visibility": -1, "drawOrder": null, "icon": null }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 30.365818, 53.87839, 157.300003051757812 ], [ 30.366139, 53.878515, 164.600006103515625 ], [ 30.366162, 53.878712, 169.899993896484375 ], [ 30.366165, 53.878846, 170.699996948242188 ], [ 30.366212, 53.879017, 172.0 ], [ 30.366432, 53.879047, 172.300003051757812 ], [ 30.366933, 53.879079, 172.199996948242188 ], [ 30.368392, 53.879197, 174.399993896484375 ], [ 30.368855, 53.879235, 170.800003051757812 ], [ 30.368999, 53.879237, 168.800003051757812 ], [ 30.36902, 53.879247, 171.0 ], [ 30.369041, 53.879251, 171.800003051757812 ], [ 30.369232, 53.879311, 167.0 ], [ 30.369249, 53.879377, 163.300003051757812 ], [ 30.36918, 53.879501, 162.800003051757812 ], [ 30.37115, 53.880248, 163.100006103515625 ], [ 30.372754, 53.880641, 161.199996948242188 ], [ 30.372945, 53.880661, 161.100006103515625 ], [ 30.374145, 53.880925, 164.300003051757812 ], [ 30.374893, 53.881098, 165.800003051757812 ], [ 30.375654, 53.881235, 166.600006103515625 ], [ 30.376714, 53.881434, 166.699996948242188 ], [ 30.379266, 53.882092, 164.899993896484375 ], [ 30.380451, 53.882391, 162.0 ], [ 30.382189, 53.882857, 164.100006103515625 ], [ 30.381839, 53.883675, 170.0 ], [ 30.381839, 53.883675, 170.0 ], [ 30.380368, 53.884549, 173.100006103515625 ], [ 30.379691, 53.884959, 174.100006103515625 ], [ 30.378696, 53.886186, 172.5 ], [ 30.378131, 53.886996, 174.5 ], [ 30.377611, 53.887794, 172.600006103515625 ] ], [ [ 30.37654, 53.8895, 172.0 ], [ 30.375875, 53.890369, 176.600006103515625 ] ], [ [ 30.374608, 53.89216, 175.0 ], [ 30.374608, 53.89216, 175.0 ], [ 30.373542, 53.893841, 175.699996948242188 ], [ 30.372899, 53.894693, 178.899993896484375 ], [ 30.372272, 53.895498, 178.699996948242188 ] ], [ [ 30.371072, 53.897211, 179.100006103515625 ], [ 30.370506, 53.8981, 180.899993896484375 ], [ 30.36993, 53.89894, 181.600006103515625 ], [ 30.369374, 53.899773, 182.100006103515625 ], [ 30.36877, 53.900622, 185.100006103515625 ], [ 30.367715, 53.902255, 186.199996948242188 ], [ 30.367715, 53.902255, 186.199996948242188 ], [ 30.367101, 53.903938, 186.399993896484375 ], [ 30.366756, 53.904657, 189.600006103515625 ], [ 30.366203, 53.905324, 190.199996948242188 ], [ 30.364985, 53.906407, 191.600006103515625 ], [ 30.364445, 53.906951, 191.0 ], [ 30.363426, 53.907881, 191.600006103515625 ], [ 30.362717, 53.908544, 190.600006103515625 ], [ 30.361814, 53.909428, 192.0 ], [ 30.361814, 53.909428, 192.0 ], [ 30.361586, 53.9096, 192.600006103515625 ], [ 30.361328, 53.909834, 191.800003051757812 ], [ 30.360581, 53.910158, 192.0 ], [ 30.360035, 53.909917, 192.800003051757812 ], [ 30.359453, 53.909628, 191.5 ], [ 30.358845, 53.909349, 191.100006103515625 ], [ 30.35886, 53.909343, 190.800003051757812 ], [ 30.358724, 53.90928, 193.100006103515625 ], [ 30.358282, 53.909097, 192.199996948242188 ], [ 30.356785, 53.908634, 193.5 ], [ 30.355859, 53.908414, 192.199996948242188 ], [ 30.355071, 53.908235, 191.0 ], [ 30.354035, 53.908119, 189.600006103515625 ], [ 30.352886, 53.908072, 189.800003051757812 ], [ 30.350539, 53.908101, 189.800003051757812 ], [ 30.348443, 53.908263, 190.600006103515625 ], [ 30.347606, 53.908329, 191.5 ], [ 30.346854, 53.908391, 193.100006103515625 ], [ 30.346385, 53.908466, 195.699996948242188 ], [ 30.346397, 53.908462, 195.800003051757812 ], [ 30.346081, 53.908474, 195.5 ], [ 30.34476, 53.908589, 198.899993896484375 ], [ 30.343976, 53.908653, 198.399993896484375 ], [ 30.342309, 53.908749, 195.600006103515625 ], [ 30.341018, 53.90881, 188.199996948242188 ], [ 30.340092, 53.908884, 187.699996948242188 ], [ 30.340092, 53.908884, 187.699996948242188 ], [ 30.338171, 53.909027, 187.100006103515625 ], [ 30.337131, 53.909019, 187.199996948242188 ], [ 30.336202, 53.909195, 184.100006103515625 ], [ 30.334589, 53.909306, 184.5 ], [ 30.333584, 53.90935, 186.399993896484375 ], [ 30.332507, 53.909608, 183.899993896484375 ], [ 30.331345, 53.909896, 184.0 ], [ 30.329017, 53.910473, 179.199996948242188 ], [ 30.327843, 53.910763, 179.5 ], [ 30.327843, 53.910763, 179.5 ], [ 30.325624, 53.911315, 185.100006103515625 ], [ 30.324497, 53.911602, 188.699996948242188 ], [ 30.323442, 53.911856, 190.5 ], [ 30.322597, 53.912068, 191.600006103515625 ], [ 30.321773, 53.912251, 196.5 ], [ 30.31989, 53.912798, 198.0 ], [ 30.317964, 53.913442, 197.199996948242188 ], [ 30.316482, 53.914535, 198.0 ], [ 30.316482, 53.914535, 198.0 ], [ 30.314928, 53.915724, 196.0 ], [ 30.314083, 53.916316, 196.100006103515625 ], [ 30.313302, 53.916741, 197.699996948242188 ], [ 30.312726, 53.916983, 200.199996948242188 ], [ 30.312649, 53.916918, 200.0 ], [ 30.312608, 53.917293, 199.0 ] ], [ [ 30.311687, 53.91953, 197.5 ], [ 30.311549, 53.920256, 195.300003051757812 ], [ 30.311469, 53.920769, 197.899993896484375 ], [ 30.310937, 53.920904, 196.899993896484375 ], [ 30.310839, 53.92083, 198.0 ], [ 30.310758, 53.9208, 206.199996948242188 ], [ 30.310516, 53.921055, 198.300003051757812 ], [ 30.310319, 53.921166, 198.0 ], [ 30.309963, 53.921293, 195.800003051757812 ], [ 30.308706, 53.921763, 192.600006103515625 ], [ 30.30707, 53.922131, 191.5 ], [ 30.30707, 53.922131, 191.5 ], [ 30.306461, 53.922273, 197.100006103515625 ], [ 30.306231, 53.922313, 194.899993896484375 ], [ 30.306212, 53.922402, 210.899993896484375 ], [ 30.306212, 53.922402, 210.899993896484375 ], [ 30.306177, 53.922427, 216.399993896484375 ] ] ] } },
-                { "type": "Feature", "properties": { "Name": " (Б)", "description": "Создано в приложении \"Мои треки\" на Android\n\nНазвание: -\nВид активности: Ходьба\nОписание: -\nОбщее расстояние: 8,10 км (5,0 мил.)\nОбщее время: 1:41:29\nВремя движения: 44:40\nСредняя скорость: 4,79 км\/ч (3,0 мил\/ч)\nСредняя скорость при движении: 10,88 км\/ч (6,8 мил\/ч)\nМакс. скорость: 78,32 км\/ч (48,7 мил\/ч)\nСредний темп: 12:32 мин\/км (20:10 мин\/мил)\nСредний темп при движении: 5:31 мин\/км (8:53 мин\/мил)\nМаксимальный темп: 0:46 мин\/км (1:14 мин\/мил)\nМакс. высота: 199 м (654 фт)\nМин. высота: 157 м (516 фт)\nНабор высоты: 7 м (24 фт)\nМакс. уклон: 1 %\nМин. уклон: -1 %\nЗаписано: 01.05.2016 13:25\n", "timestamp": "2016\/05\/01 12:06:41.376+00", "begin": null, "end": null, "altitudeMode": null, "tessellate": -1, "extrude": -1, "visibility": -1, "drawOrder": null, "icon": null }, "geometry": { "type": "Point", "coordinates": [ 30.306177, 53.922427, 216.399993896484375 ] } }
-            ]
-        }
-
-        $scope.test =  geojson.features[1].geometry.coordinates;
-
 
     }
 })();

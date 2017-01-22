@@ -36,7 +36,7 @@
 
         function convertLocalDateToServer (date) {
             if (date) {
-                return $filter('date')(date, 'yyyy-MM-dd');
+                return $filter('date')(date, "yyyy-MM-dd'T'HH:mm'Z'");
             } else {
                 return null;
             }
