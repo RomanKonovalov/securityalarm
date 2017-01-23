@@ -73,6 +73,24 @@
                     </div>
                 </div>
 
+                <div class="form-group" ng-repeat="device in vm.settingsAccount.devices">
+                    <label class="control-label" for="device">Device #{{$index + 1}}</label>
+                    <input type="text" id="device" class="form-control" name="address" ng-model="device.name"/>
+                </div>
+
+                <input type="text" id="us1-lat" ng-model="vm.settingsAccount.location.latitude" hidden/>
+                <input type="text" id="us1-lon" ng-model="vm.settingsAccount.location.longitude" hidden/>
+                <div class="form-group">
+                    <label class="control-label" for="us1-address">Home location</label>
+                    <input type="text" id="us1-address" class="form-control" name="address"/>
+                    <locationpicker options="locationpickerOptions"></locationpicker>
+                    <div class="clearfix">&nbsp;</div>
+                    <p class="form-control-static">
+                        Lat.: {{vm.settingsAccount.location.latitude}}
+                        Long.: {{vm.settingsAccount.location.longitude}}
+                    </p>
+                </div>
+
                 <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
             </form>
         </div>

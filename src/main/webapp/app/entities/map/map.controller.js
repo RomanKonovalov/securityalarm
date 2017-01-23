@@ -108,12 +108,11 @@
                     $scope.marker.current = !data[0] ? undefined : {
                         id: 1,
                         coords: {latitude: lastPosition.latitude, longitude: lastPosition.longitude},
-                        options: { draggable: false , title: 'Current position'}
+                        options: {
+                            draggable: false ,
+                            title: 'Current position',
+                            icon:'//developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'}
                     };
-
-                    $scope.marker.current.options = {
-                        icon:'//developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
-                    }
 
                     var bounds = new google.maps.LatLngBounds();
                     for (var i in data) {

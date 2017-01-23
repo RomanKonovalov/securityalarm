@@ -103,6 +103,9 @@
                     resolve: {
                         entity: ['User', function(User) {
                             return User.get({login : $stateParams.login});
+                        }],
+                        Devices: ['Device', function (Device) {
+                            return Device.query();
                         }]
                     }
                 }).result.then(function() {

@@ -1,17 +1,25 @@
 package com.romif.securityalarm.service;
 
 import com.romif.securityalarm.domain.Status;
+import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.StatusRepository;
+import com.romif.securityalarm.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Status.
@@ -25,16 +33,26 @@ public class StatusService {
     @Inject
     private StatusRepository statusRepository;
 
+    @Inject
+    private UserRepository userRepository;
+
     /**
      * Save a status.
      *
      * @param status the entity to save
      * @return the persisted entity
      */
+
+    @CachePut(value = "status", key = "#createdBy")
+    public Status putCashe(String createdBy, Status status) {
+        log.debug("Request to save putCashe");
+        return status;
+    }
+
     public Status save(Status status) {
         log.debug("Request to save Status : {}", status);
         Status result = statusRepository.save(status);
-        return result;
+        return putCashe(result.getCreatedBy(), result);
     }
 
     /**
@@ -85,4 +103,28 @@ public class StatusService {
         log.debug("Request to delete Status : {}", id);
         statusRepository.delete(id);
     }
+
+    @Cacheable(value = "status", key = "#createdBy")
+    public Optional<Status> findOneByLogin(String createdBy) {
+        log.debug("Request to get Status createdBy: {}", createdBy);
+        Optional<Status> status = statusRepository.findFirstByCreatedBy(createdBy);
+        return status;
+    }
+
+    public Set<Status> getRecentStatuses() {
+        return userRepository.findAllUserLogins().stream().map(login -> findOneByLogin(login))
+            .filter(status -> status.isPresent())
+            .map(status -> status.get())
+            .collect(Collectors.toSet());
+    }
+
+    @Scheduled(cron = "* * * * * *")
+    public void checkStatuses() {
+        Set<Status> statuses = getRecentStatuses();
+
+        statuses.forEach(status -> log.debug(status.toString()));
+
+    }
+
+
 }

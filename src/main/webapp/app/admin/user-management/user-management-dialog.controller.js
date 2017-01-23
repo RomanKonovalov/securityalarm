@@ -5,9 +5,9 @@
         .module('securityalarmApp')
         .controller('UserManagementDialogController',UserManagementDialogController);
 
-    UserManagementDialogController.$inject = ['$stateParams', '$uibModalInstance', 'entity', 'User'];
+    UserManagementDialogController.$inject = ['$stateParams', '$uibModalInstance', 'entity', 'User','Devices'];
 
-    function UserManagementDialogController ($stateParams, $uibModalInstance, entity, User) {
+    function UserManagementDialogController ($stateParams, $uibModalInstance, entity, User, Devices) {
         var vm = this;
 
         vm.authorities = ['ROLE_USER', 'ROLE_ADMIN'];
@@ -15,7 +15,7 @@
         vm.languages = null;
         vm.save = save;
         vm.user = entity;
-
+        vm.devices = Devices;
 
 
         function clear () {

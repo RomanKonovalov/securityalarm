@@ -6,9 +6,12 @@
         .controller('RegisterController', RegisterController);
 
 
-    RegisterController.$inject = [ '$timeout', 'Auth', 'LoginService'];
+    RegisterController.$inject = ['$scope', '$timeout', 'Auth', 'LoginService'];
 
-    function RegisterController ($timeout, Auth, LoginService) {
+    function RegisterController ($scope, $timeout, Auth, LoginService) {
+
+
+
         var vm = this;
 
         vm.doNotMatch = null;
@@ -18,6 +21,24 @@
         vm.register = register;
         vm.registerAccount = {};
         vm.success = null;
+
+        $scope.locationpickerOptions = {
+            location: {
+                latitude: 53.90071589999999,
+                longitude: 30.331359799999973
+            },
+            inputBinding: {
+                latitudeInput: $('#us1-lat'),
+                longitudeInput: $('#us1-lon'),
+                locationNameInput: $('#us1-address')
+            },
+            radius: 0,
+            enableAutocomplete: true,
+            autocompleteOptions: {
+                //types: ['(cities)'],
+                componentRestrictions: {country: 'by'}
+            }
+        };
 
         $timeout(function (){angular.element('#login').focus();});
 

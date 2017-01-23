@@ -21,6 +21,11 @@
                     controller: 'SettingsController',
                     controllerAs: 'vm'
                 }
+            },
+            resolve: {
+                Account: ['Principal', function (Principal) {
+                    return Principal.identity(false);
+                }]
             }
         });
     }

@@ -6,6 +6,8 @@ import com.romif.securityalarm.repository.AuthorityRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.security.SecurityUtils;
+import com.romif.securityalarm.service.dto.DeviceDTO;
+import com.romif.securityalarm.service.dto.LocationDTO;
 import com.romif.securityalarm.service.util.RandomUtil;
 import com.romif.securityalarm.web.rest.vm.ManagedUserVM;
 import org.slf4j.Logger;
@@ -80,7 +82,7 @@ public class UserService {
     }
 
     public User createUser(String login, String password, String firstName, String lastName, String email,
-        String langKey) {
+        String langKey, float latitude, float longitude) {
 
         User newUser = new User();
         Authority authority = authorityRepository.findOne(AuthoritiesConstants.USER);
@@ -99,6 +101,8 @@ public class UserService {
         newUser.setActivationKey(RandomUtil.generateActivationKey());
         authorities.add(authority);
         newUser.setAuthorities(authorities);
+        newUser.setLatitude(latitude);
+        newUser.setLongitude(longitude);
         userRepository.save(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
@@ -132,18 +136,25 @@ public class UserService {
         return user;
     }
 
-    public void updateUser(String firstName, String lastName, String email, String langKey) {
+    public void updateUser(String firstName, String lastName, String email, String langKey, LocationDTO location, Set<DeviceDTO> devices) {
         userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).ifPresent(user -> {
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setEmail(email);
             user.setLangKey(langKey);
+            user.setLatitude(location.getLatitude());
+            user.setLongitude(location.getLongitude());
+
+            devices.forEach(deviceDTO -> userRepository.findOneById(deviceDTO.getId()).ifPresent(device -> {
+                device.setFirstName(deviceDTO.getName());
+            }));
+
             log.debug("Changed Information for User: {}", user);
         });
     }
 
     public void updateUser(Long id, String login, String firstName, String lastName, String email,
-        boolean activated, String langKey, Set<String> authorities) {
+        boolean activated, String langKey, Set<String> authorities, Set<DeviceDTO> devices) {
 
         Optional.of(userRepository
             .findOne(id))
@@ -159,6 +170,10 @@ public class UserService {
                 authorities.forEach(
                     authority -> managedAuthorities.add(authorityRepository.findOne(authority))
                 );
+                user.getDevices().clear();
+                devices.forEach(deviceDTO -> userRepository.findOneById(deviceDTO.getId()).ifPresent(device -> {
+                    user.getDevices().add(device);
+                }));
                 log.debug("Changed Information for User: {}", user);
             });
     }

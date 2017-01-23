@@ -25,6 +25,12 @@
                 <li ng-repeat="authority in vm.user.authorities"><span>{{authority}}</span></li>
             </ul>
         </dd>
+        <dt><span>Devices</span></dt>
+        <dd>
+            <ul class="list-unstyled">
+                <li ng-repeat="device in vm.user.devices"><span>{{device.name}}</span></li>
+            </ul>
+        </dd>
     </dl>
     <button type="submit"
             ui-sref="user-management"

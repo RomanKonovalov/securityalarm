@@ -44,7 +44,7 @@
         ga('create','UA-XXXXX-X');ga('send','pageview');
     </script>-->
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIWfhgaHMCsGASFQ6ZNhKA4MbjPcJLaz8"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCIWfhgaHMCsGASFQ6ZNhKA4MbjPcJLaz8"></script>
 
     <!-- build:js app/vendor.js -->
     <!-- bower:js -->
@@ -73,12 +73,15 @@
     <script src="bower_components/angular-simple-logger/dist/angular-simple-logger.js"></script>
     <script src="bower_components/angular-google-maps/dist/angular-google-maps.js"></script>
     <!-- endinject -->
+    <script src="bower_components/locationpicker.jquery.min.js"></script>
+    <script src="bower_components/angularLocationpicker.jquery.min.js"></script>
     <!-- endbuild -->
 
     <!-- build:js app/app.js  -->
     <!-- inject:js -->
     <script src="app/app.module.js"></script>
     <script src="app/services/user/user.service.js"></script>
+    <script src="app/services/user/device.service.js"></script>
     <script src="app/services/profiles/profile.service.js"></script>
     <script src="app/services/profiles/page-ribbon.directive.js"></script>
     <script src="app/services/auth/register.service.js"></script>

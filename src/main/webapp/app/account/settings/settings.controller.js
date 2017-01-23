@@ -5,9 +5,27 @@
         .module('securityalarmApp')
         .controller('SettingsController', SettingsController);
 
-    SettingsController.$inject = ['Principal', 'Auth'];
+    SettingsController.$inject = ['$scope','Principal', 'Auth', 'Account'];
 
-    function SettingsController (Principal, Auth) {
+    function SettingsController ($scope, Principal, Auth, Account) {
+
+        $scope.locationpickerOptions = {
+            location: {
+                latitude: Account.location.latitude,
+                longitude: Account.location.longitude
+            },
+            inputBinding: {
+                latitudeInput: $('#us1-lat'),
+                longitudeInput: $('#us1-lon'),
+                locationNameInput: $('#us1-address')
+            },
+            radius: 0,
+            enableAutocomplete: true,
+            autocompleteOptions: {
+                componentRestrictions: {country: 'by'}
+            }
+        };
+
         var vm = this;
 
         vm.error = null;
@@ -25,7 +43,9 @@
                 firstName: account.firstName,
                 langKey: account.langKey,
                 lastName: account.lastName,
-                login: account.login
+                login: account.login,
+                location: {latitude: account.location.latitude, longitude: account.location.longitude},
+                devices: account.devices
             };
         };
 

@@ -379,7 +379,8 @@ public class AccountResourceIntTest {
             true,                   // activated
             "en",                   // langKey
             new HashSet<>(Arrays.asList(AuthoritiesConstants.USER)),
-            new LocationDTO()
+            new LocationDTO(),
+            new HashSet<>()
         );
 
         restUserMockMvc.perform(

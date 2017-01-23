@@ -15,7 +15,8 @@
             'infinite-scroll',
             // jhipster-needle-angularjs-add-module JHipster will add new module here
             'angular-loading-bar',
-            'uiGmapgoogle-maps'
+            'uiGmapgoogle-maps',
+            'angular-jquery-locationpicker'
         ])
         .config(config)
         .run(run)

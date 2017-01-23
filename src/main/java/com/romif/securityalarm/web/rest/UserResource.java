@@ -7,12 +7,14 @@ import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.MailService;
 import com.romif.securityalarm.service.UserService;
+import com.romif.securityalarm.service.dto.DeviceDTO;
 import com.romif.securityalarm.web.rest.vm.ManagedUserVM;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import com.romif.securityalarm.web.rest.util.PaginationUtil;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -125,7 +127,7 @@ public class UserResource {
         }
         userService.updateUser(managedUserVM.getId(), managedUserVM.getLogin(), managedUserVM.getFirstName(),
             managedUserVM.getLastName(), managedUserVM.getEmail(), managedUserVM.isActivated(),
-            managedUserVM.getLangKey(), managedUserVM.getAuthorities());
+            managedUserVM.getLangKey(), managedUserVM.getAuthorities(), managedUserVM.getDevices());
 
         return ResponseEntity.ok()
             .headers(HeaderUtil.createAlert("A user is updated with identifier " + managedUserVM.getLogin(), managedUserVM.getLogin()))
@@ -180,5 +182,17 @@ public class UserResource {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUser(login);
         return ResponseEntity.ok().headers(HeaderUtil.createAlert( "A user is deleted with identifier " + login, login)).build();
+    }
+
+    @GetMapping("/devices")
+    @Timed
+    public ResponseEntity<List<DeviceDTO>> getAllDevices(@ApiParam Pageable pageable)
+        throws URISyntaxException {
+        Page<User> page = userRepository.findAllDevices(pageable);
+        List<DeviceDTO> managedUserVMs = page.getContent().stream()
+            .map(DeviceDTO::new)
+            .collect(Collectors.toList());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/devices");
+        return new ResponseEntity<>(managedUserVMs, headers, HttpStatus.OK);
     }
 }

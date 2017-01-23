@@ -112,6 +112,20 @@
                     </div>
                 </div>
 
+                <input type="text" id="us1-lat" ng-model="vm.registerAccount.latitude" hidden/>
+                <input type="text" id="us1-lon" ng-model="vm.registerAccount.longitude" hidden/>
+                <div class="form-group">
+                    <label class="control-label" for="us1-address">Home location</label>
+                    <input type="text" id="us1-address" class="form-control" name="address"/>
+                    <locationpicker options="locationpickerOptions"></locationpicker>
+                    <div class="clearfix">&nbsp;</div>
+                    <p class="form-control-static">
+                        Lat.: {{vm.registerAccount.latitude}}
+                        Long.: {{vm.registerAccount.longitude}}
+                    </p>
+                </div>
+
+
                 <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">Register</button>
             </form>
             <p></p>
@@ -121,3 +135,4 @@
         </div>
     </div>
 </div>
+

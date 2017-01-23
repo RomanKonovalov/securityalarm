@@ -2,6 +2,7 @@ package com.romif.securityalarm.web.rest.vm;
 
 import java.time.ZonedDateTime;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.romif.securityalarm.domain.User;
@@ -30,6 +31,10 @@ public class ManagedUserVM extends UserDTO {
     @Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH)
     private String password;
 
+    private float latitude;
+
+    private float longitude;
+
     public ManagedUserVM() {
     }
 
@@ -46,7 +51,7 @@ public class ManagedUserVM extends UserDTO {
     public ManagedUserVM(Long id, String login, String password, String firstName, String lastName,
                          String email, boolean activated, String langKey, Set<String> authorities,
                          String createdBy, ZonedDateTime createdDate, String lastModifiedBy, ZonedDateTime lastModifiedDate) {
-        super(login, firstName, lastName, email, activated, langKey, authorities, new LocationDTO());
+        super(login, firstName, lastName, email, activated, langKey, authorities, new LocationDTO(), new HashSet<>());
         this.id = id;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
@@ -98,6 +103,22 @@ public class ManagedUserVM extends UserDTO {
 
     public String getPassword() {
         return password;
+    }
+
+    public float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
     }
 
     @Override

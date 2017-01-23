@@ -81,6 +81,7 @@ public class Status extends AbstractAuditingEntity implements Serializable {
             ", deviceState='" + deviceState + '\'' +
             ", latitude=" + latitude +
             ", longitude=" + longitude +
-            "} " + super.toString();
+            ", createdDate=" + super.getCreatedDate() +
+            ", createdBy=" + super.getCreatedBy();
     }
 }
