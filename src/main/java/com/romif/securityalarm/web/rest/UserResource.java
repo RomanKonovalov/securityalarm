@@ -2,7 +2,9 @@ package com.romif.securityalarm.web.rest;
 
 import com.romif.securityalarm.config.Constants;
 import com.codahale.metrics.annotation.Timed;
+import com.romif.securityalarm.domain.Alarm;
 import com.romif.securityalarm.domain.User;
+import com.romif.securityalarm.repository.AlarmRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.MailService;
@@ -67,6 +69,9 @@ public class UserResource {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private AlarmRepository alarmRepository;
 
     /**
      * POST  /users  : Creates a new user.
@@ -194,5 +199,16 @@ public class UserResource {
             .collect(Collectors.toList());
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/devices");
         return new ResponseEntity<>(managedUserVMs, headers, HttpStatus.OK);
+    }
+
+    @PostMapping("/devices/activate")
+    @Timed
+    @Secured(AuthoritiesConstants.USER)
+    public ResponseEntity<?> atartAlarm(@RequestBody Long deviceId) throws URISyntaxException {
+        User device = userRepository.findOne(deviceId);
+        Alarm result = alarmRepository.save(new Alarm(device.getLogin()));
+        return ResponseEntity.created(new URI("/api/statuses/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert("alarm", result.getId().toString()))
+            .body(result);
     }
 }

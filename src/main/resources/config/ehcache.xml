@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns='http://www.ehcache.org/v3'
+         xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
+
+    <cache-template name="simple">
+        <expiry>
+            <ttl unit="seconds">3600</ttl>
+        </expiry>
+        <heap size="100"></heap>
+    </cache-template>
+
+    <cache alias="com.romif.securityalarm.domain.User" usesTemplate="simple"/>
+
+    <cache alias="com.romif.securityalarm.domain.Authority" usesTemplate="simple"/>
+
+    <cache alias="com.romif.securityalarm.domain.User.authorities" usesTemplate="simple"/>
+
+    <cache alias="com.romif.securityalarm.domain.PersistentToken" usesTemplate="simple"/>
+
+    <cache alias="com.romif.securityalarm.domain.User.persistentTokens" usesTemplate="simple"/>
+
+    <cache alias="userLogins" usesTemplate="simple"/>
+
+    <cache alias="status" usesTemplate="simple"/>
+
+    <!-- jhipster-needle-ehcache-add-entry -->
+</config>

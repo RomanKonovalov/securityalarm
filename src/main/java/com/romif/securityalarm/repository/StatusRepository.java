@@ -2,6 +2,7 @@ package com.romif.securityalarm.repository;
 
 import com.romif.securityalarm.domain.Status;
 
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,5 +19,6 @@ public interface StatusRepository extends JpaRepository<Status,Long> {
 
     Page<Status> findByCreatedDateAfterAndCreatedDateBefore(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable);
 
-    Optional<Status> findFirstByCreatedBy(String createdBy);
+    Optional<Status> findFirstByCreatedByOrderByCreatedDateDesc(String createdBy);
+
 }

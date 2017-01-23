@@ -140,7 +140,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.email = email;
     }
 
-
     public float getLatitude() {
         return latitude;
     }

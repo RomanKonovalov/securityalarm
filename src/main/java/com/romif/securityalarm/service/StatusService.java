@@ -33,26 +33,17 @@ public class StatusService {
     @Inject
     private StatusRepository statusRepository;
 
-    @Inject
-    private UserRepository userRepository;
-
     /**
      * Save a status.
      *
      * @param status the entity to save
      * @return the persisted entity
      */
-
-    @CachePut(value = "status", key = "#createdBy")
-    public Status putCashe(String createdBy, Status status) {
-        log.debug("Request to save putCashe");
-        return status;
-    }
-
+    @CachePut(value = "status", key = "#result.createdBy")
     public Status save(Status status) {
         log.debug("Request to save Status : {}", status);
         Status result = statusRepository.save(status);
-        return putCashe(result.getCreatedBy(), result);
+        return result;
     }
 
     /**
@@ -105,26 +96,8 @@ public class StatusService {
     }
 
     @Cacheable(value = "status", key = "#createdBy")
-    public Optional<Status> findOneByLogin(String createdBy) {
-        log.debug("Request to get Status createdBy: {}", createdBy);
-        Optional<Status> status = statusRepository.findFirstByCreatedBy(createdBy);
-        return status;
+    public Optional<Status> getLastStatusCreatedBy(String createdBy) {
+        return statusRepository.findFirstByCreatedByOrderByCreatedDateDesc(createdBy);
     }
-
-    public Set<Status> getRecentStatuses() {
-        return userRepository.findAllUserLogins().stream().map(login -> findOneByLogin(login))
-            .filter(status -> status.isPresent())
-            .map(status -> status.get())
-            .collect(Collectors.toSet());
-    }
-
-    @Scheduled(cron = "* * * * * *")
-    public void checkStatuses() {
-        Set<Status> statuses = getRecentStatuses();
-
-        statuses.forEach(status -> log.debug(status.toString()));
-
-    }
-
 
 }

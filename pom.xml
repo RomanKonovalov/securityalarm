@@ -34,6 +34,7 @@
         <jacoco-maven-plugin.version>0.7.7.201606060606</jacoco-maven-plugin.version>
         <java.version>1.8</java.version>
         <java.version>1.8</java.version>
+        <jcache.version>1.0.0</jcache.version>
         <javax.inject.version>1</javax.inject.version>
         <liquibase-hibernate5.version>3.6</liquibase-hibernate5.version>
         <liquibase-slf4j.version>2.0.0</liquibase-slf4j.version>
@@ -399,13 +400,14 @@
             <version>${spring-security-oauth2.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
+            <version>${jcache.version}</version>
         </dependency>
         <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>2.6.1</version>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>3.0.0.m3</version>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>

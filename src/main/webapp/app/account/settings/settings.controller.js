@@ -5,9 +5,9 @@
         .module('securityalarmApp')
         .controller('SettingsController', SettingsController);
 
-    SettingsController.$inject = ['$scope','Principal', 'Auth', 'Account'];
+    SettingsController.$inject = ['$scope','Principal', 'Auth', 'Account', 'Device'];
 
-    function SettingsController ($scope, Principal, Auth, Account) {
+    function SettingsController ($scope, Principal, Auth, Account, Device) {
 
         $scope.locationpickerOptions = {
             location: {
@@ -24,6 +24,10 @@
             autocompleteOptions: {
                 componentRestrictions: {country: 'by'}
             }
+        };
+
+        $scope.activateAlarm = function (deviceId) {
+            Device.activate(deviceId);
         };
 
         var vm = this;

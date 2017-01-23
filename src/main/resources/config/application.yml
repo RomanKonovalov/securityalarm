@@ -27,6 +27,9 @@ spring:
     jackson:
         serialization.write_dates_as_timestamps: false
         time-zone: GMT+3
+    cache:
+            jcache:
+                config: config/ehcache.xml
     jpa:
         open-in-view: false
         hibernate:

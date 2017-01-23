@@ -76,6 +76,7 @@
                 <div class="form-group" ng-repeat="device in vm.settingsAccount.devices">
                     <label class="control-label" for="device">Device #{{$index + 1}}</label>
                     <input type="text" id="device" class="form-control" name="address" ng-model="device.name"/>
+                    <button type="submit" class="btn btn-primary" ng-click="activateAlarm(device.id)">Activate alarm</button>
                 </div>
 
                 <input type="text" id="us1-lat" ng-model="vm.settingsAccount.location.latitude" hidden/>
