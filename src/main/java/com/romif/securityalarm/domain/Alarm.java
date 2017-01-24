@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.EnumSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "alarm")
@@ -22,11 +24,25 @@ public class Alarm extends AbstractAuditingEntity {
     @Column(name = "device_name")
     private String deviceName;
 
+    @Column(name = "notification_type")
+    @ElementCollection(targetClass = NotificationType.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "alarm_notification_type", joinColumns = @JoinColumn(name = "alarm_id"))
+    @Enumerated(value = EnumType.STRING)
+    private Set<NotificationType> notificationTypes;
+
+    @Column(name = "tracking_type")
+    @ElementCollection(targetClass = TrackingType.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "alarm_tracking_type", joinColumns = @JoinColumn(name = "alarm_id"))
+    @Enumerated(value = EnumType.STRING)
+    private Set<TrackingType> trackingTypes;
+
     public Alarm() {
     }
 
-    public Alarm(String deviceName) {
+    public Alarm(String deviceName, EnumSet<NotificationType> notificationTypes, EnumSet<TrackingType> trackingTypes) {
         this.deviceName = deviceName;
+        this.notificationTypes = notificationTypes;
+        this.trackingTypes = trackingTypes;
     }
 
     public Long getId() {
@@ -45,21 +61,4 @@ public class Alarm extends AbstractAuditingEntity {
         this.deviceName = deviceName;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Alarm alarm = (Alarm) o;
-
-        if (!deviceName.equals(alarm.deviceName)) return false;
-        return super.getCreatedBy().equals(alarm.getCreatedBy());
-    }
-
-    @Override
-    public int hashCode() {
-        int result = deviceName.hashCode();
-        result = 31 * result + super.getCreatedBy().hashCode();
-        return result;
-    }
 }

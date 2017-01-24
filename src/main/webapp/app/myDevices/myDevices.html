@@ -1,0 +1,23 @@
+<div ng-cloak>
+
+    <h2>My Devices</h2>
+    <jhi-alert></jhi-alert>
+
+    <div class="panel" ng-repeat="device in devices" ng-class="isActivated(device.name) ? 'panel-success' : ' panel-danger'">
+        <div class="panel-heading">
+            <h3 class="panel-title">Device: {{device.name}}</h3>
+        </div>
+        <div class="panel-body">
+            <button class="btn btn-success" ng-click="activateAlarm(device.name)" ng-hide="isActivated(device.name)">
+                Activate alarm
+            </button>
+            <button class="btn btn-danger" ng-click="deactivateAlarm(device.name)" ng-hide="!isActivated(device.name)">
+                Deactivate alarm
+            </button>
+        </div>
+    </div>
+
+
+
+
+</div>

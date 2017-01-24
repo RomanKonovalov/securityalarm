@@ -3,6 +3,7 @@ package com.romif.securityalarm.service;
 import com.romif.securityalarm.domain.Authority;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.AuthorityRepository;
+import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.security.SecurityUtils;
@@ -39,6 +40,9 @@ public class UserService {
 
     @Inject
     private UserRepository userRepository;
+
+    @Inject
+    private DeviceRepository deviceRepository;
 
     @Inject
     private AuthorityRepository authorityRepository;
@@ -171,7 +175,7 @@ public class UserService {
                     authority -> managedAuthorities.add(authorityRepository.findOne(authority))
                 );
                 user.getDevices().clear();
-                devices.forEach(deviceDTO -> userRepository.findOneById(deviceDTO.getId()).ifPresent(device -> {
+                devices.forEach(deviceDTO -> deviceRepository.findOneById(deviceDTO.getId()).ifPresent(device -> {
                     user.getDevices().add(device);
                 }));
                 log.debug("Changed Information for User: {}", user);

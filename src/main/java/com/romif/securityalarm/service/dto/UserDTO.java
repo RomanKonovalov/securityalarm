@@ -3,6 +3,7 @@ package com.romif.securityalarm.service.dto;
 import com.romif.securityalarm.config.Constants;
 
 import com.romif.securityalarm.domain.Authority;
+import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.User;
 
 import org.hibernate.validator.constraints.Email;
@@ -54,7 +55,7 @@ public class UserDTO {
     }
 
     public UserDTO(String login, String firstName, String lastName,
-        String email, boolean activated, String langKey, Set<String> authorities, LocationDTO location, Set<User> devices) {
+        String email, boolean activated, String langKey, Set<String> authorities, LocationDTO location, Set<Device> devices) {
 
         this.login = login;
         this.firstName = firstName;

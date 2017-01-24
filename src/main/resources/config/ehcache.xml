@@ -20,6 +20,8 @@
 
     <cache alias="com.romif.securityalarm.domain.User.persistentTokens" usesTemplate="simple"/>
 
+    <cache alias="alarms" usesTemplate="simple"/>
+
     <cache alias="userLogins" usesTemplate="simple"/>
 
     <cache alias="status" usesTemplate="simple"/>

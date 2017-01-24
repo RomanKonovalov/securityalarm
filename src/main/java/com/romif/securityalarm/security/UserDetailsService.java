@@ -1,6 +1,9 @@
 package com.romif.securityalarm.security;
 
+import com.romif.securityalarm.domain.Device;
+import com.romif.securityalarm.domain.GenericUser;
 import com.romif.securityalarm.domain.User;
+import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,23 +29,37 @@ public class UserDetailsService implements org.springframework.security.core.use
     @Inject
     private UserRepository userRepository;
 
+    @Inject
+    private DeviceRepository deviceRepository;
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(final String login) {
         log.debug("Authenticating {}", login);
         String lowercaseLogin = login.toLowerCase(Locale.ENGLISH);
-        Optional<User> userFromDatabase = userRepository.findOneByLogin(lowercaseLogin);
-        return userFromDatabase.map(user -> {
-            if (!user.getActivated()) {
-                throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
-            }
-            List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
-                    .map(authority -> new SimpleGrantedAuthority(authority.getName()))
-                .collect(Collectors.toList());
-            return new org.springframework.security.core.userdetails.User(lowercaseLogin,
-                user.getPassword(),
-                grantedAuthorities);
-        }).orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the " +
-        "database"));
+
+        GenericUser userFromDatabase;
+
+        Optional<User> user = userRepository.findOneByLogin(lowercaseLogin);
+
+        if (user.isPresent()) {
+            userFromDatabase = user.get();
+        } else {
+            userFromDatabase = deviceRepository.findOneByLogin(lowercaseLogin)
+                .orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the database"));
+        }
+
+        if (!userFromDatabase.getActivated()) {
+            throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
+        }
+        List<GrantedAuthority> grantedAuthorities = userFromDatabase.getAuthorities().stream()
+            .map(authority -> new SimpleGrantedAuthority(authority.getName()))
+            .collect(Collectors.toList());
+        return new org.springframework.security.core.userdetails.User(lowercaseLogin,
+            userFromDatabase.getPassword(),
+            grantedAuthorities);
+
     }
+
+
 }

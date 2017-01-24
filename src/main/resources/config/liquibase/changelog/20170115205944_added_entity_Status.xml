@@ -62,14 +62,28 @@
             <column name="last_modified_date" type="timestamp"/>
         </createTable>
 
+        <createTable tableName="alarm_notification_type">
+            <column name="alarm_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notification_type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="alarm_tracking_type">
+            <column name="alarm_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tracking_type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
         <loadData encoding="UTF-8"
                   file="config/liquibase/statuses.csv"
                   separator=";"
                   tableName="status"/>
-        <loadData encoding="UTF-8"
-                  file="config/liquibase/alarm.csv"
-                  separator=";"
-                  tableName="alarm"/>
 
     </changeSet>
 </databaseChangeLog>

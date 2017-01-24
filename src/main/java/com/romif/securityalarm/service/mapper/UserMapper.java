@@ -1,6 +1,7 @@
 package com.romif.securityalarm.service.mapper;
 
 import com.romif.securityalarm.domain.Authority;
+import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.service.dto.DeviceDTO;
 import com.romif.securityalarm.service.dto.UserDTO;
@@ -55,16 +56,16 @@ public interface UserMapper {
         }).collect(Collectors.toSet());
     }
 
-    default Set<DeviceDTO> devicesFromUsers (Set<User> users) {
+    default Set<DeviceDTO> devicesFromUsers (Set<Device> users) {
         return users.stream().map(DeviceDTO::new).collect(Collectors.toSet());
     }
 
-    default Set<User> usersFromDevices (Set<DeviceDTO> devices) {
+    default Set<Device> usersFromDevices (Set<DeviceDTO> devices) {
         return devices.stream().map(deviceDTO -> {
-            User user = new User();
-            user.setId(deviceDTO.getId());
-            user.setFirstName(deviceDTO.getName());
-            return user;
+            Device device = new Device();
+            device.setId(deviceDTO.getId());
+            device.setLogin(deviceDTO.getName());
+            return device;
         }).collect(Collectors.toSet());
     }
 }

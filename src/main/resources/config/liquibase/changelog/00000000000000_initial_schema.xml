@@ -26,6 +26,9 @@
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="user_type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
             <column name="login" type="varchar(50)">
                 <constraints unique="true" nullable="false"/>
             </column>
@@ -41,6 +44,8 @@
             <column name="longitude" type="float">
                 <constraints nullable="true" />
             </column>
+            <column name="notification_types" type="LONGBLOB"/>
+            <column name="tracking_types" type="LONGBLOB"/>
             <column name="activated" type="boolean" valueBoolean="false">
                 <constraints nullable="false" />
             </column>
@@ -58,7 +63,7 @@
             </column>
             <column name="last_modified_by" type="varchar(50)"/>
             <column name="last_modified_date" type="timestamp"/>
-            <column name="user_id" type="bigint">
+            <column name="device_id" type="bigint">
                 <constraints nullable="true"/>
             </column>
         </createTable>
@@ -73,6 +78,7 @@
             unique="true">
             <column name="email" type="varchar(100)"/>
         </createIndex>
+
         <createTable tableName="jhi_authority">
             <column name="name" type="varchar(50)">
                 <constraints primaryKey="true" nullable="false"/>

@@ -2,9 +2,10 @@ package com.romif.securityalarm.web.rest;
 
 import com.romif.securityalarm.config.Constants;
 import com.codahale.metrics.annotation.Timed;
-import com.romif.securityalarm.domain.Alarm;
+import com.romif.securityalarm.domain.*;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.AlarmRepository;
+import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.MailService;
@@ -23,12 +24,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -63,6 +67,8 @@ public class UserResource {
 
     @Inject
     private UserRepository userRepository;
+    @Inject
+    private DeviceRepository deviceRepository;
 
     @Inject
     private MailService mailService;
@@ -191,22 +197,24 @@ public class UserResource {
 
     @GetMapping("/devices")
     @Timed
-    public ResponseEntity<List<DeviceDTO>> getAllDevices(@ApiParam Pageable pageable)
-        throws URISyntaxException {
-        Page<User> page = userRepository.findAllDevices(pageable);
-        List<DeviceDTO> managedUserVMs = page.getContent().stream()
-            .map(DeviceDTO::new)
-            .collect(Collectors.toList());
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/devices");
-        return new ResponseEntity<>(managedUserVMs, headers, HttpStatus.OK);
+    @Secured(AuthoritiesConstants.USER)
+    public ResponseEntity<List<DeviceDTO>> getAllDevices(@ApiParam Pageable pageable) throws URISyntaxException {
+        String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+        List<DeviceDTO> deviceDtos = userRepository.findOneByLogin(login)
+            .map(User::getDevices)
+            .map(devices -> devices.stream().map(DeviceDTO::new).collect(Collectors.toList()))
+            .orElse(Collections.emptyList());
+
+        return new ResponseEntity<>(deviceDtos, HttpStatus.OK);
     }
 
     @PostMapping("/devices/activate")
     @Timed
     @Secured(AuthoritiesConstants.USER)
     public ResponseEntity<?> atartAlarm(@RequestBody Long deviceId) throws URISyntaxException {
-        User device = userRepository.findOne(deviceId);
-        Alarm result = alarmRepository.save(new Alarm(device.getLogin()));
+        Device device = deviceRepository.findOne(deviceId);
+        Alarm result = alarmRepository.save(new Alarm(device.getLogin(), EnumSet.allOf(NotificationType.class), EnumSet.allOf(TrackingType.class)));
         return ResponseEntity.created(new URI("/api/statuses/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("alarm", result.getId().toString()))
             .body(result);

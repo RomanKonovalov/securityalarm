@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.romif.securityalarm.domain.Alarm;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.repository.AlarmRepository;
+import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.StatusService;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import com.romif.securityalarm.web.rest.util.PaginationUtil;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -24,6 +26,7 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -34,13 +37,24 @@ public class AlarmResource {
     @Inject
     private AlarmRepository alarmRepository;
 
-    @Secured("ROLE_USER")
-    @PostMapping("/alarm")
+    @GetMapping("/alarms")
     @Timed
-    public ResponseEntity<Alarm> startAlarm() throws URISyntaxException {
-        log.debug("REST request to start alarm");
+    @Secured(AuthoritiesConstants.USER)
+    public ResponseEntity<Set<Alarm>> getAllAlarms() throws URISyntaxException {
+        String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
-        Alarm result = alarmRepository.save(new Alarm());
+        Set<Alarm> alarms =  alarmRepository.findAllByCreatedBy(login);
+
+        return new ResponseEntity<>(alarms, HttpStatus.OK);
+    }
+
+    @Secured("ROLE_USER")
+    @PostMapping("/alarms")
+    @Timed
+    public ResponseEntity<Alarm> startAlarm(@RequestBody Alarm alarm) throws URISyntaxException {
+        log.debug("REST request to activate alarm");
+
+        Alarm result = alarmRepository.save(alarm);
         return ResponseEntity.created(new URI("/api/alarm/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("alarm", result.getId().toString()))
             .body(result);
@@ -48,9 +62,10 @@ public class AlarmResource {
 
 
     @Secured("ROLE_USER")
-    @DeleteMapping("/alarm")
+    @DeleteMapping("/alarms/{id}")
     @Timed
-    public ResponseEntity<Void> deleteStatus(@PathVariable Long id) {
+    public ResponseEntity<Void> stopAlarm(@PathVariable Long id) {
+        log.debug("REST request to deactivate alarm");
         alarmRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("alarm", id.toString())).build();
     }
