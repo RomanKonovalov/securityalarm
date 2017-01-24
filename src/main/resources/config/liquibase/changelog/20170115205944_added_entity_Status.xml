@@ -49,8 +49,8 @@
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="device_name" type="varchar(50)">
-                <constraints nullable="false"/>
+            <column name="device_id" type="bigint">
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="created_date" type="timestamp" defaultValueDate="${now}">
                 <constraints nullable="false"/>

@@ -66,8 +66,8 @@ public class User extends GenericUser {
     @Column(name = "reset_date", nullable = true)
     private ZonedDateTime resetDate = null;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name="device_id")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    //@JoinColumn(name="device_id")
     private Set<Device> devices = new HashSet<>();
 
     public String getFirstName() {

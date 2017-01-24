@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public interface DeviceRepository extends JpaRepository<Device, Long> {
 
-    Page<Device> findAllByCreatedBy(String createdBy, Pageable pageable);
+    List<Device> findAllByUserLogin(String createdBy);
 
     Optional<Device> findOneByLogin(String login);
 

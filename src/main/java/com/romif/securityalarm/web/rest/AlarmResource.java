@@ -39,7 +39,7 @@ public class AlarmResource {
 
     @GetMapping("/alarms")
     @Timed
-    @Secured(AuthoritiesConstants.USER)
+    @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<Set<Alarm>> getAllAlarms() throws URISyntaxException {
         String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
@@ -48,7 +48,7 @@ public class AlarmResource {
         return new ResponseEntity<>(alarms, HttpStatus.OK);
     }
 
-    @Secured("ROLE_USER")
+    @Secured(AuthoritiesConstants.USER)
     @PostMapping("/alarms")
     @Timed
     public ResponseEntity<Alarm> startAlarm(@RequestBody Alarm alarm) throws URISyntaxException {
@@ -57,6 +57,20 @@ public class AlarmResource {
         Alarm result = alarmRepository.save(alarm);
         return ResponseEntity.created(new URI("/api/alarm/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("alarm", result.getId().toString()))
+            .body(result);
+    }
+
+    @Secured(AuthoritiesConstants.USER)
+    @PutMapping("/alarms")
+    @Timed
+    public ResponseEntity<Alarm> updateStatus(@RequestBody  Alarm alarm) throws URISyntaxException {
+        log.debug("REST request to update Alarm : {}", alarm);
+        if (alarm.getId() == null) {
+            return startAlarm(alarm);
+        }
+        Alarm result = alarmRepository.save(alarm);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert("status", alarm.getId().toString()))
             .body(result);
     }
 

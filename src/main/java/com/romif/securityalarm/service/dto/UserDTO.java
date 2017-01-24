@@ -40,8 +40,6 @@ public class UserDTO {
 
     private LocationDTO location;
 
-    private Set<DeviceDTO> devices;
-
     public UserDTO() {
     }
 
@@ -50,12 +48,11 @@ public class UserDTO {
             user.getEmail(), user.getActivated(), user.getLangKey(),
             user.getAuthorities().stream().map(Authority::getName)
                 .collect(Collectors.toSet()),
-            new LocationDTO(user.getLatitude(), user.getLongitude()),
-            user.getDevices());
+            new LocationDTO(user.getLatitude(), user.getLongitude()));
     }
 
     public UserDTO(String login, String firstName, String lastName,
-        String email, boolean activated, String langKey, Set<String> authorities, LocationDTO location, Set<Device> devices) {
+        String email, boolean activated, String langKey, Set<String> authorities, LocationDTO location) {
 
         this.login = login;
         this.firstName = firstName;
@@ -65,7 +62,6 @@ public class UserDTO {
         this.langKey = langKey;
         this.authorities = authorities;
         this.location = location;
-        this.devices = devices.stream().map(DeviceDTO::new).collect(Collectors.toSet());
     }
 
     public String getLogin() {
@@ -102,14 +98,6 @@ public class UserDTO {
 
     public Set<String> getAuthorities() {
         return authorities;
-    }
-
-    public Set<DeviceDTO> getDevices() {
-        return devices;
-    }
-
-    public void setDevices(Set<DeviceDTO> devices) {
-        this.devices = devices;
     }
 
     @Override

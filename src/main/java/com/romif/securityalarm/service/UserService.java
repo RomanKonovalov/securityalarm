@@ -140,7 +140,7 @@ public class UserService {
         return user;
     }
 
-    public void updateUser(String firstName, String lastName, String email, String langKey, LocationDTO location, Set<DeviceDTO> devices) {
+    public void updateUser(String firstName, String lastName, String email, String langKey, LocationDTO location) {
         userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).ifPresent(user -> {
             user.setFirstName(firstName);
             user.setLastName(lastName);
@@ -149,16 +149,12 @@ public class UserService {
             user.setLatitude(location.getLatitude());
             user.setLongitude(location.getLongitude());
 
-            devices.forEach(deviceDTO -> userRepository.findOneById(deviceDTO.getId()).ifPresent(device -> {
-                device.setFirstName(deviceDTO.getName());
-            }));
-
             log.debug("Changed Information for User: {}", user);
         });
     }
 
     public void updateUser(Long id, String login, String firstName, String lastName, String email,
-        boolean activated, String langKey, Set<String> authorities, Set<DeviceDTO> devices) {
+        boolean activated, String langKey, Set<String> authorities) {
 
         Optional.of(userRepository
             .findOne(id))
@@ -174,10 +170,6 @@ public class UserService {
                 authorities.forEach(
                     authority -> managedAuthorities.add(authorityRepository.findOne(authority))
                 );
-                user.getDevices().clear();
-                devices.forEach(deviceDTO -> deviceRepository.findOneById(deviceDTO.getId()).ifPresent(device -> {
-                    user.getDevices().add(device);
-                }));
                 log.debug("Changed Information for User: {}", user);
             });
     }

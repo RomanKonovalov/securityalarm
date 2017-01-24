@@ -138,7 +138,7 @@ public class UserResource {
         }
         userService.updateUser(managedUserVM.getId(), managedUserVM.getLogin(), managedUserVM.getFirstName(),
             managedUserVM.getLastName(), managedUserVM.getEmail(), managedUserVM.isActivated(),
-            managedUserVM.getLangKey(), managedUserVM.getAuthorities(), managedUserVM.getDevices());
+            managedUserVM.getLangKey(), managedUserVM.getAuthorities());
 
         return ResponseEntity.ok()
             .headers(HeaderUtil.createAlert("A user is updated with identifier " + managedUserVM.getLogin(), managedUserVM.getLogin()))
@@ -201,10 +201,9 @@ public class UserResource {
     public ResponseEntity<List<DeviceDTO>> getAllDevices(@ApiParam Pageable pageable) throws URISyntaxException {
         String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
-        List<DeviceDTO> deviceDtos = userRepository.findOneByLogin(login)
-            .map(User::getDevices)
-            .map(devices -> devices.stream().map(DeviceDTO::new).collect(Collectors.toList()))
-            .orElse(Collections.emptyList());
+        List<DeviceDTO> deviceDtos = deviceRepository.findAllByUserLogin(login).stream()
+            .map(DeviceDTO::new)
+            .collect(Collectors.toList());
 
         return new ResponseEntity<>(deviceDtos, HttpStatus.OK);
     }
@@ -214,7 +213,7 @@ public class UserResource {
     @Secured(AuthoritiesConstants.USER)
     public ResponseEntity<?> atartAlarm(@RequestBody Long deviceId) throws URISyntaxException {
         Device device = deviceRepository.findOne(deviceId);
-        Alarm result = alarmRepository.save(new Alarm(device.getLogin(), EnumSet.allOf(NotificationType.class), EnumSet.allOf(TrackingType.class)));
+        Alarm result = alarmRepository.save(new Alarm(device, EnumSet.allOf(NotificationType.class), EnumSet.allOf(TrackingType.class)));
         return ResponseEntity.created(new URI("/api/statuses/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("alarm", result.getId().toString()))
             .body(result);

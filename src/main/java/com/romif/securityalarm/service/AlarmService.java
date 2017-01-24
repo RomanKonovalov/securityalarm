@@ -27,7 +27,7 @@ public class AlarmService {
 
     public Set<Status> getRecentStatuses() {
         return alarmRepository.findAll().stream()
-            .map(alarm -> statusService.getLastStatusCreatedBy(alarm.getDeviceName()))
+            .map(alarm -> statusService.getLastStatusCreatedBy(alarm.getDevice().getLogin()))
             .filter(status -> status.isPresent())
             .map(status -> status.get())
             .collect(Collectors.toSet());

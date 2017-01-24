@@ -5,51 +5,35 @@
         .module('securityalarmApp')
         .controller('MyDevicesController', MyDevicesController);
 
-    MyDevicesController.$inject = ['$scope', 'Principal', 'LoginService', '$state', 'Alarm', 'Devices', 'Alarms'];
+    MyDevicesController.$inject = ['$scope', 'Principal', 'LoginService', '$state', 'Alarm','Device', 'Devices', 'TrackingTypes', 'NotificationTypes'];
 
-    function MyDevicesController ($scope, Principal, LoginService, $state, Alarm, Devices, Alarms) {
+    function MyDevicesController ($scope, Principal, LoginService, $state, Alarm, Device, Devices, TrackingTypes, NotificationTypes) {
 
         $scope.devices = Devices;
 
-        $scope.alarms = Alarms;
+        $scope.trackingTypes = TrackingTypes;
 
-        $scope.isActivated = function (name) {
-            return _.some($scope.alarms, { 'deviceName': name });
-        };
+        $scope.notificationTypes = NotificationTypes;
 
-        $scope.activateAlarm = function (name) {
-            Alarm.save({'deviceName': name}, function () {
-                $scope.alarms = Alarm.query();
+
+        $scope.activateAlarm = function (device) {
+            device.alarm.device = {'id': device.id};
+            Alarm.save(device.alarm, function () {
+                $scope.devices = Device.query();
             });
         };
 
-        $scope.deactivateAlarm = function (name) {
-            var alarm = _.find($scope.alarms, { 'deviceName': name });
-            Alarm.delete({'id': alarm.id}, function () {
-                $scope.alarms = Alarm.query();
+        $scope.deactivateAlarm = function (device) {
+            Alarm.delete({'id': device.alarm.id}, function () {
+                $scope.devices = Device.query();
             });
         };
 
-        var vm = this;
-
-        vm.account = null;
-        vm.isAuthenticated = null;
-        vm.login = LoginService.open;
-        vm.register = register;
-        $scope.$on('authenticationSuccess', function() {
-            getAccount();
-        });
-
-        getAccount();
-
-        function getAccount() {
-            Principal.identity().then(function(account) {
-                vm.account = account;
-                vm.isAuthenticated = Principal.isAuthenticated;
+        $scope.updateAlarm = function (alarm) {
+            Alarm.update(alarm, function () {
+                $scope.devices = Device.query();
             });
-        }
-        function register () {
-            $state.go('register');
-        }
+        };
+
     }
 })();

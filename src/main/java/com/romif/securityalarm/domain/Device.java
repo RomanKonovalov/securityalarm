@@ -20,11 +20,34 @@ public class Device extends GenericUser {
     @Column(name = "first_name", length = 50)
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable = true)
+    private User user;
+
+    @OneToOne(optional=true, mappedBy="device")
+    private Alarm alarm;
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Alarm getAlarm() {
+        return alarm;
+    }
+
+    public void setAlarm(Alarm alarm) {
+        this.alarm = alarm;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -16,7 +16,8 @@
             // jhipster-needle-angularjs-add-module JHipster will add new module here
             'angular-loading-bar',
             'uiGmapgoogle-maps',
-            'angular-jquery-locationpicker'
+            'angular-jquery-locationpicker',
+            'checklist-model'
         ])
         .config(config)
         .run(run)

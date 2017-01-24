@@ -3,21 +3,35 @@
     <h2>My Devices</h2>
     <jhi-alert></jhi-alert>
 
-    <div class="panel" ng-repeat="device in devices" ng-class="isActivated(device.name) ? 'panel-success' : ' panel-danger'">
+    <div class="panel" ng-repeat="device in devices" ng-class="device.alarm.id ? 'panel-success' : ' panel-danger'">
         <div class="panel-heading">
             <h3 class="panel-title">Device: {{device.name}}</h3>
         </div>
         <div class="panel-body">
-            <button class="btn btn-success" ng-click="activateAlarm(device.name)" ng-hide="isActivated(device.name)">
+            <button class="btn btn-success" ng-click="activateAlarm(device)" ng-hide="device.alarm.id">
                 Activate alarm
             </button>
-            <button class="btn btn-danger" ng-click="deactivateAlarm(device.name)" ng-hide="!isActivated(device.name)">
+            <button class="btn btn-danger" ng-click="deactivateAlarm(device)" ng-hide="!device.alarm.id">
                 Deactivate alarm
             </button>
         </div>
+
+        <label ng-repeat="trackingType in trackingTypes">
+            <input type="checkbox" checklist-model="device.alarm.trackingTypes" checklist-value="trackingType" checklist-change="updateAlarm(device.alarm)"> {{trackingType}}
+        </label>
+
+        <label ng-repeat="notificationType in notificationTypes">
+            <input type="checkbox" checklist-model="device.alarm.notificationTypes" checklist-value="notificationType" checklist-change="updateAlarm(device.alarm)"> {{notificationType}}
+        </label>
+
+
+
     </div>
 
 
 
 
+
+
 </div>
+

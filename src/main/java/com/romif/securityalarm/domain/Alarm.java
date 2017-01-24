@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,26 +22,27 @@ public class Alarm extends AbstractAuditingEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "device_name")
-    private String deviceName;
+    @OneToOne
+    @JoinColumn(name="device_id", unique=true, nullable=false, updatable=false)
+    private Device device;
 
     @Column(name = "notification_type")
     @ElementCollection(targetClass = NotificationType.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "alarm_notification_type", joinColumns = @JoinColumn(name = "alarm_id"))
     @Enumerated(value = EnumType.STRING)
-    private Set<NotificationType> notificationTypes;
+    private Set<NotificationType> notificationTypes = new HashSet<>();
 
     @Column(name = "tracking_type")
     @ElementCollection(targetClass = TrackingType.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "alarm_tracking_type", joinColumns = @JoinColumn(name = "alarm_id"))
     @Enumerated(value = EnumType.STRING)
-    private Set<TrackingType> trackingTypes;
+    private Set<TrackingType> trackingTypes = new HashSet<>();
 
     public Alarm() {
     }
 
-    public Alarm(String deviceName, EnumSet<NotificationType> notificationTypes, EnumSet<TrackingType> trackingTypes) {
-        this.deviceName = deviceName;
+    public Alarm(Device device, EnumSet<NotificationType> notificationTypes, EnumSet<TrackingType> trackingTypes) {
+        this.device = device;
         this.notificationTypes = notificationTypes;
         this.trackingTypes = trackingTypes;
     }
@@ -53,12 +55,27 @@ public class Alarm extends AbstractAuditingEntity {
         this.id = id;
     }
 
-    public String getDeviceName() {
-        return deviceName;
+    public Device getDevice() {
+        return device;
     }
 
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
+    public void setDevice(Device device) {
+        this.device = device;
     }
 
+    public Set<NotificationType> getNotificationTypes() {
+        return notificationTypes;
+    }
+
+    public void setNotificationTypes(Set<NotificationType> notificationTypes) {
+        this.notificationTypes = notificationTypes;
+    }
+
+    public Set<TrackingType> getTrackingTypes() {
+        return trackingTypes;
+    }
+
+    public void setTrackingTypes(Set<TrackingType> trackingTypes) {
+        this.trackingTypes = trackingTypes;
+    }
 }
