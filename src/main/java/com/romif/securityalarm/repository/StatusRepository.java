@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.*;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Spring Data JPA repository for the Status entity.
@@ -20,5 +21,7 @@ public interface StatusRepository extends JpaRepository<Status,Long> {
     Page<Status> findByCreatedDateAfterAndCreatedDateBefore(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable);
 
     Optional<Status> findFirstByCreatedByOrderByCreatedDateDesc(String createdBy);
+
+    Set<Status> findTop10ByCreatedByOrderByCreatedDateDesc(String createdBy);
 
 }

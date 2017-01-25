@@ -7,6 +7,7 @@ import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import com.romif.securityalarm.web.rest.util.PaginationUtil;
 
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,8 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
 
 /**
  * REST controller for managing Status.
@@ -52,6 +55,8 @@ public class StatusResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("status", "idexists", "A new status cannot already have an ID")).body(null);
         }
         Status result = statusService.save(status);
+        Queue<Status> statuses =  statusService.getLast10StatusesCreatedBy(result.getCreatedBy());
+        statusService.putInQueue(result, statuses);
         return ResponseEntity.created(new URI("/api/statuses/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("status", result.getId().toString()))
             .body(result);

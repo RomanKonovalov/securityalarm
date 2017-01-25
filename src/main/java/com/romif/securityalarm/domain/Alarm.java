@@ -78,4 +78,19 @@ public class Alarm extends AbstractAuditingEntity {
     public void setTrackingTypes(Set<TrackingType> trackingTypes) {
         this.trackingTypes = trackingTypes;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Alarm alarm = (Alarm) o;
+
+        return device != null ? device.equals(alarm.device) : alarm.device == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return device != null ? device.hashCode() : 0;
+    }
 }

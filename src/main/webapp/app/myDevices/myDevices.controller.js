@@ -15,9 +15,8 @@
 
         $scope.notificationTypes = NotificationTypes;
 
-
         $scope.activateAlarm = function (device) {
-            device.alarm.device = {'id': device.id};
+            device.alarm.device = {'id': device.id, 'login': device.name};
             Alarm.save(device.alarm, function () {
                 $scope.devices = Device.query();
             });
@@ -30,6 +29,9 @@
         };
 
         $scope.updateAlarm = function (alarm) {
+            if (!alarm.id) {
+                return;
+            }
             Alarm.update(alarm, function () {
                 $scope.devices = Device.query();
             });

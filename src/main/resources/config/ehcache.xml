@@ -26,5 +26,7 @@
 
     <cache alias="status" usesTemplate="simple"/>
 
+    <cache alias="statusQueue" usesTemplate="simple"/>
+
     <!-- jhipster-needle-ehcache-add-entry -->
 </config>

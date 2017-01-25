@@ -4,6 +4,7 @@ import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.StatusRepository;
 import com.romif.securityalarm.repository.UserRepository;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CachePut;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,6 +46,12 @@ public class StatusService {
         log.debug("Request to save Status : {}", status);
         Status result = statusRepository.save(status);
         return result;
+    }
+
+    @CachePut(value = "statusQueue", key = "#status.createdBy")
+    public Queue<Status> putInQueue(Status status, Queue<Status> statusQueue) {
+        statusQueue.add(status);
+        return statusQueue;
     }
 
     /**
@@ -98,6 +106,14 @@ public class StatusService {
     @Cacheable(value = "status", key = "#createdBy")
     public Optional<Status> getLastStatusCreatedBy(String createdBy) {
         return statusRepository.findFirstByCreatedByOrderByCreatedDateDesc(createdBy);
+    }
+
+    @Cacheable(value = "statusQueue", key = "#createdBy")
+    public Queue<Status> getLast10StatusesCreatedBy(String createdBy) {
+        Set<Status> statuses = statusRepository.findTop10ByCreatedByOrderByCreatedDateDesc(createdBy);
+        Queue<Status> statusQueue = new CircularFifoQueue<>(10);
+        statusQueue.addAll(statuses);
+        return statusQueue;
     }
 
 }

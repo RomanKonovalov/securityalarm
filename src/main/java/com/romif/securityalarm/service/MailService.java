@@ -1,6 +1,7 @@
 package com.romif.securityalarm.service;
 
 import com.romif.securityalarm.config.JHipsterProperties;
+import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.domain.User;
 
 import org.apache.commons.lang3.CharEncoding;
@@ -30,6 +31,8 @@ public class MailService {
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
     private static final String USER = "user";
+
+    private static final String STATUS = "status";
 
     private static final String BASE_URL = "baseUrl";
 
@@ -98,6 +101,31 @@ public class MailService {
         context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
         String content = templateEngine.process("passwordResetEmail", context);
         String subject = messageSource.getMessage("email.reset.title", null, locale);
+        sendEmail(user.getEmail(), subject, content, false, true);
+    }
+
+    @Async
+    public void sendDeviceMovingAlertEmail(User user, Status status) {
+        log.debug("Sending DeviceMovingAlert e-mail to '{}'", user.getEmail());
+        Locale locale = Locale.forLanguageTag(user.getLangKey());
+        Context context = new Context(locale);
+        context.setVariable(USER, user);
+        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        String content = templateEngine.process("deviceMovingAlertEmail", context);
+        String subject = messageSource.getMessage("email.activation.title", null, locale);
+        sendEmail(user.getEmail(), subject, content, false, true);
+    }
+
+    @Async
+    public void sendDeviceInaccessibleAlertEmail(User user, Status status) {
+        log.debug("Sending DeviceInaccessibleAlert e-mail to '{}'", user.getEmail());
+        Locale locale = Locale.forLanguageTag(user.getLangKey());
+        Context context = new Context(locale);
+        context.setVariable(USER, user);
+        context.setVariable(STATUS, status);
+        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+        String content = templateEngine.process("deviceInaccessibleAlertEmail", context);
+        String subject = messageSource.getMessage("email.activation.title", null, locale);
         sendEmail(user.getEmail(), subject, content, false, true);
     }
 }
