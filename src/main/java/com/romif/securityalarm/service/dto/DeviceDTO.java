@@ -22,6 +22,10 @@ public class DeviceDTO {
 
     private AlarmDTO alarm;
 
+    private boolean authorized;
+
+    private String token;
+
     public DeviceDTO() {
     }
 
@@ -64,5 +68,21 @@ public class DeviceDTO {
 
     public void setAlarm(AlarmDTO alarm) {
         this.alarm = alarm;
+    }
+
+    public boolean isAuthorized() {
+        return authorized;
+    }
+
+    public void setAuthorized(boolean authorized) {
+        this.authorized = authorized;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

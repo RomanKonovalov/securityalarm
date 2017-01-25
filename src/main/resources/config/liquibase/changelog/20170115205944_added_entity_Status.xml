@@ -80,10 +80,36 @@
             </column>
         </createTable>
 
+        <createTable tableName="device_credentials">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="device_id" type="bigint">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="raw_password" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="device_id"
+                                 baseTableName="device_credentials"
+                                 constraintName="fk_device_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+
         <loadData encoding="UTF-8"
                   file="config/liquibase/statuses.csv"
                   separator=";"
                   tableName="status"/>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/device_credentials.csv"
+                  separator=";"
+                  tableName="device_credentials"/>
 
     </changeSet>
 </databaseChangeLog>

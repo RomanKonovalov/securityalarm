@@ -47,6 +47,7 @@ module.exports = function (config) {
             'src/main/webapp/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
             'src/main/webapp/bower_components/angular-simple-logger/dist/angular-simple-logger.js',
             'src/main/webapp/bower_components/checklist-model/checklist-model.js',
+            'src/main/webapp/bower_components/angular-uuid/uuid.min.js',
             'src/main/webapp/bower_components/angular-mocks/angular-mocks.js',
             'src/main/webapp/bower_components/angular-google-maps/dist/angular-google-maps.js',
             // endbower

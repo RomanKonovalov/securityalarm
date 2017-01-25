@@ -3,12 +3,14 @@
 
     angular
         .module('securityalarmApp')
-        .controller('UserManagementDialogController',UserManagementDialogController);
+        .controller('DeviceManagementDialogController',DeviceManagementDialogController);
 
-    UserManagementDialogController.$inject = ['$stateParams', '$uibModalInstance', 'entity', 'User', 'uuid4', 'Device'];
+    DeviceManagementDialogController.$inject = ['$stateParams', '$uibModalInstance', 'entity', 'User', 'uuid4', 'Devices', 'Device'];
 
-    function UserManagementDialogController ($stateParams, $uibModalInstance, entity, User, uuid4, Device) {
+    function DeviceManagementDialogController ($stateParams, $uibModalInstance, entity, User, uuid4, Devices, Device) {
         var vm = this;
+
+        vm.devices = Devices;
 
         vm.authorities = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_DEVICE'];
         vm.clear = clear;

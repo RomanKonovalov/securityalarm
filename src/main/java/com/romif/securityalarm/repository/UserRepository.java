@@ -37,10 +37,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
         countQuery = "select count(user) from User user where 'ROLE_DEVICE' NOT MEMBER OF user.authorities")
     Page<User> findAllWithAuthorities(Pageable pageable);
 
-    /*@Query(value = "select distinct user from User user where 'ROLE_DEVICE' MEMBER OF user.authorities",
-        countQuery = "select count(user) from User user where 'ROLE_DEVICE' MEMBER OF user.authorities")
-    Page<User> findAllDevices(Pageable pageable);*/
-
     @Query(value = "select distinct user.devices from User user where user.login in (select alarm.createdBy from Alarm alarm)")
     @Cacheable("userLogins")
     Set<Device> findAllUserLogins();

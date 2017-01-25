@@ -5,12 +5,15 @@ import com.codahale.metrics.annotation.Timed;
 import com.romif.securityalarm.domain.*;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.AlarmRepository;
+import com.romif.securityalarm.repository.DeviceCredentialsRepository;
 import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
+import com.romif.securityalarm.service.DeviceService;
 import com.romif.securityalarm.service.MailService;
 import com.romif.securityalarm.service.UserService;
 import com.romif.securityalarm.service.dto.DeviceDTO;
+import com.romif.securityalarm.service.util.RandomUtil;
 import com.romif.securityalarm.web.rest.vm.ManagedUserVM;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import com.romif.securityalarm.web.rest.util.PaginationUtil;
@@ -77,7 +80,7 @@ public class UserResource {
     private UserService userService;
 
     @Inject
-    private AlarmRepository alarmRepository;
+    private DeviceService deviceService;
 
     /**
      * POST  /users  : Creates a new user.
@@ -201,21 +204,21 @@ public class UserResource {
     public ResponseEntity<List<DeviceDTO>> getAllDevices(@ApiParam Pageable pageable) throws URISyntaxException {
         String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
-        List<DeviceDTO> deviceDtos = deviceRepository.findAllByUserLogin(login).stream()
-            .map(DeviceDTO::new)
-            .collect(Collectors.toList());
+        List<DeviceDTO> deviceDtos = deviceService.getAllDevices();
 
         return new ResponseEntity<>(deviceDtos, HttpStatus.OK);
     }
 
-    @PostMapping("/devices/activate")
+    @PostMapping("/devices")
     @Timed
-    @Secured(AuthoritiesConstants.USER)
-    public ResponseEntity<?> atartAlarm(@RequestBody Long deviceId) throws URISyntaxException {
-        Device device = deviceRepository.findOne(deviceId);
-        Alarm result = alarmRepository.save(new Alarm(device, EnumSet.allOf(NotificationType.class), EnumSet.allOf(TrackingType.class)));
-        return ResponseEntity.created(new URI("/api/statuses/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert("alarm", result.getId().toString()))
+    @Secured(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<?> createDevice(@RequestBody Device device) throws URISyntaxException {
+        log.debug("REST request to save Device : {}", device);
+
+        Device result = userService.createDevice(device);
+
+        return ResponseEntity.created(new URI("/api/devices/" + result.getLogin()))
+            .headers(HeaderUtil.createAlert( "A Device is created with identifier " + result.getLogin(), result.getLogin()))
             .body(result);
     }
 }

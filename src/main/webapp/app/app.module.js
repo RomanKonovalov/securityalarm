@@ -17,7 +17,8 @@
             'angular-loading-bar',
             'uiGmapgoogle-maps',
             'angular-jquery-locationpicker',
-            'checklist-model'
+            'checklist-model',
+            'uuid'
         ])
         .config(config)
         .run(run)

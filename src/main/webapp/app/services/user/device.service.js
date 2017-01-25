@@ -8,9 +8,11 @@
     Device.$inject = ['$resource'];
 
     function Device ($resource) {
-        var service = $resource('api/devices/:action', {}, {
+        var service = $resource('api/devices/:id', {}, {
             'query': {method: 'GET', isArray: true},
-            'activate': {method: 'POST', params: {action: 'activate'}}
+            'save': { method:'POST' },
+            'update': { method:'PUT' },
+            'delete':{ method:'DELETE'}
         });
 
         return service;

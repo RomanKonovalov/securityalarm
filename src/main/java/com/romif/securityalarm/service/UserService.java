@@ -1,8 +1,11 @@
 package com.romif.securityalarm.service;
 
 import com.romif.securityalarm.domain.Authority;
+import com.romif.securityalarm.domain.Device;
+import com.romif.securityalarm.domain.DeviceCredentials;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.AuthorityRepository;
+import com.romif.securityalarm.repository.DeviceCredentialsRepository;
 import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
@@ -46,6 +49,9 @@ public class UserService {
 
     @Inject
     private AuthorityRepository authorityRepository;
+
+    @Inject
+    private DeviceCredentialsRepository deviceCredentialsRepository;
 
     public Optional<User> activateRegistration(String key) {
         log.debug("Activating user for activation key {}", key);
@@ -233,4 +239,21 @@ public class UserService {
             userRepository.delete(user);
         }
     }
+
+    public Device createDevice(Device device) {
+
+        String rawPassword = RandomUtil.generatePassword();
+
+        device.setPassword(passwordEncoder.encode(rawPassword));
+
+        Device result = deviceRepository.save(device);
+
+        DeviceCredentials deviceCredentials = new DeviceCredentials(result, rawPassword, UUID.randomUUID().toString());
+
+        deviceCredentialsRepository.save(deviceCredentials);
+
+        return result;
+    }
+
+
 }

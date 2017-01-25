@@ -63,6 +63,9 @@
             data: {
                 authorities: ['ROLE_ADMIN']
             },
+            params: {
+                user: undefined
+            },
             onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
                 $uibModal.open({
                     templateUrl: 'app/admin/user-management/user-management-dialog.html',
@@ -76,7 +79,7 @@
                                 id: null, login: null, firstName: null, lastName: null, email: null,
                                 activated: true, langKey: null, createdBy: null, createdDate: null,
                                 lastModifiedBy: null, lastModifiedDate: null, resetDate: null,
-                                resetKey: null, authorities: null
+                                resetKey: null, authorities: null, description: null
                             };
                         }
                     }
@@ -97,6 +100,34 @@
                 $uibModal.open({
                     templateUrl: 'app/admin/user-management/user-management-dialog.html',
                     controller: 'UserManagementDialogController',
+                    controllerAs: 'vm',
+                    backdrop: 'static',
+                    size: 'lg',
+                    resolve: {
+                        entity: ['User', function(User) {
+                            return User.get({login : $stateParams.login});
+                        }],
+                        Devices: ['Device', function (Device) {
+                            return Device.query();
+                        }]
+                    }
+                }).result.then(function() {
+                    $state.go('user-management', null, { reload: true });
+                }, function() {
+                    $state.go('^');
+                });
+            }]
+        })
+        .state('user-management.device-management', {
+            parent: 'user-management',
+            url: '/{login}/device-management',
+            data: {
+                authorities: ['ROLE_ADMIN']
+            },
+            onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
+                $uibModal.open({
+                    templateUrl: 'app/admin/user-management/device-management-dialog.html',
+                    controller: 'DeviceManagementDialogController',
                     controllerAs: 'vm',
                     backdrop: 'static',
                     size: 'lg',
