@@ -1,6 +1,10 @@
 package com.romif.securityalarm.security;
 
 import com.romif.securityalarm.config.JHipsterProperties;
+import com.romif.securityalarm.domain.Device;
+import com.romif.securityalarm.domain.DeviceCredentials;
+import com.romif.securityalarm.repository.DeviceCredentialsRepository;
+import com.romif.securityalarm.repository.DeviceRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
@@ -16,6 +20,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Created by Roman_Konovalov on 1/17/2017.
@@ -31,7 +36,10 @@ public class CustomTokenService extends DefaultTokenServices {
     private ClientDetailsService clientDetailsService;
 
     @Inject
-    private JHipsterProperties jHipsterProperties;
+    private DeviceRepository deviceRepository;
+
+    @Inject
+    private DeviceCredentialsRepository deviceCredentialsRepository;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -44,15 +52,20 @@ public class CustomTokenService extends DefaultTokenServices {
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OAuth2AccessToken accessToken = super.createAccessToken(authentication);
 
-        jHipsterProperties.getSecurity().getAuthentication().getUsers().stream()
-            .filter(user -> ((User)authentication.getPrincipal()).getUsername().equalsIgnoreCase(user.getLogin()))
+        List<Device> devices = deviceRepository.findAll();
+
+        devices.stream()
+            .filter(device -> ((User)authentication.getPrincipal()).getUsername().equalsIgnoreCase(device.getLogin()))
             .findFirst()
-            .ifPresent(user -> {
+            .map(device -> deviceCredentialsRepository.findOneByDevice(device))
+            .filter(optional -> optional.isPresent())
+            .map(optional -> optional.get())
+            .ifPresent(deviceCredentials -> {
                 tokenStore.removeAccessToken(accessToken);
                 if (accessToken.getRefreshToken() != null) {
                     tokenStore.removeRefreshToken(accessToken.getRefreshToken());
                 }
-                ((DefaultOAuth2AccessToken)accessToken).setValue(user.getToken());
+                ((DefaultOAuth2AccessToken)accessToken).setValue(deviceCredentials.getToken());
                 ((DefaultOAuth2AccessToken) accessToken).setExpiration(null);
                 ((DefaultOAuth2AccessToken) accessToken).setRefreshToken(null);
                 tokenStore.storeAccessToken(accessToken, authentication);

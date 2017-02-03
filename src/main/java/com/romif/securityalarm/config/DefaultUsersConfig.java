@@ -1,5 +1,7 @@
 package com.romif.securityalarm.config;
 
+import com.romif.securityalarm.repository.DeviceCredentialsRepository;
+import com.romif.securityalarm.service.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -34,48 +36,22 @@ public class DefaultUsersConfig {
     private static final Logger log = LoggerFactory.getLogger(DefaultUsersConfig.class);
 
     @Inject
-    private TokenEndpoint tokenEndpoint;
+    private DeviceCredentialsRepository deviceCredentialsRepository;
 
     @Inject
-    private JdbcTokenStore tokenStore;
-
-    @Inject
-    private JHipsterProperties jHipsterProperties;
+    private SecurityService securityService;
 
     @EventListener(ContextRefreshedEvent.class)
     public void authenticateDefaultUsers() {
         log.info("Authenticating users ...");
-        jHipsterProperties.getSecurity().getAuthentication().getUsers().forEach(this::authenticate);
+
+        deviceCredentialsRepository.findAll()
+            .forEach(deviceCredentials -> {
+                securityService.authenticate(deviceCredentials);
+            });
+
         log.info("Authenticating users done");
     }
 
-    private void authenticate(JHipsterProperties.Security.Authentication.User user) {
-        try {
-            final Map<String, String> authorizationParameters = new HashMap<>();
-            authorizationParameters.put("username", user.getLogin());
-            authorizationParameters.put("password", user.getPassword());
-            authorizationParameters.put("grant_type", "password");
-            authorizationParameters.put("scope", "read write");
-            authorizationParameters.put("client_id", jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid());
-            authorizationParameters.put("client_secret", jHipsterProperties.getSecurity().getAuthentication().getOauth().getSecret());
 
-            final Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-            authorities.add(new SimpleGrantedAuthority("Admin"));
-
-            final User userPrincipal = new User(jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid(), "", true, true, true, true, authorities);
-
-            final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities) ;
-
-
-            final OAuth2AccessToken token = tokenEndpoint.postAccessToken(authenticationToken, authorizationParameters).getBody();
-
-            final Authentication authResult = tokenStore.readAuthentication(token);
-            authResult.setAuthenticated(true);
-
-            SecurityContextHolder.getContext().setAuthentication(authResult);
-        } catch (Exception e) {
-            log.error("Can't authenticate user: " + user.getLogin(), e);
-        }
-
-    }
 }

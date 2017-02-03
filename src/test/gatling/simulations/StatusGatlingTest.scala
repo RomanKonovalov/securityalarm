@@ -20,7 +20,7 @@ class StatusGatlingTest extends Simulation {
     // Log failed HTTP requests
     //context.getLogger("io.gatling.http").setLevel(Level.valueOf("DEBUG"))
 
-    val baseURL = Option(System.getProperty("baseURL")) getOrElse """http://127.0.0.1:8080"""
+    val baseURL = Option(System.getProperty("baseURL")) getOrElse """http://104.238.176.254"""
 
     val httpConf = http
         .baseURL(baseURL)
@@ -43,62 +43,27 @@ class StatusGatlingTest extends Simulation {
         "Authorization"-> authorization_header
     )
 
-    val headers_http_authenticated = Map(
+    /*val headers_http_authenticated = Map(
         "Accept" -> """application/json""",
         "Authorization" -> "Bearer ${access_token}"
+    )*/
+
+    val headers_http_authenticated = Map(
+        "Accept" -> """application/json""",
+        "Authorization" -> "Bearer 6590abb5-57ef-44d9-a5cf-567cf3cd556e"
     )
 
     val scn = scenario("Test the Status entity")
-        .exec(http("First unauthenticated request")
-        .get("/api/account")
-        .headers(headers_http)
-        .check(status.is(401))).exitHereIfFailed
-        .pause(10)
-        .exec(http("Authentication")
-        .post("/oauth/token")
-        .headers(headers_http_authentication)
-        .formParam("username", "admin")
-        .formParam("password", "admin")
-        .formParam("grant_type", "password")
-        .formParam("scope", "read write")
-        .formParam("client_secret", "my-secret-token-to-change-in-production")
-        .formParam("client_id", "securityalarmapp")
-        .formParam("submit", "Login")
-        .check(jsonPath("$.access_token").saveAs("access_token"))).exitHereIfFailed
-        .pause(1)
-        .exec(http("Authenticated request")
-        .get("/api/account")
-        .headers(headers_http_authenticated)
-        .check(status.is(200)))
-        .pause(10)
-        .repeat(2) {
-            exec(http("Get all statuses")
-            .get("/api/statuses")
-            .headers(headers_http_authenticated)
-            .check(status.is(200)))
-            .pause(10 seconds, 20 seconds)
-            .exec(http("Create new status")
+        .exec(http("Create new status")
             .post("/api/statuses")
             .headers(headers_http_authenticated)
-            .body(StringBody("""{"id":null, "deviceState":"SAMPLE_TEXT"}""")).asJSON
-            .check(status.is(201))
-            .check(headerRegex("Location", "(.*)").saveAs("new_status_url"))).exitHereIfFailed
-            .pause(10)
-            .repeat(5) {
-                exec(http("Get created status")
-                .get("${new_status_url}")
-                .headers(headers_http_authenticated))
-                .pause(10)
-            }
-            .exec(http("Delete created status")
-            .delete("${new_status_url}")
-            .headers(headers_http_authenticated))
-            .pause(10)
-        }
+            .body(StringBody("""{"id":null, "deviceState":"SAMPLE_TEXT", "latitude":53.87796, "longitude": 30.361100}""")).asJSON
+            .check(status.is(201)))
+
 
     val users = scenario("Users").exec(scn)
 
     setUp(
-        users.inject(rampUsers(100) over (1 minutes))
+        users.inject(rampUsers(15000) over (1 minutes))
     ).protocols(httpConf)
 }

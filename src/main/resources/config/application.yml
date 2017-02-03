@@ -83,7 +83,7 @@ jhipster:
         #allow-credentials: true
         #max-age: 1800
     mail:
-        from: securityalarm@localhost
+        from: no-reply@securityalarm.com
     swagger:
         title: securityalarm API
         description: securityalarm API documentation

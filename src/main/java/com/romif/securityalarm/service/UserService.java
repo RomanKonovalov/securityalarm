@@ -45,13 +45,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Inject
-    private DeviceRepository deviceRepository;
-
-    @Inject
     private AuthorityRepository authorityRepository;
-
-    @Inject
-    private DeviceCredentialsRepository deviceCredentialsRepository;
 
     public Optional<User> activateRegistration(String key) {
         log.debug("Activating user for activation key {}", key);
@@ -239,21 +233,5 @@ public class UserService {
             userRepository.delete(user);
         }
     }
-
-    public Device createDevice(Device device) {
-
-        String rawPassword = RandomUtil.generatePassword();
-
-        device.setPassword(passwordEncoder.encode(rawPassword));
-
-        Device result = deviceRepository.save(device);
-
-        DeviceCredentials deviceCredentials = new DeviceCredentials(result, rawPassword, UUID.randomUUID().toString());
-
-        deviceCredentialsRepository.save(deviceCredentials);
-
-        return result;
-    }
-
 
 }

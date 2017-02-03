@@ -1,7 +1,11 @@
 #!/bin/bash
 
-ssh 587aad4689f5cf759a0000a9@securityalarm-romif.rhcloud.com '/var/lib/openshift/587aad4689f5cf759a0000a9/app-root/runtime/repo/.openshift/action_hooks/stop'
+#ssh 587aad4689f5cf759a0000a9@securityalarm-romif.rhcloud.com '/var/lib/openshift/587aad4689f5cf759a0000a9/app-root/runtime/repo/.openshift/action_hooks/stop'
 
-scp target/*.war 587aad4689f5cf759a0000a9@securityalarm-romif.rhcloud.com:/var/lib/openshift/587aad4689f5cf759a0000a9/app-root/runtime/repo/bin/securityalarm.war
+#scp target/*.war 587aad4689f5cf759a0000a9@securityalarm-romif.rhcloud.com:/var/lib/openshift/587aad4689f5cf759a0000a9/app-root/runtime/repo/bin/securityalarm.war
 
-ssh 587aad4689f5cf759a0000a9@securityalarm-romif.rhcloud.com '/var/lib/openshift/587aad4689f5cf759a0000a9/app-root/runtime/repo/.openshift/action_hooks/start'
+#scp target/*.war root@188.166.164.10:/home/securityalarm.war
+
+scp target/*.war root@104.238.176.254:/home/securityalarm.war
+
+#ssh 587aad4689f5cf759a0000a9@securityalarm-romif.rhcloud.com '/var/lib/openshift/587aad4689f5cf759a0000a9/app-root/runtime/repo/.openshift/action_hooks/start'

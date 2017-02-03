@@ -94,7 +94,7 @@
         <div class="form-group">
             <label>Profiles</label>
             <select class="form-control" multiple name="authority" ng-model="vm.user.authorities"
-                    ng-options="authority for authority in vm.authorities" ng-disabled="vm.existedUser">
+                    ng-options="authority for authority in vm.authorities" ng-disabled="vm.existedUser" ng-change="addPerson()">
             </select>
         </div>
 

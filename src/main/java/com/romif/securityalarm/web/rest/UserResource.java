@@ -70,17 +70,12 @@ public class UserResource {
 
     @Inject
     private UserRepository userRepository;
-    @Inject
-    private DeviceRepository deviceRepository;
 
     @Inject
     private MailService mailService;
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private DeviceService deviceService;
 
     /**
      * POST  /users  : Creates a new user.
@@ -198,27 +193,4 @@ public class UserResource {
         return ResponseEntity.ok().headers(HeaderUtil.createAlert( "A user is deleted with identifier " + login, login)).build();
     }
 
-    @GetMapping("/devices")
-    @Timed
-    @Secured(AuthoritiesConstants.USER)
-    public ResponseEntity<List<DeviceDTO>> getAllDevices(@ApiParam Pageable pageable) throws URISyntaxException {
-        String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-
-        List<DeviceDTO> deviceDtos = deviceService.getAllDevices();
-
-        return new ResponseEntity<>(deviceDtos, HttpStatus.OK);
-    }
-
-    @PostMapping("/devices")
-    @Timed
-    @Secured(AuthoritiesConstants.ADMIN)
-    public ResponseEntity<?> createDevice(@RequestBody Device device) throws URISyntaxException {
-        log.debug("REST request to save Device : {}", device);
-
-        Device result = userService.createDevice(device);
-
-        return ResponseEntity.created(new URI("/api/devices/" + result.getLogin()))
-            .headers(HeaderUtil.createAlert( "A Device is created with identifier " + result.getLogin(), result.getLogin()))
-            .body(result);
-    }
 }
