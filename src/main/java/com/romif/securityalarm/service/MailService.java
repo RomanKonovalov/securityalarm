@@ -125,7 +125,7 @@ public class MailService {
         context.setVariable(STATUS, status);
         context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
         String content = templateEngine.process("deviceInaccessibleAlertEmail", context);
-        String subject = messageSource.getMessage("email.activation.title", null, locale);
+        String subject = messageSource.getMessage("email.alert.inaccessible.title", null, locale);
         sendEmail(user.getEmail(), subject, content, false, true);
     }
 }

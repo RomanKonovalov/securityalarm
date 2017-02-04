@@ -6,6 +6,8 @@
 
 #scp target/*.war root@188.166.164.10:/home/securityalarm.war
 
-scp target/*.war root@104.238.176.254:/home/securityalarm.war
+ssh root@104.238.176.254 '/etc/init.d/securityalarm stop'
+scp target/*.war root@104.238.176.254:/home/app/securityalarm.war
+ssh root@104.238.176.254 '/etc/init.d/securityalarm start'
 
 #ssh 587aad4689f5cf759a0000a9@securityalarm-romif.rhcloud.com '/var/lib/openshift/587aad4689f5cf759a0000a9/app-root/runtime/repo/.openshift/action_hooks/start'

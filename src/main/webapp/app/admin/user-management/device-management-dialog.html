@@ -18,8 +18,10 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Status</label>
                     <div class="col-sm-10">
-                        <p class="form-control-static text-success" ng-show="device.authorized">Logged</p>
-                        <p class="form-control-static text-danger" ng-hide="device.authorized">Not Logged</p>
+                        <p class="label label-success" ng-click="loginDevice(device)" ng-show="device.authorized"
+                              style="cursor: pointer;">Logged</p>
+                        <p class="label label-danger" ng-click="logoutDevice(device)" ng-hide="device.authorized"
+                              style="cursor: pointer;">Not Logged</p>
                     </div>
                 </div>
 
@@ -31,12 +33,6 @@
                     </div>
                 </div>
 
-                <button class="btn btn-success" ng-click="loginDevice(device)" ng-hide="device.authorized">
-                    Login Device
-                </button>
-                <button class="btn btn-danger" ng-click="logoutDevice(device)" ng-show="device.authorized">
-                    Logout Device
-                </button>
                 <button class="btn btn-primary" ng-click="logoutDevice(device)">
                     Update Device
                 </button>
