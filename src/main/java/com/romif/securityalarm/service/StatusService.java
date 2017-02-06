@@ -1,5 +1,6 @@
 package com.romif.securityalarm.service;
 
+import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.StatusRepository;
@@ -68,13 +69,13 @@ public class StatusService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Status> findAll(Pageable pageable, ZonedDateTime startDate, ZonedDateTime endDate) {
+    public Page<Status> findAll(Pageable pageable, ZonedDateTime startDate, ZonedDateTime endDate, Device device) {
         log.debug("Request to get all Statuses");
         Page<Status> result;
         if (startDate != null && endDate != null) {
-            result = statusRepository.findByCreatedDateAfterAndCreatedDateBefore(startDate, endDate, pageable);
+            result = statusRepository.findByCreatedDateAfterAndCreatedDateBeforeAndCreatedBy(startDate, endDate, device.getLogin(), pageable);
         } else {
-            result = statusRepository.findAll(pageable);
+            result = statusRepository.findByCreatedBy(device.getLogin(), pageable);
         }
 
         return result;

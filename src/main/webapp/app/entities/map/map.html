@@ -3,7 +3,7 @@
     <jhi-alert></jhi-alert>
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <p class="input-group">
                 <input type="text" class="form-control" ng-change="dateRangeChange()" uib-datepicker-popup="{{format}}" ng-model="startDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
                 <span class="input-group-btn">
@@ -12,7 +12,7 @@
             </p>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <p class="input-group">
                 <input type="text" class="form-control" ng-change="dateRangeChange()" uib-datepicker-popup ng-model="endDate" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
                 <span class="input-group-btn">
@@ -20,9 +20,18 @@
           </span>
             </p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>
             <button type="button" class="btn btn-sm btn-info" ng-click="yesterday()">Yesterday</button>
+            <button type="button" class="btn btn-sm btn-info" ng-click="last6hours()">Last 6 hours</button>
+        </div>
+        <div class="col-md-3">
+            <label for="device" class="col-xs-6 control-label text-right">Device:</label>
+            <div class="col-xs-6">
+                <select class="form-control" ng-model="device" id="device"
+                        ng-options="device as device.description for device in devices" ng-change="loadAll()">
+                </select>
+            </div>
         </div>
     </div>
 

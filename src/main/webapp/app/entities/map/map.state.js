@@ -37,6 +37,9 @@
             resolve: {
                 Account: ['Principal', function (Principal) {
                     return Principal.identity(false);
+                }],
+                devices: ['Device', function (Device) {
+                    return Device.query();
                 }]
             }
         });

@@ -5,12 +5,21 @@
         .module('securityalarmApp')
         .controller('MapController', MapController);
 
-    MapController.$inject = ['$scope', '$interval', 'uiGmapGoogleMapApi', 'Status', 'Account', 'AlertService', 'Principal','DateUtils'];
+    MapController.$inject = ['$scope', '$interval', 'uiGmapGoogleMapApi', 'Status', 'Account', 'AlertService', 'Principal','DateUtils', 'devices'];
 
-    function MapController ($scope, $interval, uiGmapGoogleMapApi, Status, Account,  AlertService, Principal, DateUtils) {
+    function MapController ($scope, $interval, uiGmapGoogleMapApi, Status, Account,  AlertService, Principal, DateUtils, devices) {
+
+        $scope.devices = devices;
+        $scope.device = {};
 
         var limit = 100;
-        loadAll();
+
+        $scope.devices.$promise.then(function (result) {
+            if (result.length > 0) {
+                $scope.device = result[0];
+                $scope.last6hours();
+            }
+        });
 
         var minDate = function (date) {
             date.setHours(0,0,0,0);
@@ -24,7 +33,7 @@
         $scope.today = function() {
             $scope.startDate = minDate(new Date());
             $scope.endDate = maxDate(new Date());
-            limit = 1000;
+            limit = 1440;
             loadAll();
         };
 
@@ -33,6 +42,15 @@
             $scope.startDate.setDate($scope.startDate.getDate() - 1);
             $scope.endDate = maxDate(new Date());
             $scope.endDate.setDate($scope.endDate.getDate() - 1);
+            limit = 1440;
+            loadAll();
+        };
+
+        $scope.last6hours = function() {
+            var last6hours = new Date();
+            last6hours.setHours(last6hours.getHours() - 6);
+            $scope.startDate = last6hours;
+            $scope.endDate = new Date();
             limit = 1000;
             loadAll();
         };
@@ -40,7 +58,7 @@
         $scope.dateRangeChange = function () {
             $scope.startDate = minDate($scope.startDate);
             $scope.endDate = maxDate($scope.endDate);
-            limit = 1000;
+            limit = 1440;
             loadAll();
         };
 
@@ -86,7 +104,8 @@
                 size: limit,
                 sort: 'createdDate,desc',
                 startDate: DateUtils.convertLocalDateToServer($scope.startDate),
-                endDate: DateUtils.convertLocalDateToServer($scope.endDate)
+                endDate: DateUtils.convertLocalDateToServer($scope.endDate),
+                device: $scope.device.id
             }, onSuccess, onError);
 
             function onSuccess(data) {
@@ -94,10 +113,6 @@
                 if (data.length ===0) {
                     AlertService.warning('You don\'t have any records for this date range');
                 }
-
-                $scope.startDate = $scope.startDate || new Date(data[data.length - 1].createdDate);
-
-                $scope.endDate = $scope.endDate || new Date(data[0].createdDate);
 
                 uiGmapGoogleMapApi.then(function() {
 
@@ -162,6 +177,8 @@
                 AlertService.error(error.data.message);
             }
         }
+
+        $scope.loadAll = loadAll;
 
     }
 })();

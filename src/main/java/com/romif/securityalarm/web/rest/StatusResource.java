@@ -1,6 +1,7 @@
 package com.romif.securityalarm.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.service.StatusService;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
@@ -8,6 +9,7 @@ import com.romif.securityalarm.web.rest.util.PaginationUtil;
 
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,16 +18,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 /**
  * REST controller for managing Status.
@@ -52,6 +52,7 @@ public class StatusResource {
     public ResponseEntity<Status> createStatus(@RequestBody Status status) throws URISyntaxException {
         log.debug("REST request to save Status : {}", status);
         if (status.getId() != null) {
+
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("status", "idexists", "A new status cannot already have an ID")).body(null);
         }
         Status result = statusService.save(status);
@@ -93,13 +94,21 @@ public class StatusResource {
      * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
     @GetMapping("/statuses")
+    @Secured("ROLE_USER")
     @Timed
     public ResponseEntity<List<Status>> getAllStatuses(@ApiParam Pageable pageable,
                                                        @RequestParam(required = false) ZonedDateTime startDate,
-                                                       @RequestParam(required = false) ZonedDateTime endDate)
+                                                       @RequestParam(required = false) ZonedDateTime endDate,
+                                                       @RequestParam Device device)
         throws URISyntaxException {
         log.debug("REST request to get a page of Statuses");
-        Page<Status> page = statusService.findAll(pageable, startDate, endDate);
+        String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+        if (device == null || !login.equals(device.getUser().getLogin())) {
+            HttpHeaders headers = HeaderUtil.createFailureAlert("alarm", "deviceNotFound", "Device not found");
+            return new ResponseEntity<>(Collections.emptyList(), headers, HttpStatus.BAD_REQUEST);
+        }
+        Page<Status> page = statusService.findAll(pageable, startDate, endDate, device);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/statuses");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

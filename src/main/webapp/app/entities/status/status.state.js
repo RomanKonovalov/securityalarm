@@ -29,7 +29,7 @@
                     squash: true
                 },
                 sort: {
-                    value: 'id,asc',
+                    value: 'createdDate,desc',
                     squash: true
                 },
                 search: null
@@ -43,6 +43,9 @@
                         ascending: PaginationUtil.parseAscending($stateParams.sort),
                         search: $stateParams.search
                     };
+                }],
+                devices: ['Device', function (Device) {
+                    return Device.query();
                 }]
             }
         })
