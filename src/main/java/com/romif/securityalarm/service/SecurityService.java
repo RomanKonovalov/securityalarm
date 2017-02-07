@@ -49,7 +49,7 @@ public class SecurityService {
             authorizationParameters.put("client_id", jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid());
             authorizationParameters.put("client_secret", jHipsterProperties.getSecurity().getAuthentication().getOauth().getSecret());
 
-            final Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+            final Set<GrantedAuthority> authorities = new HashSet<>();
             authorities.add(new SimpleGrantedAuthority("Admin"));
 
             final User userPrincipal = new User(jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid(), "", true, true, true, true, authorities);

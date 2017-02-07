@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -48,17 +49,31 @@ public class DeviceService {
     @Inject
     private DeviceRepository deviceRepository;
 
-    public List<DeviceDTO> getAllDevices() {
+    @Inject
+    private SecurityService securityService;
+
+    public List<DeviceDTO> getAllDevices(String login) {
 
         Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid());
 
-        List<DeviceDTO> deviceDTOS = deviceCredentialsRepository.findAll().stream()
+        List<DeviceDTO> deviceDTOS = deviceCredentialsRepository.findAllByDeviceUserLogin(login).stream()
             .map(deviceCredentials -> {
                 DeviceDTO deviceDTO = new DeviceDTO(deviceCredentials.getDevice());
                 deviceDTO.setAuthorized(tokens.stream().anyMatch(oAuth2AccessToken -> oAuth2AccessToken.getValue().equals(deviceCredentials.getToken())));
                 deviceDTO.setToken(deviceCredentials.getToken());
                 return deviceDTO;
             })
+            .collect(Collectors.toList());
+
+        return deviceDTOS;
+    }
+
+    public List<DeviceDTO> getAllLoggedDevices(String login) {
+
+        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid());
+
+        List<DeviceDTO> deviceDTOS = getAllDevices(login).stream()
+            .filter(deviceDTO -> deviceDTO.isAuthorized())
             .collect(Collectors.toList());
 
         return deviceDTOS;
@@ -89,16 +104,21 @@ public class DeviceService {
     }
 
     public boolean loginDevice(String login) {
-        return false;
+        Optional<DeviceCredentials> deviceCredentials = deviceCredentialsRepository.findOneByDeviceLogin(login);
 
-        /*deviceCredentialsRepository.findOneByDeviceLogin(login)
-            .map()
+        if (deviceCredentials.isPresent()) {
+            return securityService.authenticate(deviceCredentials.get());
+        } else {
+            return false;
+        }
 
+    }
+
+    public boolean logoutDevice(String login) {
         tokenStore.findTokensByUserName(login).forEach(token ->
             tokenStore.removeAccessToken(token));
-        deviceRepository.findOneByLogin(login).ifPresent(device -> {
-            deviceRepository.delete(device);
-            log.debug("Deleted Вevice: {}", device);
-        });*/
+
+        return tokenStore.findTokensByUserName(login).isEmpty();
+
     }
 }

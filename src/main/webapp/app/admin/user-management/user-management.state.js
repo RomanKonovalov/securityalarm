@@ -132,11 +132,8 @@
                     backdrop: 'static',
                     size: 'lg',
                     resolve: {
-                        entity: ['User', function(User) {
-                            return User.get({login : $stateParams.login});
-                        }],
                         Devices: ['Device', function (Device) {
-                            return Device.query();
+                            return Device.query({login : $stateParams.login});
                         }]
                     }
                 }).result.then(function() {

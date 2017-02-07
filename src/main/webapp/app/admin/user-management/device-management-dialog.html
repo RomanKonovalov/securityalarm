@@ -7,20 +7,21 @@
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
+        <jhi-alert></jhi-alert>
 
 
         <div class="panel" ng-repeat="device in vm.devices" ng-class="device.authorized ? 'panel-success' : ' panel-danger'">
             <div class="panel-heading">
                 <h3 class="panel-title">Device: {{device.description}}</h3>
             </div>
-            <div class="panel-body">
+            <div class="panel-body form-horizontal">
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Status</label>
                     <div class="col-sm-10">
-                        <p class="label label-success" ng-click="loginDevice(device)" ng-show="device.authorized"
+                        <p class="label label-success" ng-click="vm.logout(device)" ng-show="device.authorized"
                               style="cursor: pointer;">Logged</p>
-                        <p class="label label-danger" ng-click="logoutDevice(device)" ng-hide="device.authorized"
+                        <p class="label label-danger" ng-click="vm.login(device)" ng-hide="device.authorized"
                               style="cursor: pointer;">Not Logged</p>
                     </div>
                 </div>
@@ -32,10 +33,6 @@
                                ng-model="device.token" required="required" ng-minlength=16 ng-maxlength=16>
                     </div>
                 </div>
-
-                <button class="btn btn-primary" ng-click="logoutDevice(device)">
-                    Update Device
-                </button>
 
             </div>
         </div>

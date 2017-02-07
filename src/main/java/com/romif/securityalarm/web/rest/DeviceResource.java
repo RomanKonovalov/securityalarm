@@ -34,13 +34,54 @@ public class DeviceResource {
     @Inject
     private DeviceService deviceService;
 
+    @GetMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}")
+    @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<List<DeviceDTO>> getDevices(@PathVariable String login) {
+        log.debug("REST request to get Devices for : {}", login);
+        List<DeviceDTO> deviceDtos = deviceService.getAllDevices(login);
+
+        return new ResponseEntity<>(deviceDtos, HttpStatus.OK);
+    }
+
+    @PostMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}/login")
+    @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<Void> loginDevice(@PathVariable String login) {
+        log.debug("REST request to login Device: {}", login);
+        boolean result = deviceService.loginDevice(login);
+        return result ? ResponseEntity.ok().headers(HeaderUtil.createAlert( "A Device is logged with login " + login, login)).build() :
+            ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("device", "deviceError", "Error. Device is not logged"))
+                .body(null);
+    }
+
+    @PostMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}/logout")
+    @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<Void> logoutDevice(@PathVariable String login) {
+        log.debug("REST request to logout Device: {}", login);
+        boolean result = deviceService.logoutDevice(login);
+        return result ? ResponseEntity.ok().headers(HeaderUtil.createAlert( "A Device is logged out with login " + login, login)).build() :
+            ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("device", "deviceError", "Error. Device is still logged"))
+                .body(null);
+    }
+
+    @DeleteMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}")
+    @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<Void> deleteDevice(@PathVariable String login) {
+        log.debug("REST request to delete Device: {}", login);
+        deviceService.deleteDevice(login);
+        return ResponseEntity.ok().headers(HeaderUtil.createAlert( "A Device is deleted with identifier " + login, login)).build();
+    }
+
     @GetMapping("/devices")
     @Timed
     @Secured(AuthoritiesConstants.USER)
-    public ResponseEntity<List<DeviceDTO>> getAllDevices(@ApiParam Pageable pageable) throws URISyntaxException {
+    public ResponseEntity<List<DeviceDTO>> getAllLoggedDevices() throws URISyntaxException {
         String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
-        List<DeviceDTO> deviceDtos = deviceService.getAllDevices();
+        List<DeviceDTO> deviceDtos = deviceService.getAllLoggedDevices(login);
 
         return new ResponseEntity<>(deviceDtos, HttpStatus.OK);
     }
@@ -56,23 +97,5 @@ public class DeviceResource {
         return ResponseEntity.created(new URI("/api/devices/" + result.getLogin()))
             .headers(HeaderUtil.createAlert( "A Device is created with identifier " + result.getLogin(), result.getLogin()))
             .body(result);
-    }
-
-    @DeleteMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}")
-    @Timed
-    @Secured(AuthoritiesConstants.ADMIN)
-    public ResponseEntity<Void> deleteDevice(@PathVariable String login) {
-        log.debug("REST request to delete Device: {}", login);
-        deviceService.deleteDevice(login);
-        return ResponseEntity.ok().headers(HeaderUtil.createAlert( "A Device is deleted with identifier " + login, login)).build();
-    }
-
-    @PostMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}/login")
-    @Timed
-    @Secured(AuthoritiesConstants.ADMIN)
-    public ResponseEntity<Void> loginDevice(@PathVariable String login) {
-        log.debug("REST request to delete Device: {}", login);
-        deviceService.deleteDevice(login);
-        return ResponseEntity.ok().headers(HeaderUtil.createAlert( "A user is deleted with identifier " + login, login)).build();
     }
 }
