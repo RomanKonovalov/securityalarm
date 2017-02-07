@@ -18,7 +18,9 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public interface StatusRepository extends JpaRepository<Status,Long> {
 
-    Page<Status> findByCreatedDateAfterAndCreatedDateBefore(ZonedDateTime startDate, ZonedDateTime endDate, Pageable pageable);
+    Page<Status> findByCreatedDateAfterAndCreatedDateBeforeAndCreatedBy(ZonedDateTime startDate, ZonedDateTime endDate,  String createdBy, Pageable pageable);
+
+    Page<Status> findByCreatedBy(String createdBy, Pageable pageable);
 
     Optional<Status> findFirstByCreatedByOrderByCreatedDateDesc(String createdBy);
 

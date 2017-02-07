@@ -34,7 +34,7 @@ public class AlarmService {
     private UserRepository userRepository;
 
     private Cache<String, Alarm> emailsMoving = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
-    private Cache<String, Alarm> emailsInaccessible = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
+    private Cache<Alarm, Object> emailsInaccessible = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
 
 
     @Scheduled(cron = "* * * * * *")
@@ -50,12 +50,12 @@ public class AlarmService {
                 Optional<Status> status = statusService.getLastStatusCreatedBy(login);
                 log.debug(status.toString());
 
-                if (status.isPresent() && status.get().getCreatedDate().plusMinutes(1).isBefore(now)) {
-                    log.debug("ALARM!! Device is inaccessible");
+                if (status.isPresent() && status.get().getCreatedDate().plusMinutes(2).isBefore(now)) {
+                    log.warn("ALARM!! Device is inaccessible");
 
                     if (alarm.getNotificationTypes().contains(NotificationType.EMAIL)) {
-                        if (emailsInaccessible.getIfPresent(login) == null) {
-                            emailsInaccessible.put(login, alarm);
+                        if (emailsInaccessible.getIfPresent(alarm) == null) {
+                            emailsInaccessible.put(alarm, new Object());
                             log.error("ALARM!! Device is inaccessible. Sending email");
                             Optional<User> user =  userRepository.findOneByLogin(alarm.getCreatedBy());
 

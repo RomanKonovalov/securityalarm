@@ -5,9 +5,9 @@
         .module('securityalarmApp')
         .controller('StatusController', StatusController);
 
-    StatusController.$inject = ['$scope', '$state', 'Status', 'ParseLinks', 'AlertService', 'paginationConstants', 'pagingParams'];
+    StatusController.$inject = ['$scope', '$state', 'Status', 'ParseLinks', 'AlertService', 'paginationConstants', 'pagingParams', 'devices'];
 
-    function StatusController ($scope, $state, Status, ParseLinks, AlertService, paginationConstants, pagingParams) {
+    function StatusController ($scope, $state, Status, ParseLinks, AlertService, paginationConstants, pagingParams, devices) {
         var vm = this;
 
         vm.loadPage = loadPage;
@@ -16,13 +16,16 @@
         vm.transition = transition;
         vm.itemsPerPage = paginationConstants.itemsPerPage;
 
-        loadAll();
+        vm.devices = devices;
+        vm.device = {};
 
-        function loadAll () {
+
+        vm.refresh = function loadAll (device) {
             Status.query({
                 page: pagingParams.page - 1,
                 size: vm.itemsPerPage,
-                sort: sort()
+                sort: sort(),
+                device: device.id
             }, onSuccess, onError);
             function sort() {
                 var result = [vm.predicate + ',' + (vm.reverse ? 'asc' : 'desc')];
@@ -42,6 +45,14 @@
                 AlertService.error(error.data.message);
             }
         }
+
+        devices.$promise.then(function (result) {
+            if (result.length > 0) {
+                vm.device = result[0];
+                vm.refresh(vm.device);
+            }
+        });
+
 
         function loadPage(page) {
             vm.page = page;
