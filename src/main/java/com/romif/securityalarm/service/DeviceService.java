@@ -52,6 +52,9 @@ public class DeviceService {
     @Inject
     private SecurityService securityService;
 
+    @Inject
+    private SmsService smsService;
+
     public List<DeviceDTO> getAllDevices(String login) {
 
         Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid());
@@ -112,6 +115,15 @@ public class DeviceService {
             return false;
         }
 
+    }
+
+    public boolean configDevice(String login) {
+        Optional<Device> device = deviceRepository.findOneByLogin(login);
+        if (device.isPresent()) {
+            return smsService.sendConfig(device.get());
+        } else {
+            return false;
+        }
     }
 
     public boolean logoutDevice(String login) {

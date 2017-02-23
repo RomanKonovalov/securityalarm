@@ -61,16 +61,12 @@ server:
 jhipster:
     security:
             authentication:
-                users:
-                    - login: village
-                      password: wX4s7MXeky2K7C8k
-                      token: 6590abb5-57ef-44d9-a5cf-567cf3cd556e
-                    - login: car
-                      password: 4gAubmHmXH5M52MW
-                      token: a202ecec-38b7-4b1e-959d-2c1ea47faa7f
                 oauth:
                     clientid: securityalarmapp
-                    secret: ntOjZl36SwcIAMdp
+                    secret:
+            sms:
+                url: http://api.txtlocal.com/bulk_json
+                apikey: qp7CsPtLRvY-vtgvb8KgGwCNzVnaKCYdAFcvGZfyyL
     async:
         corePoolSize: 2
         maxPoolSize: 50

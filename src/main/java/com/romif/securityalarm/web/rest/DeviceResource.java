@@ -66,6 +66,17 @@ public class DeviceResource {
                 .body(null);
     }
 
+    @PostMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}/config")
+    @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<Void> configDevice(@PathVariable String login) {
+        log.debug("REST request to config Device: {}", login);
+        boolean result = deviceService.configDevice(login);
+        return result ? ResponseEntity.ok().headers(HeaderUtil.createAlert( "Config has been sent to device: " + login, login)).build() :
+            ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("device", "deviceError", "Error while sending config"))
+                .body(null);
+    }
+
     @DeleteMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}")
     @Timed
     @Secured(AuthoritiesConstants.ADMIN)

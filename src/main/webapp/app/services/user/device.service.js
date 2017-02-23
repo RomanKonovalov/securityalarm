@@ -14,7 +14,8 @@
             'update': { method:'PUT' },
             'delete':{ method:'DELETE'},
             'login': { method:'POST', params: {'login': '@login', action: 'login'} },
-            'logout': { method:'POST', params: {'login': '@login', action: 'logout'} }
+            'logout': { method:'POST', params: {'login': '@login', action: 'logout'} },
+            'config': { method:'POST', params: {'login': '@login', action: 'config'} }
         });
 
         return service;

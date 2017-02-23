@@ -155,21 +155,22 @@ public class JHipsterProperties {
 
         private final Authentication authentication = new Authentication();
 
+        private final Sms sms = new Sms();
+
         public Authentication getAuthentication() {
             return authentication;
         }
+
+        public Sms getSms() {
+            return sms;
+        }
+
         public static class Authentication {
 
             private final Oauth oauth = new Oauth();
 
-            private final List<User> users = new ArrayList<>();
-
             public Oauth getOauth() {
                 return oauth;
-            }
-
-            public List<User> getUsers() {
-                return users;
             }
 
             public static class Oauth {
@@ -205,36 +206,26 @@ public class JHipsterProperties {
                 }
             }
 
-            public static class User {
-                private String login;
+        }
 
-                private String password;
+        public static class Sms {
+            private String url;
+            private String apikey;
 
-                private String token;
+            public String getUrl() {
+                return url;
+            }
 
-                public String getLogin() {
-                    return login;
-                }
+            public void setUrl(String url) {
+                this.url = url;
+            }
 
-                public void setLogin(String login) {
-                    this.login = login;
-                }
+            public String getApikey() {
+                return apikey;
+            }
 
-                public String getPassword() {
-                    return password;
-                }
-
-                public void setPassword(String password) {
-                    this.password = password;
-                }
-
-                public String getToken() {
-                    return token;
-                }
-
-                public void setToken(String token) {
-                    this.token = token;
-                }
+            public void setApikey(String apikey) {
+                this.apikey = apikey;
             }
         }
     }

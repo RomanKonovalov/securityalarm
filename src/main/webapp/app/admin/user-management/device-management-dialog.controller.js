@@ -30,5 +30,9 @@
             Device.logout({'login': device.name}, onSuccess);
         };
 
+        vm.config = function (device) {
+            Device.config({'login': device.name}, onSuccess);
+        };
+
     }
 })();
