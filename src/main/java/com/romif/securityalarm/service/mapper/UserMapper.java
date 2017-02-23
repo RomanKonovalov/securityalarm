@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Mapper for the entity User and its DTO UserDTO.
  */
-@Mapper(componentModel = "spring", uses = {})
+@Mapper(componentModel = "spring", uses = DeviceMapper.class)
 public interface UserMapper {
 
     UserDTO userToUserDTO(User user);
@@ -56,16 +56,4 @@ public interface UserMapper {
         }).collect(Collectors.toSet());
     }
 
-    default Set<DeviceDTO> devicesFromUsers (Set<Device> users) {
-        return users.stream().map(DeviceDTO::new).collect(Collectors.toSet());
-    }
-
-    default Set<Device> usersFromDevices (Set<DeviceDTO> devices) {
-        return devices.stream().map(deviceDTO -> {
-            Device device = new Device();
-            device.setId(deviceDTO.getId());
-            device.setLogin(deviceDTO.getName());
-            return device;
-        }).collect(Collectors.toSet());
-    }
 }

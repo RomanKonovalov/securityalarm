@@ -3,14 +3,14 @@ package com.romif.securityalarm.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Device;
+import com.romif.securityalarm.domain.sms.Receipt;
 import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.DeviceService;
 import com.romif.securityalarm.service.dto.DeviceDTO;
+import com.romif.securityalarm.service.dto.DeviceManagementDTO;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
-import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -34,12 +34,21 @@ public class DeviceResource {
     @Inject
     private DeviceService deviceService;
 
+    @PostMapping(Constants.HANDLE_RECEIPTS_PATH)
+    @Timed
+    public ResponseEntity<?> handleReceipts(Receipt receipt) {
+        log.debug("REST request to handle Receipts");
+        log.error(receipt.toString());
+        return ResponseEntity.ok().build();
+        // Receipt(number=375445486323, status=D, customID=, datetime=2017-02-23 21:49:56)
+    }
+
     @GetMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}")
     @Timed
     @Secured(AuthoritiesConstants.ADMIN)
-    public ResponseEntity<List<DeviceDTO>> getDevices(@PathVariable String login) {
+    public ResponseEntity<List<DeviceManagementDTO>> getDevices(@PathVariable String login) {
         log.debug("REST request to get Devices for : {}", login);
-        List<DeviceDTO> deviceDtos = deviceService.getAllDevices(login);
+        List<DeviceManagementDTO> deviceDtos = deviceService.getAllDevices(login);
 
         return new ResponseEntity<>(deviceDtos, HttpStatus.OK);
     }
@@ -89,7 +98,7 @@ public class DeviceResource {
     @GetMapping("/devices")
     @Timed
     @Secured(AuthoritiesConstants.USER)
-    public ResponseEntity<List<DeviceDTO>> getAllLoggedDevices() throws URISyntaxException {
+    public ResponseEntity<List<DeviceDTO>> getAllLoggedDevices() {
         String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
         List<DeviceDTO> deviceDtos = deviceService.getAllLoggedDevices(login);

@@ -1,6 +1,7 @@
 package com.romif.securityalarm.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.service.StatusService;
@@ -31,7 +32,6 @@ import java.util.*;
  * REST controller for managing Status.
  */
 @RestController
-@RequestMapping("/api")
 public class StatusResource {
 
     private final Logger log = LoggerFactory.getLogger(StatusResource.class);
@@ -47,9 +47,9 @@ public class StatusResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @Secured("ROLE_DEVICE")
-    @PostMapping("/statuses")
+    @PostMapping(Constants.SEND_LOCATION_PATH)
     @Timed
-    public ResponseEntity<Status> createStatus(@RequestBody Status status) throws URISyntaxException {
+    public ResponseEntity<?> createStatus(@RequestBody Status status) throws URISyntaxException {
         log.debug("REST request to save Status : {}", status);
         if (status.getId() != null) {
 
@@ -58,9 +58,7 @@ public class StatusResource {
         Status result = statusService.save(status);
         Queue<Status> statuses =  statusService.getLast10StatusesCreatedBy(result.getCreatedBy());
         statusService.putInQueue(result, statuses);
-        return ResponseEntity.created(new URI("/api/statuses/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert("status", result.getId().toString()))
-            .body(result);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
@@ -73,9 +71,9 @@ public class StatusResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @Secured("ROLE_ADMIN")
-    @PutMapping("/statuses")
+    @PutMapping("/api/statuses")
     @Timed
-    public ResponseEntity<Status> updateStatus(@RequestBody Status status) throws URISyntaxException {
+    public ResponseEntity<?> updateStatus(@RequestBody Status status) throws URISyntaxException {
         log.debug("REST request to update Status : {}", status);
         if (status.getId() == null) {
             return createStatus(status);
@@ -93,7 +91,7 @@ public class StatusResource {
      * @return the ResponseEntity with status 200 (OK) and the list of statuses in body
      * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
      */
-    @GetMapping("/statuses")
+    @GetMapping("/api/statuses")
     @Secured("ROLE_USER")
     @Timed
     public ResponseEntity<List<Status>> getAllStatuses(@ApiParam Pageable pageable,
@@ -120,7 +118,7 @@ public class StatusResource {
      * @return the ResponseEntity with status 200 (OK) and with body the status, or with status 404 (Not Found)
      */
     @Secured("ROLE_ADMIN")
-    @GetMapping("/statuses/{id}")
+    @GetMapping("/api/statuses/{id}")
     @Timed
     public ResponseEntity<Status> getStatus(@PathVariable Long id) {
         log.debug("REST request to get Status : {}", id);
@@ -139,7 +137,7 @@ public class StatusResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @Secured("ROLE_ADMIN")
-    @DeleteMapping("/statuses/{id}")
+    @DeleteMapping("/api/statuses/{id}")
     @Timed
     public ResponseEntity<Void> deleteStatus(@PathVariable Long id) {
         log.debug("REST request to delete Status : {}", id);

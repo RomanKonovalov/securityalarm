@@ -1,5 +1,9 @@
 package com.romif.securityalarm.domain;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.data.annotation.CreatedBy;
@@ -14,6 +18,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "alarm")
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(of = "device", callSuper = false)
 public class Alarm extends AbstractAuditingEntity {
 
     private static final long serialVersionUID = 1L;
@@ -38,59 +45,7 @@ public class Alarm extends AbstractAuditingEntity {
     @Enumerated(value = EnumType.STRING)
     private Set<TrackingType> trackingTypes = new HashSet<>();
 
-    public Alarm() {
-    }
+    @Column(name = "paused")
+    private boolean paused;
 
-    public Alarm(Device device, EnumSet<NotificationType> notificationTypes, EnumSet<TrackingType> trackingTypes) {
-        this.device = device;
-        this.notificationTypes = notificationTypes;
-        this.trackingTypes = trackingTypes;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Device getDevice() {
-        return device;
-    }
-
-    public void setDevice(Device device) {
-        this.device = device;
-    }
-
-    public Set<NotificationType> getNotificationTypes() {
-        return notificationTypes;
-    }
-
-    public void setNotificationTypes(Set<NotificationType> notificationTypes) {
-        this.notificationTypes = notificationTypes;
-    }
-
-    public Set<TrackingType> getTrackingTypes() {
-        return trackingTypes;
-    }
-
-    public void setTrackingTypes(Set<TrackingType> trackingTypes) {
-        this.trackingTypes = trackingTypes;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Alarm alarm = (Alarm) o;
-
-        return device != null ? device.equals(alarm.device) : alarm.device == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return device != null ? device.hashCode() : 0;
-    }
 }

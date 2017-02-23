@@ -2,6 +2,9 @@ package com.romif.securityalarm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.romif.securityalarm.config.Constants;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.mapstruct.Named;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,6 +22,8 @@ import java.util.Set;
 @Table(name = "jhi_user")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type")
+@Data
+@EqualsAndHashCode(of = "login", callSuper = false)
 public abstract class GenericUser extends AbstractAuditingEntity implements Serializable {
 
     @Id
@@ -37,6 +42,9 @@ public abstract class GenericUser extends AbstractAuditingEntity implements Seri
     @Column(name = "password_hash",length = 60)
     private String password;
 
+    @Column(name = "phone", length = 50)
+    private String phone;
+
     @NotNull
     @Column(nullable = false)
     private boolean activated = false;
@@ -50,46 +58,8 @@ public abstract class GenericUser extends AbstractAuditingEntity implements Seri
         inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
     private Set<Authority> authorities = new HashSet<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
     //Lowercase the login before saving it in database
     public void setLogin(String login) {
         this.login = login.toLowerCase(Locale.ENGLISH);
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-    public boolean getActivated() {
-        return activated;
-    }
-
-    public void setActivated(boolean activated) {
-        this.activated = activated;
-    }
-
-
-    public Set<Authority> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(Set<Authority> authorities) {
-        this.authorities = authorities;
     }
 }

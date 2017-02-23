@@ -6,8 +6,11 @@ import com.romif.securityalarm.domain.DeviceCredentials;
 import com.romif.securityalarm.repository.DeviceCredentialsRepository;
 import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.service.dto.DeviceDTO;
+import com.romif.securityalarm.service.dto.DeviceManagementDTO;
+import com.romif.securityalarm.service.mapper.DeviceMapper;
 import com.romif.securityalarm.service.util.RandomUtil;
 import com.romif.securityalarm.web.rest.DeviceResource;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,17 +56,21 @@ public class DeviceService {
     private SecurityService securityService;
 
     @Inject
+    private DeviceMapper deviceMapper;
+
+    @Inject
     private SmsService smsService;
 
-    public List<DeviceDTO> getAllDevices(String login) {
+    public List<DeviceManagementDTO> getAllDevices(String login) {
 
         Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid());
 
-        List<DeviceDTO> deviceDTOS = deviceCredentialsRepository.findAllByDeviceUserLogin(login).stream()
+        List<DeviceManagementDTO> deviceDTOS = deviceCredentialsRepository.findAllByDeviceUserLogin(login).stream()
             .map(deviceCredentials -> {
-                DeviceDTO deviceDTO = new DeviceDTO(deviceCredentials.getDevice());
+                DeviceManagementDTO deviceDTO = deviceMapper.deviceToDeviceManagementDTO(deviceCredentials.getDevice());
                 deviceDTO.setAuthorized(tokens.stream().anyMatch(oAuth2AccessToken -> oAuth2AccessToken.getValue().equals(deviceCredentials.getToken())));
                 deviceDTO.setToken(deviceCredentials.getToken());
+                deviceDTO.setPauseToken(deviceCredentials.getPauseToken());
                 return deviceDTO;
             })
             .collect(Collectors.toList());
@@ -77,6 +84,7 @@ public class DeviceService {
 
         List<DeviceDTO> deviceDTOS = getAllDevices(login).stream()
             .filter(deviceDTO -> deviceDTO.isAuthorized())
+            .map(deviceManagementDTO -> deviceMapper.deviceManagementDTOToDeviceDTO(deviceManagementDTO))
             .collect(Collectors.toList());
 
         return deviceDTOS;
@@ -85,12 +93,15 @@ public class DeviceService {
     public Device createDevice(Device device) {
 
         String rawPassword = RandomUtil.generatePassword();
+        String pauseToken = UUID.randomUUID().toString();
+        String secret = RandomStringUtils.randomAlphanumeric(8);
 
         device.setPassword(passwordEncoder.encode(rawPassword));
+        device.setPauseToken(passwordEncoder.encode(pauseToken));
 
         Device result = deviceRepository.save(device);
 
-        DeviceCredentials deviceCredentials = new DeviceCredentials(result, rawPassword, UUID.randomUUID().toString());
+        DeviceCredentials deviceCredentials = new DeviceCredentials(null, result, rawPassword, UUID.randomUUID().toString(), pauseToken, secret);
 
         deviceCredentialsRepository.save(deviceCredentials);
 
@@ -102,7 +113,7 @@ public class DeviceService {
             tokenStore.removeAccessToken(token));
         deviceRepository.findOneByLogin(login).ifPresent(device -> {
             deviceRepository.delete(device);
-            log.debug("Deleted Вevice: {}", device);
+            log.debug("Deleted Device: {}", device);
         });
     }
 
@@ -119,8 +130,9 @@ public class DeviceService {
 
     public boolean configDevice(String login) {
         Optional<Device> device = deviceRepository.findOneByLogin(login);
-        if (device.isPresent()) {
-            return smsService.sendConfig(device.get());
+        Optional<DeviceCredentials> deviceCredentials = deviceCredentialsRepository.findOneByDeviceLogin(login);
+        if (device.isPresent() && deviceCredentials.isPresent()) {
+            return smsService.sendConfig(device.get(), deviceCredentials.get());
         } else {
             return false;
         }

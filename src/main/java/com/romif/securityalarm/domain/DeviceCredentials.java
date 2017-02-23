@@ -1,12 +1,23 @@
 package com.romif.securityalarm.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
 @Table(name = "device_credentials")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class DeviceCredentials implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -19,74 +30,21 @@ public class DeviceCredentials implements Serializable {
     @JoinColumn(name="device_id")
     private Device device;
 
+    @NotNull
     @Column(name = "raw_password")
     private String rawPassword;
 
+    @NotNull
     @Column(name = "token")
     private String token;
 
-    public DeviceCredentials() {
-    }
+    @NotNull
+    @Column(name = "pause_token")
+    private String pauseToken;
 
-    public DeviceCredentials(Device device, String rawPassword, String token) {
-        this.device = device;
-        this.rawPassword = rawPassword;
-        this.token = token;
-    }
+    @NotNull
+    @Size(min = 8, max = 8)
+    @Column(name = "secret",length = 8)
+    private String secret;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Device getDevice() {
-        return device;
-    }
-
-    public void setDevice(Device device) {
-        this.device = device;
-    }
-
-    public String getRawPassword() {
-        return rawPassword;
-    }
-
-    public void setRawPassword(String rawPassword) {
-        this.rawPassword = rawPassword;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DeviceCredentials that = (DeviceCredentials) o;
-
-        return device != null ? device.equals(that.device) : that.device == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return device != null ? device.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return "DeviceCredentials{" +
-            "device=" + device +
-            ", rawPassword='" + rawPassword + '\'' +
-            ", token=" + token +
-            '}';
-    }
 }

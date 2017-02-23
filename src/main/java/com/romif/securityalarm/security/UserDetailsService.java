@@ -49,7 +49,7 @@ public class UserDetailsService implements org.springframework.security.core.use
                 .orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the database"));
         }
 
-        if (!userFromDatabase.getActivated()) {
+        if (!userFromDatabase.isActivated()) {
             throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
         }
         List<GrantedAuthority> grantedAuthorities = userFromDatabase.getAuthorities().stream()

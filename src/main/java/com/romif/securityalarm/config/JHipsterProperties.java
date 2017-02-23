@@ -107,8 +107,18 @@ public class JHipsterProperties {
 
         private final Cache cache = new Cache();
 
+        private String host;
+
         public Cache getCache() {
             return cache;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
         }
 
         public static class Cache {

@@ -184,7 +184,7 @@ public class User extends GenericUser {
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
             ", email='" + email + '\'' +
-            ", activated='" + getActivated() + '\'' +
+            ", activated='" + isActivated() + '\'' +
             ", langKey='" + langKey + '\'' +
             ", activationKey='" + activationKey + '\'' +
             "}";

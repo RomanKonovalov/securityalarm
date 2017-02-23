@@ -21,4 +21,6 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     Set<Alarm> findAllByCreatedBy(String createdBy);
 
+    Optional<Alarm> findOneByDeviceLogin(String deviceLogin);
+
 }

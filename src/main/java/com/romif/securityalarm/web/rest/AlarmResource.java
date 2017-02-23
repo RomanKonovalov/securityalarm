@@ -1,10 +1,12 @@
 package com.romif.securityalarm.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Alarm;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.repository.AlarmRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
+import com.romif.securityalarm.service.AlarmService;
 import com.romif.securityalarm.service.StatusService;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
@@ -39,7 +41,10 @@ public class AlarmResource {
     @Inject
     private StatusService statusService;
 
-    @GetMapping("/alarms")
+    @Inject
+    private AlarmService alarmService;
+
+    @GetMapping("/api/alarms")
     @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<List<Alarm>> getAllAlarms() throws URISyntaxException {
@@ -51,7 +56,7 @@ public class AlarmResource {
     }
 
     @Secured(AuthoritiesConstants.USER)
-    @PostMapping("/alarms")
+    @PostMapping("/api/alarms")
     @Timed
     @CacheEvict(cacheNames = "alarms", allEntries = true)
     public ResponseEntity<Alarm> startAlarm(@RequestBody Alarm alarm) throws URISyntaxException {
@@ -73,7 +78,7 @@ public class AlarmResource {
     }
 
     @Secured(AuthoritiesConstants.USER)
-    @PutMapping("/alarms")
+    @PutMapping("/api/alarms")
     @Timed
     @CacheEvict(cacheNames = "alarms", allEntries = true)
     public ResponseEntity<Alarm> updateAlarm(@RequestBody  Alarm alarm) throws URISyntaxException {
@@ -92,7 +97,7 @@ public class AlarmResource {
     }
 
     @Secured("ROLE_USER")
-    @DeleteMapping("/alarms/{id}")
+    @DeleteMapping("/api/alarms/{id}")
     @Timed
     @CacheEvict(cacheNames = "alarms", allEntries = true)
     public ResponseEntity<Void> stopAlarm(@PathVariable Long id) {
@@ -109,6 +114,34 @@ public class AlarmResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("alarm", "requiredfield", "Please choose Notification Type")).body(null);
         }
         return null;
+    }
+
+    @Secured(AuthoritiesConstants.DEVICE)
+    @GetMapping(Constants.PAUSE_ALARM_PATH + "/{pauseToken}")
+    @Timed
+    @CacheEvict(cacheNames = "alarms", allEntries = true)
+    public ResponseEntity<Void> pauseAlarm(@PathVariable String pauseToken) {
+        log.debug("REST request to pause alarm");
+
+        if (alarmService.pauseAlarm(pauseToken)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @Secured(AuthoritiesConstants.DEVICE)
+    @GetMapping(Constants.RESUME_ALARM_PATH)
+    @Timed
+    @CacheEvict(cacheNames = "alarms", allEntries = true)
+    public ResponseEntity<Void> resumeAlarm() {
+        log.debug("REST request to resume alarm");
+
+        if (alarmService.resumeAlarm()) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 }

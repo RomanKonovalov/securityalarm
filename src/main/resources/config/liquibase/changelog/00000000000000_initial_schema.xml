@@ -38,12 +38,20 @@
             <column name="email" type="varchar(100)">
                 <constraints unique="true" nullable="true"/>
             </column>
+            <column name="phone" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="additional_phone" type="varchar(50)"/>
+            <column name="apn" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
             <column name="latitude" type="float">
                 <constraints nullable="true" />
             </column>
             <column name="longitude" type="float">
                 <constraints nullable="true" />
             </column>
+            <column name="pause_token_hash" type="varchar(60)"/>
             <column name="notification_types" type="LONGBLOB"/>
             <column name="tracking_types" type="LONGBLOB"/>
             <column name="activated" type="boolean" valueBoolean="false">

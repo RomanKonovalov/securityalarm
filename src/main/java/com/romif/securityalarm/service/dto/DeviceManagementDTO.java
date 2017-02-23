@@ -1,14 +1,9 @@
 package com.romif.securityalarm.service.dto;
 
-import com.romif.securityalarm.config.Constants;
-import com.romif.securityalarm.domain.Alarm;
 import com.romif.securityalarm.domain.Device;
-import com.romif.securityalarm.domain.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -16,7 +11,7 @@ import javax.validation.constraints.Size;
  */
 @Data
 @NoArgsConstructor
-public class DeviceDTO {
+public class DeviceManagementDTO {
 
     private Long id;
 
@@ -26,5 +21,11 @@ public class DeviceDTO {
     private String description;
 
     private AlarmDTO alarm;
+
+    private boolean authorized;
+
+    private String token;
+
+    private String pauseToken;
 
 }

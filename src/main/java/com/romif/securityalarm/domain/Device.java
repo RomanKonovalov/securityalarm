@@ -2,6 +2,9 @@ package com.romif.securityalarm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.romif.securityalarm.config.Constants;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,6 +16,9 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @DiscriminatorValue(value = "device")
+@Data
+@ToString(exclude = "alarm")
+@EqualsAndHashCode(callSuper = false, of = "login")
 public class Device extends GenericUser {
 
     private static final long serialVersionUID = 1L;
@@ -27,27 +33,15 @@ public class Device extends GenericUser {
     @OneToOne(optional=true, mappedBy="device")
     private Alarm alarm;
 
-    public String getDescription() {
-        return description;
-    }
+    @JsonIgnore
+    @NotNull
+    @Size(min = 60, max = 60)
+    @Column(name = "pause_token_hash",length = 60)
+    private String pauseToken;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
-    public Alarm getAlarm() {
-        return alarm;
-    }
+    @NotNull
+    @Column(name = "apn", length = 50)
+    private String apn;
 
-    public void setAlarm(Alarm alarm) {
-        this.alarm = alarm;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }
