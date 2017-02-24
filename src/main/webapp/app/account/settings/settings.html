@@ -73,6 +73,30 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label class="control-label">Primary Phone</label>
+                    <input type="tel" ng-model="vm.settingsAccount.phone" intl-tel-input name="phone" class="form-control" required>
+
+                    <div ng-show="editForm.phone.$invalid">
+                        <p class="help-block" ng-show="form.phone.$error.required">
+                            This field is required.
+                        </p>
+                        <p class="help-block" ng-show="form.phone.$error.phoneNumber">
+                            Enter valid phone number.
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Secondary Phone</label>
+                    <input type="text" name="additionalPhone" ng-model="vm.settingsAccount.additionalPhone" intl-tel-input class="form-control">
+
+                    <div ng-show="editForm.phone.$invalid">
+                        <p class="help-block" ng-show="form.additionalPhone.$error.phoneNumber">
+                            Enter valid phone number.
+                        </p>
+                    </div>
+                </div>
+
                 <div class="form-group" ng-repeat="device in vm.settingsAccount.devices">
                     <label class="control-label" for="device">Device #{{$index + 1}}</label>
                     <input type="text" id="device" class="form-control" name="address" ng-model="device.name"/>

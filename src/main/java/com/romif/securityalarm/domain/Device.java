@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @Entity
 @DiscriminatorValue(value = "device")
 @Data
-@ToString(exclude = "alarm")
+@ToString(exclude = {"alarm", "user"})
 @EqualsAndHashCode(callSuper = false, of = "login")
 public class Device extends GenericUser {
 

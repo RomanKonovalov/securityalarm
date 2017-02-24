@@ -3,6 +3,7 @@ package com.romif.securityalarm.service.dto;
 import com.romif.securityalarm.domain.Device;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Size;
 
@@ -27,5 +28,12 @@ public class DeviceManagementDTO {
     private String token;
 
     private String pauseToken;
+
+    @NotBlank
+    @Size(max = 50)
+    private String apn;
+
+    @NotBlank
+    private String phone;
 
 }

@@ -3,6 +3,8 @@ package com.romif.securityalarm.domain;
 import com.romif.securityalarm.config.Constants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
@@ -20,6 +22,8 @@ import java.time.ZonedDateTime;
  * A user.
  */
 @Entity
+@Data
+@ToString(exclude = "devices")
 @DiscriminatorValue(value = "user")
 public class User extends GenericUser {
 
@@ -37,6 +41,9 @@ public class User extends GenericUser {
     @Size(max = 100)
     @Column(length = 100, unique = true)
     private String email;
+
+    @Column(name = "additional_phone", length = 50)
+    private String additionalPhone;
 
     @Column
     private float latitude;
@@ -70,90 +77,6 @@ public class User extends GenericUser {
     //@JoinColumn(name="device_id")
     private Set<Device> devices = new HashSet<>();
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public float getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getActivationKey() {
-        return activationKey;
-    }
-
-    public void setActivationKey(String activationKey) {
-        this.activationKey = activationKey;
-    }
-
-    public String getResetKey() {
-        return resetKey;
-    }
-
-    public void setResetKey(String resetKey) {
-        this.resetKey = resetKey;
-    }
-
-    public ZonedDateTime getResetDate() {
-       return resetDate;
-    }
-
-    public void setResetDate(ZonedDateTime resetDate) {
-       this.resetDate = resetDate;
-    }
-
-    public String getLangKey() {
-        return langKey;
-    }
-
-    public void setLangKey(String langKey) {
-        this.langKey = langKey;
-    }
-
-    public Set<Device> getDevices() {
-        return devices;
-    }
-
-    public void setDevices(Set<Device> devices) {
-        this.devices = devices;
-    }
-
-    public Set<Authority> getAuthorities() {
-        return super.getAuthorities();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -177,16 +100,4 @@ public class User extends GenericUser {
         return getLogin().hashCode();
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-            "login='" + getLogin() + '\'' +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", email='" + email + '\'' +
-            ", activated='" + isActivated() + '\'' +
-            ", langKey='" + langKey + '\'' +
-            ", activationKey='" + activationKey + '\'' +
-            "}";
-    }
 }

@@ -49,7 +49,9 @@
                 lastName: account.lastName,
                 login: account.login,
                 location: {latitude: account.location.latitude, longitude: account.location.longitude},
-                devices: account.devices
+                devices: account.devices,
+                phone: account.phone,
+                additionalPhone: account.additionalPhone
             };
         };
 

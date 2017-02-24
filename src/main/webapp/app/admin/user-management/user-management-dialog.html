@@ -85,6 +85,44 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="control-label" ng-hide="vm.existedUser">Primary Phone</label>
+            <label class="control-label" ng-show="vm.existedUser">Device Phone</label>
+            <input type="tel" ng-model="vm.user.phone" intl-tel-input name="phone" class="form-control" required>
+
+            <div ng-show="editForm.phone.$invalid">
+                <p class="help-block" ng-show="editForm.phone.$error.required">
+                    This field is required.
+                </p>
+                <p class="help-block" ng-show="editForm.phone.$error.phoneNumber">
+                    Enter valid phone number.
+                </p>
+            </div>
+        </div>
+        <div class="form-group" ng-hide="vm.existedUser">
+            <label class="control-label" >Secondary Phone</label>
+            <input type="text" name="additionalPhone" ng-model="vm.user.additionalPhone" intl-tel-input class="form-control">
+
+            <div ng-show="editForm.phone.$invalid">
+                <p class="help-block" ng-show="editForm.additionalPhone.$error.phoneNumber">
+                    Enter valid phone number.
+                </p>
+            </div>
+        </div>
+        <div class="form-group" ng-if="vm.existedUser">
+            <label class="control-label">Apn</label>
+            <input type="text" class="form-control" name="apn"
+                   ng-model="vm.user.apn" ng-maxlength="50" required>
+
+            <div ng-show="editForm.phone.$invalid">
+                <p class="help-block" ng-show="editForm.apn.$error.required">
+                    This field is required.
+                </p>
+                <p class="help-block" ng-show="editForm.apn.$error.ngIntlTelInput">
+                    Enter valid phone number.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
             <label for="activated">
                 <input ng-disabled="vm.user.id === null" type="checkbox" id="activated" name="activated" ng-model="vm.user.activated">
                 <span>Activated</span>

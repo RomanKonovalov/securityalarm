@@ -18,7 +18,8 @@
             'uiGmapgoogle-maps',
             'angular-jquery-locationpicker',
             'checklist-model',
-            'uuid'
+            'uuid',
+            'betsol.intlTelInput'
         ])
         .config(config)
         .run(run)
@@ -26,17 +27,28 @@
 
     run.$inject = ['stateHandler'];
 
-    config.$inject = ['uiGmapGoogleMapApiProvider'];
+    config.$inject = ['uiGmapGoogleMapApiProvider', 'intlTelInputOptions'];
 
     function run(stateHandler) {
         stateHandler.initialize();
     }
 
-    function config(uiGmapGoogleMapApiProvider) {
+    function config(uiGmapGoogleMapApiProvider, intlTelInputOptions) {
         uiGmapGoogleMapApiProvider.configure({
             key: 'AIzaSyCIWfhgaHMCsGASFQ6ZNhKA4MbjPcJLaz8',
             v: '3.20', //defaults to latest 3.X anyhow
             libraries: 'weather,geometry,visualization'
+        });
+
+        angular.extend(intlTelInputOptions, {
+            utilsScript: 'bower_components/intl-tel-input/build/js/utils.js',
+            geoIpLookup: function(callback) {
+                $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+                    var countryCode = (resp && resp.country) ? resp.country : "";
+                    callback(countryCode);
+                });
+            },
+            initialCountry: 'auto'
         });
     }
 

@@ -6,7 +6,10 @@ import com.romif.securityalarm.domain.Authority;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.User;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.*;
 import java.util.Set;
@@ -15,6 +18,8 @@ import java.util.stream.Collectors;
 /**
  * A DTO representing a user, with his authorities.
  */
+@Data
+@NoArgsConstructor
 public class UserDTO {
 
     @Pattern(regexp = Constants.LOGIN_REGEX)
@@ -40,19 +45,22 @@ public class UserDTO {
 
     private LocationDTO location;
 
-    public UserDTO() {
-    }
+    @NotBlank
+    private String phone;
+
+    private String additionalPhone;
 
     public UserDTO(User user) {
         this(user.getLogin(), user.getFirstName(), user.getLastName(),
             user.getEmail(), user.isActivated(), user.getLangKey(),
             user.getAuthorities().stream().map(Authority::getName)
                 .collect(Collectors.toSet()),
-            new LocationDTO(user.getLatitude(), user.getLongitude()));
+            new LocationDTO(user.getLatitude(), user.getLongitude()),
+            user.getPhone(), user.getAdditionalPhone());
     }
 
     public UserDTO(String login, String firstName, String lastName,
-        String email, boolean activated, String langKey, Set<String> authorities, LocationDTO location) {
+        String email, boolean activated, String langKey, Set<String> authorities, LocationDTO location,String phone, String additionalPhone) {
 
         this.login = login;
         this.firstName = firstName;
@@ -62,54 +70,8 @@ public class UserDTO {
         this.langKey = langKey;
         this.authorities = authorities;
         this.location = location;
+        this.phone = phone;
+        this.additionalPhone = additionalPhone;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public LocationDTO getLocation() {
-        return location;
-    }
-
-    public void setLocation(LocationDTO location) {
-        this.location = location;
-    }
-
-    public boolean isActivated() {
-        return activated;
-    }
-
-    public String getLangKey() {
-        return langKey;
-    }
-
-    public Set<String> getAuthorities() {
-        return authorities;
-    }
-
-    @Override
-    public String toString() {
-        return "UserDTO{" +
-            "login='" + login + '\'' +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", email='" + email + '\'' +
-            ", activated=" + activated +
-            ", langKey='" + langKey + '\'' +
-            ", authorities=" + authorities +
-            "}";
-    }
 }

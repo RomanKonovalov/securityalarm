@@ -32,6 +32,7 @@ module.exports = function (config) {
             'src/main/webapp/bower_components/google-maps-utility-library-v3-infobox/dist/infobox.js',
             'src/main/webapp/bower_components/google-maps-utility-library-v3-keydragzoom/dist/keydragzoom.js',
             'src/main/webapp/bower_components/js-rich-marker/src/richmarker.js',
+            'src/main/webapp/bower_components/intl-tel-input/build/js/intlTelInput.js',
             'src/main/webapp/bower_components/angular/angular.js',
             'src/main/webapp/bower_components/angular-aria/angular-aria.js',
             'src/main/webapp/bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
@@ -48,6 +49,7 @@ module.exports = function (config) {
             'src/main/webapp/bower_components/angular-simple-logger/dist/angular-simple-logger.js',
             'src/main/webapp/bower_components/checklist-model/checklist-model.js',
             'src/main/webapp/bower_components/angular-uuid/uuid.min.js',
+            'src/main/webapp/bower_components/betsol-ng-intl-tel-input/dist/scripts/betsol-ng-intl-tel-input.js',
             'src/main/webapp/bower_components/angular-mocks/angular-mocks.js',
             'src/main/webapp/bower_components/angular-google-maps/dist/angular-google-maps.js',
             // endbower

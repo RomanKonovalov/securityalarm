@@ -140,7 +140,7 @@ public class UserService {
         return user;
     }
 
-    public void updateUser(String firstName, String lastName, String email, String langKey, LocationDTO location) {
+    public void updateUser(String firstName, String lastName, String email, String langKey, LocationDTO location, String phone, String additionalPhone) {
         userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).ifPresent(user -> {
             user.setFirstName(firstName);
             user.setLastName(lastName);
@@ -148,13 +148,15 @@ public class UserService {
             user.setLangKey(langKey);
             user.setLatitude(location.getLatitude());
             user.setLongitude(location.getLongitude());
+            user.setPhone(phone);
+            user.setAdditionalPhone(additionalPhone);
 
             log.debug("Changed Information for User: {}", user);
         });
     }
 
     public void updateUser(Long id, String login, String firstName, String lastName, String email,
-        boolean activated, String langKey, Set<String> authorities) {
+        boolean activated, String langKey, Set<String> authorities, String phone, String additionalPhone) {
 
         Optional.of(userRepository
             .findOne(id))
@@ -165,6 +167,8 @@ public class UserService {
                 user.setEmail(email);
                 user.setActivated(activated);
                 user.setLangKey(langKey);
+                user.setPhone(phone);
+                user.setAdditionalPhone(additionalPhone);
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
                 authorities.forEach(
