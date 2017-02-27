@@ -41,7 +41,6 @@
         });
 
         angular.extend(intlTelInputOptions, {
-            utilsScript: 'bower_components/intl-tel-input/build/js/utils.js',
             geoIpLookup: function(callback) {
                 $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
                     var countryCode = (resp && resp.country) ? resp.country : "";

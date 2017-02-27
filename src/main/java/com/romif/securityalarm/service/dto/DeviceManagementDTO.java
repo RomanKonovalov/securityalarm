@@ -1,5 +1,6 @@
 package com.romif.securityalarm.service.dto;
 
+import com.romif.securityalarm.domain.ConfigStatus;
 import com.romif.securityalarm.domain.Device;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,11 +30,15 @@ public class DeviceManagementDTO {
 
     private String pauseToken;
 
+    private String secret;
+
     @NotBlank
     @Size(max = 50)
     private String apn;
 
     @NotBlank
     private String phone;
+
+    private ConfigStatus configStatus;
 
 }

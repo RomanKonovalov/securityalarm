@@ -1,6 +1,7 @@
 package com.romif.securityalarm.service;
 
 import com.romif.securityalarm.config.JHipsterProperties;
+import com.romif.securityalarm.domain.ConfigStatus;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.DeviceCredentials;
 import com.romif.securityalarm.repository.DeviceCredentialsRepository;
@@ -30,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,6 +73,7 @@ public class DeviceService {
                 deviceDTO.setAuthorized(tokens.stream().anyMatch(oAuth2AccessToken -> oAuth2AccessToken.getValue().equals(deviceCredentials.getToken())));
                 deviceDTO.setToken(deviceCredentials.getToken());
                 deviceDTO.setPauseToken(deviceCredentials.getPauseToken());
+                deviceDTO.setSecret(deviceCredentials.getSecret());
                 return deviceDTO;
             })
             .collect(Collectors.toList());
@@ -108,6 +111,15 @@ public class DeviceService {
         return result;
     }
 
+    public boolean updateDevice(DeviceDTO deviceDTO) {
+        return deviceRepository.findOneById(deviceDTO.getId()).map(device -> {
+            device.setPhone(deviceDTO.getPhone());
+            device.setApn(deviceDTO.getApn());
+            deviceRepository.save(device);
+            return true;
+        }).orElse(false);
+    }
+
     public void deleteDevice(String login) {
         tokenStore.findTokensByUserName(login).forEach(token ->
             tokenStore.removeAccessToken(token));
@@ -128,13 +140,19 @@ public class DeviceService {
 
     }
 
-    public boolean configDevice(String login) {
+    public CompletableFuture<ConfigStatus> configDevice(String login) {
         Optional<Device> device = deviceRepository.findOneByLogin(login);
         Optional<DeviceCredentials> deviceCredentials = deviceCredentialsRepository.findOneByDeviceLogin(login);
         if (device.isPresent() && deviceCredentials.isPresent()) {
-            return smsService.sendConfig(device.get(), deviceCredentials.get());
+            CompletableFuture<ConfigStatus> future = smsService.sendConfig(device.get(), deviceCredentials.get());
+            future.thenApply(configStatus -> {
+                device.get().setConfigStatus(configStatus);
+                deviceRepository.save(device.get());
+                return configStatus;
+            });
+            return future;
         } else {
-            return false;
+            return CompletableFuture.completedFuture(ConfigStatus.NOT_CONFIGURED);
         }
     }
 

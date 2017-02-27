@@ -134,6 +134,12 @@
                     resolve: {
                         Devices: ['Device', function (Device) {
                             return Device.query({login : $stateParams.login});
+                        }],
+                        TrackingTypes: ['Util', function (Util) {
+                            return Util.trackingTypes();
+                        }],
+                        NotificationTypes: ['Util', function (Util) {
+                            return Util.notificationTypes();
                         }]
                     }
                 }).result.then(function() {

@@ -37,5 +37,15 @@
             });
         };
 
+        $scope.saveDevice = function (device) {
+            Device.update(device, function () {
+                $scope.devices = Device.query();
+            });
+        };
+
+        $scope.configDevice = function (device) {
+            Device.config({'login': device.name});
+        };
+
     }
 })();

@@ -1,10 +1,8 @@
 package com.romif.securityalarm.service;
 
-import com.romif.securityalarm.domain.Device;
-import com.romif.securityalarm.domain.Status;
-import com.romif.securityalarm.domain.User;
+import com.romif.securityalarm.domain.*;
+import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.StatusRepository;
-import com.romif.securityalarm.repository.UserRepository;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,17 +10,14 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Status.
@@ -36,6 +31,9 @@ public class StatusService {
     @Inject
     private StatusRepository statusRepository;
 
+    @Inject
+    private DeviceRepository deviceRepository;
+
     /**
      * Save a status.
      *
@@ -46,6 +44,13 @@ public class StatusService {
     public Status save(Status status) {
         log.debug("Request to save Status : {}", status);
         Status result = statusRepository.save(status);
+        if (DeviceState.CONFIGURED.equals(status.getDeviceState())) {
+            deviceRepository.findOneByLogin(result.getCreatedBy())
+                .ifPresent(device -> {
+                    device.setConfigStatus(ConfigStatus.CONFIGURED);
+                    deviceRepository.save(device);
+                });
+        }
         return result;
     }
 

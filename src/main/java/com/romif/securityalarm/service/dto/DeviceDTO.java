@@ -2,6 +2,7 @@ package com.romif.securityalarm.service.dto;
 
 import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Alarm;
+import com.romif.securityalarm.domain.ConfigStatus;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.User;
 import lombok.AllArgsConstructor;
@@ -37,5 +38,7 @@ public class DeviceDTO {
 
     @NotBlank
     private String phone;
+
+    private ConfigStatus configStatus;
 
 }

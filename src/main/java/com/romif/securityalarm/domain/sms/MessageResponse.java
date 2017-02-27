@@ -27,7 +27,7 @@ public class MessageResponse {
     @JsonProperty("balance")
     private Integer balance;
     @JsonProperty("batch_id")
-    private Integer batchId;
+    private String batchId;
     @JsonProperty("cost")
     private Integer cost;
     @JsonProperty("num_messages")
@@ -54,12 +54,12 @@ public class MessageResponse {
     }
 
     @JsonProperty("batch_id")
-    public Integer getBatchId() {
+    public String getBatchId() {
         return batchId;
     }
 
     @JsonProperty("batch_id")
-    public void setBatchId(Integer batchId) {
+    public void setBatchId(String batchId) {
         this.batchId = batchId;
     }
 

@@ -47,6 +47,55 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label for="description" class="col-sm-2 control-label">Name</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" name="description" ng-model="device.description" ng-maxlength="50" id="description">
+
+                        <div ng-show="editForm.description.$invalid">
+                            <p class="help-block" ng-show="alarmManagingForm.description.$error.required">
+                                This field is required.
+                            </p>
+                            <p class="help-block" ng-show="alarmManagingForm.description.$error.maxlength">
+                                This field cannot be longer than 50 characters.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Device Phone</label>
+                    <div class="col-sm-10">
+                        <input type="tel" ng-model="device.phone" intl-tel-input name="phone" class="form-control" required>
+
+                        <div ng-show="editForm.phone.$invalid">
+                            <p class="help-block" ng-show="alarmManagingForm.phone.$error.required">
+                                This field is required.
+                            </p>
+                            <p class="help-block" ng-show="alarmManagingForm.phone.$error.phoneNumber">
+                                Enter valid phone number.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="apn" class="col-sm-2 control-label">Apn</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" name="apn" ng-model="device.apn" ng-maxlength="50" id="apn">
+
+                        <div ng-show="editForm.phone.$invalid">
+                            <p class="help-block" ng-show="alarmManagingForm.apn.$error.required">
+                                This field is required.
+                            </p>
+                            <p class="help-block" ng-show="alarmManagingForm.apn.$error.maxlength">
+                                This field cannot be longer than 50 characters.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button class="btn btn-success" ng-click="activateAlarm(device)" ng-hide="device.alarm.id"
@@ -55,6 +104,12 @@
                         </button>
                         <button class="btn btn-danger" ng-click="deactivateAlarm(device)" ng-hide="!device.alarm.id">
                             Deactivate alarm
+                        </button>
+                        <button ng-click="saveDevice(device)" ng-disabled="alarmManagingForm.$invalid || vm.isSaving" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-save"></span>&nbsp;<span>Save</span>
+                        </button>
+                        <button class="btn btn-primary" ng-click="configDevice(device)">
+                            <span class="glyphicon glyphicon-pencil"></span> <span>Send Config</span>
                         </button>
                     </div>
                 </div>

@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
 public class AlarmResource {
 
     private final Logger log = LoggerFactory.getLogger(AlarmResource.class);

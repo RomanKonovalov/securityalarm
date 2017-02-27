@@ -44,4 +44,7 @@ public class Device extends GenericUser {
     @Column(name = "apn", length = 50)
     private String apn;
 
+    @Column(name = "config_status", length = 50)
+    private ConfigStatus configStatus = ConfigStatus.NOT_CONFIGURED;
+
 }

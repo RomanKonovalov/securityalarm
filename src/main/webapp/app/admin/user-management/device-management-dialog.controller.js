@@ -5,14 +5,18 @@
         .module('securityalarmApp')
         .controller('DeviceManagementDialogController',DeviceManagementDialogController);
 
-    DeviceManagementDialogController.$inject = ['$uibModalInstance', '$stateParams', 'Devices', 'Device'];
+    DeviceManagementDialogController.$inject = ['$uibModalInstance', '$stateParams', 'Devices', 'Device', 'TrackingTypes', 'NotificationTypes'];
 
-    function DeviceManagementDialogController ($uibModalInstance, $stateParams, Devices, Device) {
+    function DeviceManagementDialogController ($uibModalInstance, $stateParams, Devices, Device, TrackingTypes, NotificationTypes) {
         var vm = this;
 
         vm.devices = Devices;
 
         vm.clear = clear;
+
+        vm.trackingTypes = TrackingTypes;
+
+        vm.notificationTypes = NotificationTypes;
 
         function clear () {
             $uibModalInstance.dismiss('cancel');

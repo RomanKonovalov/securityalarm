@@ -2,6 +2,7 @@ package com.romif.securityalarm.web.rest;
 
 import com.romif.securityalarm.SecurityalarmApp;
 
+import com.romif.securityalarm.domain.DeviceState;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.repository.StatusRepository;
 import com.romif.securityalarm.service.StatusService;
@@ -78,7 +79,7 @@ public class StatusResourceIntTest {
      */
     public static Status createEntity(EntityManager em) {
         Status status = new Status();
-        status.setDeviceState(DEFAULT_DEVICE_STATE);
+        status.setDeviceState(DeviceState.OK);
         return status;
     }
 
@@ -172,7 +173,7 @@ public class StatusResourceIntTest {
 
         // Update the status
         Status updatedStatus = statusRepository.findOne(status.getId());
-        updatedStatus.setDeviceState(UPDATED_DEVICE_STATE);
+        updatedStatus.setDeviceState(DeviceState.OK);
 
         restStatusMockMvc.perform(put("/api/statuses")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)

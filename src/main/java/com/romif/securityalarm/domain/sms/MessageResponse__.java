@@ -18,29 +18,29 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class MessageResponse__ {
 
     @JsonProperty("id")
-    private Integer id;
+    private String id;
     @JsonProperty("recipient")
-    private Integer recipient;
+    private String recipient;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("id")
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
     @JsonProperty("id")
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     @JsonProperty("recipient")
-    public Integer getRecipient() {
+    public String getRecipient() {
         return recipient;
     }
 
     @JsonProperty("recipient")
-    public void setRecipient(Integer recipient) {
+    public void setRecipient(String recipient) {
         this.recipient = recipient;
     }
 
