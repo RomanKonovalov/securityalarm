@@ -1,7 +1,7 @@
 package com.romif.securityalarm.web.rest;
 
+import com.romif.securityalarm.config.ApplicationProperties;
 import com.romif.securityalarm.config.DefaultProfileUtil;
-import com.romif.securityalarm.config.JHipsterProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ public class ProfileInfoResource {
     private Environment env;
 
     @Inject
-    private JHipsterProperties jHipsterProperties;
+    private ApplicationProperties applicationProperties;
 
     @GetMapping("/profile-info")
     public ProfileInfoResponse getActiveProfiles() {
@@ -30,7 +30,7 @@ public class ProfileInfoResource {
     }
 
     private String getRibbonEnv(String[] activeProfiles) {
-        String[] displayOnActiveProfiles = jHipsterProperties.getRibbon().getDisplayOnActiveProfiles();
+        String[] displayOnActiveProfiles = applicationProperties.getRibbon().getDisplayOnActiveProfiles();
 
         if (displayOnActiveProfiles == null) {
             return null;

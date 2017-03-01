@@ -1,6 +1,6 @@
 package com.romif.securityalarm.service;
 
-import com.romif.securityalarm.config.JHipsterProperties;
+import com.romif.securityalarm.config.ApplicationProperties;
 import com.romif.securityalarm.domain.ConfigStatus;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.DeviceCredentials;
@@ -10,23 +10,15 @@ import com.romif.securityalarm.service.dto.DeviceDTO;
 import com.romif.securityalarm.service.dto.DeviceManagementDTO;
 import com.romif.securityalarm.service.mapper.DeviceMapper;
 import com.romif.securityalarm.service.util.RandomUtil;
-import com.romif.securityalarm.web.rest.DeviceResource;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.ClientRegistrationService;
-import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +35,7 @@ public class DeviceService {
     private JdbcTokenStore tokenStore;
 
     @Inject
-    private JHipsterProperties jHipsterProperties;
+    private ApplicationProperties applicationProperties;
 
     @Inject
     private DeviceCredentialsRepository deviceCredentialsRepository;
@@ -61,11 +53,11 @@ public class DeviceService {
     private DeviceMapper deviceMapper;
 
     @Inject
-    private SmsService smsService;
+    private SmsTxtlocalService smsService;
 
     public List<DeviceManagementDTO> getAllDevices(String login) {
 
-        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid());
+        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(applicationProperties.getSecurity().getAuthentication().getOauth().getClientid());
 
         List<DeviceManagementDTO> deviceDTOS = deviceCredentialsRepository.findAllByDeviceUserLogin(login).stream()
             .map(deviceCredentials -> {
@@ -83,7 +75,7 @@ public class DeviceService {
 
     public List<DeviceDTO> getAllLoggedDevices(String login) {
 
-        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid());
+        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(applicationProperties.getSecurity().getAuthentication().getOauth().getClientid());
 
         List<DeviceDTO> deviceDTOS = getAllDevices(login).stream()
             .filter(deviceDTO -> deviceDTO.isAuthorized())
@@ -115,6 +107,7 @@ public class DeviceService {
         return deviceRepository.findOneById(deviceDTO.getId()).map(device -> {
             device.setPhone(deviceDTO.getPhone());
             device.setApn(deviceDTO.getApn());
+            device.setDescription(deviceDTO.getDescription());
             deviceRepository.save(device);
             return true;
         }).orElse(false);

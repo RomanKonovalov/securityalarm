@@ -8,16 +8,14 @@ import com.romif.securityalarm.domain.sms.DeliveryStatus;
 import com.romif.securityalarm.domain.sms.Receipt;
 import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.DeviceService;
-import com.romif.securityalarm.service.SmsService;
+import com.romif.securityalarm.service.SmsTxtlocalService;
 import com.romif.securityalarm.service.dto.DeviceDTO;
 import com.romif.securityalarm.service.dto.DeviceManagementDTO;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
-import com.romif.securityalarm.web.rest.vm.ManagedUserVM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaTypeEditor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,7 +44,7 @@ public class DeviceResource {
     private DeviceService deviceService;
 
     @Inject
-    private SmsService smsService;
+    private SmsTxtlocalService smsService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -154,11 +152,11 @@ public class DeviceResource {
 
         if (deviceService.updateDevice(device)) {
             return ResponseEntity.ok()
-                .headers(HeaderUtil.createAlert("A device is updated with identifier " + device.getDescription(), device.getDescription()))
+                .headers(HeaderUtil.createAlert("A device is updated with name " + device.getDescription(), device.getDescription()))
                 .build();
         } else {
             return ResponseEntity.notFound()
-                .headers(HeaderUtil.createAlert("A device is not found with identifier " + device.getDescription(), device.getDescription()))
+                .headers(HeaderUtil.createAlert("A device is not found with name " + device.getDescription(), device.getDescription()))
                 .build();
         }
 

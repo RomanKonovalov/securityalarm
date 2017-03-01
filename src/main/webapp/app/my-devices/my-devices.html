@@ -1,0 +1,90 @@
+<div ng-cloak>
+
+    <h2>My Devices</h2>
+    <jhi-alert></jhi-alert>
+    <jhi-alert-error></jhi-alert-error>
+
+    <div class="panel panel-default" ng-repeat="device in devices" >
+        <div class="panel-heading">
+            <h3 class="panel-title">Device: {{device.description}}</h3>
+        </div>
+        <div class="panel-body">
+
+            <form name="deviceManagingForm" class="form-horizontal" novalidate show-validation>
+
+                <div class="form-group">
+                    <label for="description" class="col-sm-2 control-label">Name</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" name="description" ng-model="device.description" ng-maxlength="50" id="description" required>
+
+                        <div ng-show="deviceManagingForm.description.$invalid">
+                            <p class="help-block" ng-show="deviceManagingForm.description.$error.required">
+                                This field is required.
+                            </p>
+                            <p class="help-block" ng-show="deviceManagingForm.description.$error.maxlength">
+                                This field cannot be longer than 50 characters.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Device Phone</label>
+                    <div class="col-sm-10">
+                        <input type="tel" ng-model="device.phone" intl-tel-input name="phone" class="form-control" required>
+
+                        <div ng-show="deviceManagingForm.phone.$invalid">
+                            <p class="help-block" ng-show="deviceManagingForm.phone.$error.required">
+                                This field is required.
+                            </p>
+                            <p class="help-block" ng-show="deviceManagingForm.phone.$error.phoneNumber">
+                                Enter valid phone number.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="apn" class="col-sm-2 control-label">Apn</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" name="apn" ng-model="device.apn" ng-maxlength="50" id="apn" required>
+
+                        <div ng-show="deviceManagingForm.apn.$invalid">
+                            <p class="help-block" ng-show="deviceManagingForm.apn.$error.required">
+                                This field is required.
+                            </p>
+                            <p class="help-block" ng-show="deviceManagingForm.apn.$error.maxlength">
+                                This field cannot be longer than 50 characters.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Config Status</label>
+                    <div class="col-sm-10">
+                        <p class="label label-danger" ng-show="!device.configStatus || device.configStatus === 'NOT_CONFIGURED'">Not Configured</p>
+                        <p class="label label-success" ng-show="device.configStatus === 'CONFIGURED'">Configured</p>
+                        <p class="label label-warning" ng-show="device.configStatus === 'PENDING'">Pending</p>
+                        <p class="label label-warning" ng-show="device.configStatus === 'CONFIG_SENT'">Config Sent</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button ng-click="saveDevice(device)" ng-disabled="deviceManagingForm.$invalid || vm.isSaving" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-save"></span>&nbsp;<span>Save</span>
+                        </button>
+                        <button class="btn btn-primary" ng-click="configDevice(device)">
+                            <span class="glyphicon glyphicon-import"></span> <span>Send Config</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+

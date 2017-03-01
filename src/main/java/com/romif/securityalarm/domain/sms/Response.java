@@ -1,6 +1,8 @@
 
 package com.romif.securityalarm.domain.sms;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +33,11 @@ public class Response {
     @JsonProperty("messages_not_sent")
     private List<MessagesNotSent> messagesNotSent = null;
     @JsonProperty("balance_pre_send")
-    private Integer balancePreSend;
+    private BigDecimal balancePreSend;
     @JsonProperty("total_cost")
     private Integer totalCost;
     @JsonProperty("balance_post_send")
-    private Integer balancePostSend;
+    private BigDecimal balancePostSend;
     @JsonProperty("errors")
     private List<Error> errors = null;
     @JsonProperty("status")
@@ -64,12 +66,12 @@ public class Response {
     }
 
     @JsonProperty("balance_pre_send")
-    public Integer getBalancePreSend() {
+    public BigDecimal getBalancePreSend() {
         return balancePreSend;
     }
 
     @JsonProperty("balance_pre_send")
-    public void setBalancePreSend(Integer balancePreSend) {
+    public void setBalancePreSend(BigDecimal balancePreSend) {
         this.balancePreSend = balancePreSend;
     }
 
@@ -84,12 +86,12 @@ public class Response {
     }
 
     @JsonProperty("balance_post_send")
-    public Integer getBalancePostSend() {
+    public BigDecimal getBalancePostSend() {
         return balancePostSend;
     }
 
     @JsonProperty("balance_post_send")
-    public void setBalancePostSend(Integer balancePostSend) {
+    public void setBalancePostSend(BigDecimal balancePostSend) {
         this.balancePostSend = balancePostSend;
     }
 

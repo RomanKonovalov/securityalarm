@@ -1,7 +1,7 @@
 package com.romif.securityalarm.config.apidoc;
 
 import com.romif.securityalarm.config.Constants;
-import com.romif.securityalarm.config.JHipsterProperties;
+import com.romif.securityalarm.config.ApplicationProperties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,27 +36,27 @@ public class SwaggerConfiguration {
     /**
      * Swagger Springfox configuration.
      *
-     * @param jHipsterProperties the properties of the application
+     * @param applicationProperties the properties of the application
      * @return the Swagger Springfox configuration
      */
     @Bean
-    public Docket swaggerSpringfoxDocket(JHipsterProperties jHipsterProperties) {
+    public Docket swaggerSpringfoxDocket(ApplicationProperties applicationProperties) {
         log.debug("Starting Swagger");
         StopWatch watch = new StopWatch();
         watch.start();
         Contact contact = new Contact(
-            jHipsterProperties.getSwagger().getContactName(),
-            jHipsterProperties.getSwagger().getContactUrl(),
-            jHipsterProperties.getSwagger().getContactEmail());
+            applicationProperties.getSwagger().getContactName(),
+            applicationProperties.getSwagger().getContactUrl(),
+            applicationProperties.getSwagger().getContactEmail());
 
         ApiInfo apiInfo = new ApiInfo(
-            jHipsterProperties.getSwagger().getTitle(),
-            jHipsterProperties.getSwagger().getDescription(),
-            jHipsterProperties.getSwagger().getVersion(),
-            jHipsterProperties.getSwagger().getTermsOfServiceUrl(),
+            applicationProperties.getSwagger().getTitle(),
+            applicationProperties.getSwagger().getDescription(),
+            applicationProperties.getSwagger().getVersion(),
+            applicationProperties.getSwagger().getTermsOfServiceUrl(),
             contact,
-            jHipsterProperties.getSwagger().getLicense(),
-            jHipsterProperties.getSwagger().getLicenseUrl());
+            applicationProperties.getSwagger().getLicense(),
+            applicationProperties.getSwagger().getLicenseUrl());
 
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
             .apiInfo(apiInfo)

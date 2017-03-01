@@ -1,6 +1,7 @@
 
 package com.romif.securityalarm.domain.sms;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class MessageResponse {
     @JsonProperty("batch_id")
     private String batchId;
     @JsonProperty("cost")
-    private Integer cost;
+    private BigDecimal cost;
     @JsonProperty("num_messages")
     private Integer numMessages;
     @JsonProperty("message")
@@ -64,12 +65,12 @@ public class MessageResponse {
     }
 
     @JsonProperty("cost")
-    public Integer getCost() {
+    public BigDecimal getCost() {
         return cost;
     }
 
     @JsonProperty("cost")
-    public void setCost(Integer cost) {
+    public void setCost(BigDecimal cost) {
         this.cost = cost;
     }
 

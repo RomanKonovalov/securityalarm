@@ -2,7 +2,7 @@ package com.romif.securityalarm;
 
 import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.config.DefaultProfileUtil;
-import com.romif.securityalarm.config.JHipsterProperties;
+import com.romif.securityalarm.config.ApplicationProperties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ import java.util.Collection;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = { MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class })
-@EnableConfigurationProperties({ JHipsterProperties.class, LiquibaseProperties.class })
+@EnableConfigurationProperties({ ApplicationProperties.class, LiquibaseProperties.class })
 public class SecurityalarmApp {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityalarmApp.class);

@@ -3,11 +3,11 @@
 
     angular
         .module('securityalarmApp')
-        .controller('MyDevicesController', MyDevicesController);
+        .controller('MyAlarmsController', MyAlarmsController);
 
-    MyDevicesController.$inject = ['$scope', 'Principal', 'LoginService', '$state', 'Alarm','Device', 'Devices', 'TrackingTypes', 'NotificationTypes'];
+    MyAlarmsController.$inject = ['$scope', 'Alarm','Device', 'Devices', 'TrackingTypes', 'NotificationTypes'];
 
-    function MyDevicesController ($scope, Principal, LoginService, $state, Alarm, Device, Devices, TrackingTypes, NotificationTypes) {
+    function MyAlarmsController ($scope, Alarm, Device, Devices, TrackingTypes, NotificationTypes) {
 
         $scope.devices = Devices;
 
@@ -35,16 +35,6 @@
             Alarm.update(alarm, function () {
                 $scope.devices = Device.query();
             });
-        };
-
-        $scope.saveDevice = function (device) {
-            Device.update(device, function () {
-                $scope.devices = Device.query();
-            });
-        };
-
-        $scope.configDevice = function (device) {
-            Device.config({'login': device.name});
         };
 
     }

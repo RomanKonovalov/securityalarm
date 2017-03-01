@@ -1,7 +1,6 @@
 package com.romif.securityalarm.service;
 
-import com.romif.securityalarm.config.JHipsterProperties;
-import com.romif.securityalarm.domain.Device;
+import com.romif.securityalarm.config.ApplicationProperties;
 import com.romif.securityalarm.domain.DeviceCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,7 @@ public class SecurityService {
     private JdbcTokenStore tokenStore;
 
     @Inject
-    private JHipsterProperties jHipsterProperties;
+    private ApplicationProperties applicationProperties;
 
     public boolean authenticate(DeviceCredentials deviceCredentials) {
         try {
@@ -46,13 +45,13 @@ public class SecurityService {
             authorizationParameters.put("password", deviceCredentials.getRawPassword());
             authorizationParameters.put("grant_type", "password");
             authorizationParameters.put("scope", "read write");
-            authorizationParameters.put("client_id", jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid());
-            authorizationParameters.put("client_secret", jHipsterProperties.getSecurity().getAuthentication().getOauth().getSecret());
+            authorizationParameters.put("client_id", applicationProperties.getSecurity().getAuthentication().getOauth().getClientid());
+            authorizationParameters.put("client_secret", applicationProperties.getSecurity().getAuthentication().getOauth().getSecret());
 
             final Set<GrantedAuthority> authorities = new HashSet<>();
             authorities.add(new SimpleGrantedAuthority("Admin"));
 
-            final User userPrincipal = new User(jHipsterProperties.getSecurity().getAuthentication().getOauth().getClientid(), "", true, true, true, true, authorities);
+            final User userPrincipal = new User(applicationProperties.getSecurity().getAuthentication().getOauth().getClientid(), "", true, true, true, true, authorities);
 
             final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities) ;
 

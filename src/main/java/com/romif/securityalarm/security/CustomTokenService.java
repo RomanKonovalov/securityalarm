@@ -1,8 +1,6 @@
 package com.romif.securityalarm.security;
 
-import com.romif.securityalarm.config.JHipsterProperties;
 import com.romif.securityalarm.domain.Device;
-import com.romif.securityalarm.domain.DeviceCredentials;
 import com.romif.securityalarm.repository.DeviceCredentialsRepository;
 import com.romif.securityalarm.repository.DeviceRepository;
 import org.springframework.context.annotation.Primary;
@@ -10,12 +8,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 

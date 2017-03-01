@@ -23,6 +23,7 @@ public class Status extends AbstractAuditingEntity implements Serializable {
     private Long id;
 
     @Column(name = "device_state")
+    @Enumerated(EnumType.STRING)
     private DeviceState deviceState;
 
     @Column(name = "latitude")

@@ -44,7 +44,7 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
     private HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
 
     @Inject
-    private JHipsterProperties jHipsterProperties;
+    private ApplicationProperties applicationProperties;
 
     @Autowired(required = false)
     private HikariDataSource hikariDataSource;
@@ -73,20 +73,20 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
             log.debug("Monitoring the datasource");
             hikariDataSource.setMetricRegistry(metricRegistry);
         }
-        if (jHipsterProperties.getMetrics().getJmx().isEnabled()) {
+        if (applicationProperties.getMetrics().getJmx().isEnabled()) {
             log.debug("Initializing Metrics JMX reporting");
             JmxReporter jmxReporter = JmxReporter.forRegistry(metricRegistry).build();
             jmxReporter.start();
         }
 
-        if (jHipsterProperties.getMetrics().getLogs().isEnabled()) {
+        if (applicationProperties.getMetrics().getLogs().isEnabled()) {
             log.info("Initializing Metrics Log reporting");
             final Slf4jReporter reporter = Slf4jReporter.forRegistry(metricRegistry)
                 .outputTo(LoggerFactory.getLogger("metrics"))
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build();
-            reporter.start(jHipsterProperties.getMetrics().getLogs().getReportFrequency(), TimeUnit.SECONDS);
+            reporter.start(applicationProperties.getMetrics().getLogs().getReportFrequency(), TimeUnit.SECONDS);
         }
     }
 
@@ -100,15 +100,15 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
         private MetricRegistry metricRegistry;
 
         @Inject
-        private JHipsterProperties jHipsterProperties;
+        private ApplicationProperties applicationProperties;
 
         @PostConstruct
         private void init() {
-            if (jHipsterProperties.getMetrics().getGraphite().isEnabled()) {
+            if (applicationProperties.getMetrics().getGraphite().isEnabled()) {
                 log.info("Initializing Metrics Graphite reporting");
-                String graphiteHost = jHipsterProperties.getMetrics().getGraphite().getHost();
-                Integer graphitePort = jHipsterProperties.getMetrics().getGraphite().getPort();
-                String graphitePrefix = jHipsterProperties.getMetrics().getGraphite().getPrefix();
+                String graphiteHost = applicationProperties.getMetrics().getGraphite().getHost();
+                Integer graphitePort = applicationProperties.getMetrics().getGraphite().getPort();
+                String graphitePrefix = applicationProperties.getMetrics().getGraphite().getPrefix();
                 Graphite graphite = new Graphite(new InetSocketAddress(graphiteHost, graphitePort));
                 GraphiteReporter graphiteReporter = GraphiteReporter.forRegistry(metricRegistry)
                     .convertRatesTo(TimeUnit.SECONDS)
@@ -130,12 +130,12 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
         private MetricRegistry metricRegistry;
 
         @Inject
-        private JHipsterProperties jHipsterProperties;
+        private ApplicationProperties applicationProperties;
 
         @Override
         public void onStartup(ServletContext servletContext) throws ServletException {
-            if(jHipsterProperties.getMetrics().getPrometheus().isEnabled()) {
-                String endpoint = jHipsterProperties.getMetrics().getPrometheus().getEndpoint();
+            if(applicationProperties.getMetrics().getPrometheus().isEnabled()) {
+                String endpoint = applicationProperties.getMetrics().getPrometheus().getEndpoint();
                 log.info("Initializing Metrics Prometheus endpoint at {}", endpoint);
                 CollectorRegistry collectorRegistry = new CollectorRegistry();
                 collectorRegistry.register(new DropwizardExports(metricRegistry));

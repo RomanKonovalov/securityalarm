@@ -14,7 +14,7 @@ import java.util.List;
  * </p>
  */
 @ConfigurationProperties(prefix = "jhipster", ignoreUnknownFields = false)
-public class JHipsterProperties {
+public class ApplicationProperties {
 
     private final Async async = new Async();
 
