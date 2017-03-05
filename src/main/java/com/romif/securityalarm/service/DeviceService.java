@@ -78,7 +78,7 @@ public class DeviceService {
         Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(applicationProperties.getSecurity().getAuthentication().getOauth().getClientid());
 
         List<DeviceDTO> deviceDTOS = getAllDevices(login).stream()
-            .filter(deviceDTO -> deviceDTO.isAuthorized())
+            .filter(DeviceManagementDTO::isAuthorized)
             .map(deviceManagementDTO -> deviceMapper.deviceManagementDTOToDeviceDTO(deviceManagementDTO))
             .collect(Collectors.toList());
 

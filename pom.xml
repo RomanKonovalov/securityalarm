@@ -110,6 +110,10 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <!-- <scope>test</scope>-->
@@ -428,10 +432,6 @@
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-java8time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>

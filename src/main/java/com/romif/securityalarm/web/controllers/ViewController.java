@@ -27,7 +27,7 @@ public class ViewController {
     @Inject
     private Environment env;
 
-    @Value("dist/index.html")
+    @Value("index.html")
     private Resource indexHtmlResourceProd;
 
     @Value("index.html")

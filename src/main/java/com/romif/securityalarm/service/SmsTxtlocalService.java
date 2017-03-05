@@ -8,8 +8,11 @@ import com.romif.securityalarm.domain.ConfigStatus;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.DeviceCredentials;
 import com.romif.securityalarm.domain.sms.*;
+import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
+import com.romif.securityalarm.security.SecurityUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,6 +52,9 @@ public class SmsTxtlocalService {
     @Autowired
     private ApplicationProperties applicationProperties;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public CompletableFuture<ConfigStatus> sendConfig(Device device, DeviceCredentials deviceCredentials) {
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -64,6 +71,8 @@ public class SmsTxtlocalService {
         stringBuilder.append(Constants.RESUME_ALARM_PATH);
         stringBuilder.append(";");
         stringBuilder.append(deviceCredentials.getToken());
+        stringBuilder.append(";");
+        stringBuilder.append(StringUtils.remove(device.getUser().getPhone(), "+"));
         stringBuilder.append(";");
 
         Request request = new Request();
@@ -129,9 +138,13 @@ public class SmsTxtlocalService {
 
     @Secured(AuthoritiesConstants.ADMIN)
     public BigDecimal getBalance() {
+        String login = SecurityUtils.getCurrentUserLogin();
+
+        String phone = userRepository.findOneByLogin(login).map(user -> user.getPhone()).orElse("1234567890");
+
         Request request = new Request();
         MessageRequest messageRequest = new MessageRequest();
-        messageRequest.setNumber("1234567890");
+        messageRequest.setNumber(phone);
         messageRequest.setText("text");
         request.setMessages(Arrays.asList(messageRequest));
         request.setTest(true);
@@ -150,7 +163,7 @@ public class SmsTxtlocalService {
         Response response = model.getBody();
 
         if ("success".equals(response.getStatus()) && CollectionUtils.isEmpty(response.getMessagesNotSent())) {
-            return response.getBalancePostSend().divide(response.getMessages().get(0).getCost());
+            return response.getBalancePostSend().divide(response.getMessages().get(0).getCost(), 0, RoundingMode.DOWN);
         } else if (CollectionUtils.isNotEmpty(response.getErrors())) {
             log.error("Error while sending config: {}", response.getErrors().get(0).getMessage());
             return null;
