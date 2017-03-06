@@ -28,22 +28,13 @@ public class ViewController {
     private Environment env;
 
     @Value("index.html")
-    private Resource indexHtmlResourceProd;
-
-    @Value("index.html")
-    private Resource indexHtmlResourceDev;
+    private Resource indexHtmlResource;
 
     private String indexHtmlContent;
 
     @PostConstruct
     public void init() throws IOException {
-        final Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
-        if (activeProfiles.contains(Constants.SPRING_PROFILE_DEVELOPMENT)) {
-            indexHtmlContent = IOUtils.toString(indexHtmlResourceDev.getInputStream(), "UTF-8");
-        }
-        if (activeProfiles.contains(Constants.SPRING_PROFILE_PRODUCTION)) {
-            indexHtmlContent = IOUtils.toString(indexHtmlResourceProd.getInputStream(), "UTF-8");
-        }
+        indexHtmlContent = IOUtils.toString(indexHtmlResource.getInputStream(), "UTF-8");
     }
 
     @RequestMapping(value = {

@@ -48,7 +48,7 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
         }
         EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
         initMetrics(servletContext, disps);
-        if (env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
+        if (env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION, Constants.SPRING_PROFILE_OPENSHIFT)) {
             initCachingHttpHeadersFilter(servletContext, disps);
         }
         log.info("Web application fully configured");
@@ -72,7 +72,7 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
     private void setLocationForStaticAssets(ConfigurableEmbeddedServletContainer container) {
         File root;
         String prefixPath = resolvePathPrefix();
-        if (env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
+        if (env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION, Constants.SPRING_PROFILE_OPENSHIFT)) {
             root = new File(prefixPath + "target/www/");
         } else {
             root = new File(prefixPath + "src/main/webapp/");

@@ -59,8 +59,6 @@ server:
 # ===================================================================
 
 jhipster:
-    http:
-        host: 104.238.176.254
     security:
             authentication:
                 oauth:

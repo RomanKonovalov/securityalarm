@@ -55,6 +55,7 @@ server:
 
 jhipster:
     http:
+        host: 104.238.176.254
         cache: # Used by the CachingHttpHeadersFilter
             timeToLiveInDays: 1461
     mail: # specific JHipster mail property, for standard properties see MailProperties

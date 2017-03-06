@@ -55,6 +55,7 @@ server:
 
 jhipster:
     http:
+        host: security-alarmgsm.rhcloud.com
         cache: # Used by the CachingHttpHeadersFilter
             timeToLiveInDays: 1461
     mail: # specific JHipster mail property, for standard properties see MailProperties

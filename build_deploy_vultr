@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mvn -Pprod clean install -DskipTests
+
+ssh root@104.238.176.254 '/etc/init.d/securityalarm stop'
+scp target/*.war root@104.238.176.254:/home/app/securityalarm.war
+ssh root@104.238.176.254 '/etc/init.d/securityalarm start'
