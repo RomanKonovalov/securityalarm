@@ -1,7 +1,0 @@
-#!/bin/bash
-
-mvn -Pprod clean install -DskipTests
-
-ssh 58bde4112d5271e75400011e@security-alarmgsm.rhcloud.com '/var/lib/openshift/58bde4112d5271e75400011e/app-root/runtime/repo/.openshift/action_hooks/stop'
-scp target/*.war 58bde4112d5271e75400011e@security-alarmgsm.rhcloud.com:/var/lib/openshift/58bde4112d5271e75400011e/app-root/runtime/repo/bin/securityalarm.war
-ssh 58bde4112d5271e75400011e@security-alarmgsm.rhcloud.com '/var/lib/openshift/58bde4112d5271e75400011e/app-root/runtime/repo/.openshift/action_hooks/start'

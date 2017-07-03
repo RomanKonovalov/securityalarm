@@ -1,137 +1,68 @@
-######################
-# Project Specific
-######################
-/target/www/**
+# Created by .ignore support plugin (hsz.mobi)
+### Java template
+# Compiled class file
+*.class
 
-######################
-# Node
-######################
-node/
-node_tmp/
-node_modules/
+# Log file
+*.log
 
-######################
-# SASS
-######################
-.sass-cache/
+# BlueJ files
+*.ctxt
 
-######################
-# Eclipse
-######################
-*.pydevproject
-.project
-.metadata
-tmp/
-tmp/**/*
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.classpath
-.settings/
-.loadpath
-/src/main/resources/rebel.xml
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
 
-# External tool builders
-.externalToolBuilders/**
-
-# Locally stored "Eclipse launch configurations"
-*.launch
-
-# CDT-specific
-.cproject
-
-# PDT-specific
-.buildpath
-
-######################
-# Intellij
-######################
-.idea/
-*.iml
-*.iws
-*.ipr
-*.ids
-*.orig
-
-######################
-# Visual Studio Code
-######################
-.vscode/
-
-######################
-# Maven
-######################
-log/
-target/
-
-######################
-# Gradle
-######################
-.gradle/
-
-######################
-# Package Files
-######################
+# Package Files #
 *.jar
 *.war
 *.ear
-*.db
+*.zip
+*.tar.gz
+*.rar
 
-######################
-# Windows
-######################
-# Windows image file caches
-Thumbs.db
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+### Maven template
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
 
-# Folder config file
-Desktop.ini
+# Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
+!/.mvn/wrapper/maven-wrapper.jar
 
-######################
-# Mac OSX
-######################
-.DS_Store
-.svn
-
-# Thumbnails
-._*
-
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-
-######################
-# Directories
-######################
-/build/
-/bin/
-/deploy/
-
-######################
-# Logs
-######################
-*.log
-
-######################
-# Others
-######################
-*.class
-*.*~
-*~
-.merge_file*
-
-######################
-# Gradle Wrapper
-######################
-!gradle/wrapper/gradle-wrapper.jar
-
-######################
-# Maven Wrapper
-######################
-!.mvn/wrapper/maven-wrapper.jar
-
-######################
-# ESLint
-######################
-.eslintcache
+.idea/
+api/securityalarm-api.iml
+api/src/main/webapp/
+api/target/
+application/.gitattributes
+application/.gitignore
+application/.openshift/
+application/build_deploy_amazon
+application/build_deploy_openshift
+application/build_deploy_openshift_
+application/deploy
+application/id_rsa.pub
+application/lib/
+application/logs/
+application/securityalarm.pid
+application/securityalarm_public_status.sql
+application/settings.xml
+application/src/main/webapp/bower_components/angular-google-maps/spec/backend/
+application/src/main/webapp/bower_components/betsol-ng-intl-tel-input/demo/vendor/
+application/src/main/webapp/bower_components/checklist-model/test/
+application/src/main/webapp/bower_components/google-maps-utility-library-v3-infobox/docs/
+application/src/main/webapp/bower_components/google-maps-utility-library-v3-infobox/examples/
+application/src/main/webapp/bower_components/google-maps-utility-library-v3-keydragzoom/example/
+application/src/main/webapp/bower_components/google-maps-utility-library-v3-markerwithlabel/docs/
+application/src/main/webapp/bower_components/markerclustererplus/docs/
+application/src/test/gatling/bodies/
+application/src/test/gatling/data/
+client/securityalarm-client.iml
+client/src/main/java/com/romif/securityalarm/service/
+securityalarm.iml
