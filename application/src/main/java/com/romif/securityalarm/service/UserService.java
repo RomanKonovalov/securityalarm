@@ -1,16 +1,11 @@
 package com.romif.securityalarm.service;
 
 import com.romif.securityalarm.domain.Authority;
-import com.romif.securityalarm.domain.Device;
-import com.romif.securityalarm.domain.DeviceCredentials;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.AuthorityRepository;
-import com.romif.securityalarm.repository.DeviceCredentialsRepository;
-import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.security.SecurityUtils;
-import com.romif.securityalarm.service.dto.DeviceDTO;
 import com.romif.securityalarm.service.dto.LocationDTO;
 import com.romif.securityalarm.service.util.RandomUtil;
 import com.romif.securityalarm.web.rest.vm.ManagedUserVM;
@@ -39,7 +34,7 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     @Inject
-    public JdbcTokenStore jdbcTokenStore;
+    private JdbcTokenStore jdbcTokenStore;
 
     @Inject
     private UserRepository userRepository;

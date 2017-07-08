@@ -22,7 +22,7 @@ public class MessageResponse__ {
     @JsonProperty("recipient")
     private String recipient;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("id")
     public String getId() {

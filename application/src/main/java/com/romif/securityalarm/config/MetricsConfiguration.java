@@ -39,9 +39,9 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
     private static final String PROP_METRIC_REG_JVM_BUFFERS = "jvm.buffers";
     private final Logger log = LoggerFactory.getLogger(MetricsConfiguration.class);
 
-    private MetricRegistry metricRegistry = new MetricRegistry();
+    private final MetricRegistry metricRegistry = new MetricRegistry();
 
-    private HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
+    private final HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
 
     @Inject
     private ApplicationProperties applicationProperties;

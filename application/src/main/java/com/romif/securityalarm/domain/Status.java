@@ -1,12 +1,12 @@
 package com.romif.securityalarm.domain;
 
 
+import com.romif.securityalarm.api.dto.DeviceState;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +14,7 @@ import java.io.Serializable;
 /**
  * A Status.
  */
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "status")
 @Data

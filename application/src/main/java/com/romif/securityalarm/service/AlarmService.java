@@ -4,15 +4,12 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.romif.securityalarm.domain.*;
 import com.romif.securityalarm.repository.AlarmRepository;
-import com.romif.securityalarm.repository.DeviceCredentialsRepository;
 import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,8 +42,8 @@ public class AlarmService {
     @Inject
     private PasswordEncoder passwordEncoder;
 
-    private Cache<String, Alarm> emailsMoving = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
-    private Cache<Alarm, Object> emailsInaccessible = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
+    private final Cache<String, Alarm> emailsMoving = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
+    private final Cache<Alarm, Object> emailsInaccessible = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
 
 
     @Scheduled(cron = "* * * * * *")
@@ -71,9 +68,7 @@ public class AlarmService {
                             log.error("ALARM!! Device is inaccessible. Sending email");
                             Optional<User> user =  userRepository.findOneByLogin(alarm.getCreatedBy());
 
-                            if (user.isPresent()) {
-                                mailService.sendDeviceInaccessibleAlertEmail(user.get(), status.get());
-                            }
+                            user.ifPresent(user1 -> mailService.sendDeviceInaccessibleAlertEmail(user1, status.get()));
 
                         }
                     }
@@ -96,9 +91,7 @@ public class AlarmService {
                             log.error("ALARM!! Device is moving. Sending email");
                             Optional<User> user =  userRepository.findOneByLogin(alarm.getCreatedBy());
 
-                            if (user.isPresent()) {
-                                mailService.sendDeviceMovingAlertEmail(user.get(), statuses.element());
-                            }
+                            user.ifPresent(user1 -> mailService.sendDeviceMovingAlertEmail(user1, statuses.element()));
 
                         }
                     }

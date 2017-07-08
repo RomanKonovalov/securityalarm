@@ -1,7 +1,6 @@
 package com.romif.securityalarm.repository;
 
 import com.romif.securityalarm.domain.Device;
-import com.romif.securityalarm.domain.GenericUser;
 import com.romif.securityalarm.domain.User;
 
 import java.time.ZonedDateTime;

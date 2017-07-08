@@ -22,9 +22,9 @@ import java.util.Optional;
 @Transactional
 public class AuditEventService {
 
-    private PersistenceAuditEventRepository persistenceAuditEventRepository;
+    private final PersistenceAuditEventRepository persistenceAuditEventRepository;
 
-    private AuditEventConverter auditEventConverter;
+    private final AuditEventConverter auditEventConverter;
 
     @Inject
     public AuditEventService(

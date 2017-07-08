@@ -1,0 +1,38 @@
+{
+    "properties": [
+        {
+            "name": "spring.devtools.restart.enabled",
+            "type": "java.lang.String",
+            "description": "Description for spring.devtools.restart.enabled."
+        },
+        {
+            "name": "jhipster.http.cache.timeToLiveInDays",
+            "type": "java.lang.String",
+            "description": "Description for jhipster.http.cache.timeToLiveInDays."
+        },
+        {
+            "name": "spring.devtools.livereload.enabled",
+            "type": "java.lang.String",
+            "description": "Description for spring.devtools.livereload.enabled."
+        },
+        {
+            "name": "spring.devtools.restart.enabled",
+            "type": "java.lang.String",
+            "description": "Description for spring.devtools.restart.enabled."
+        },
+        {
+            "name": "jhipster.http.cache.timeToLiveInDays",
+            "type": "java.lang.String",
+            "description": "Description for jhipster.http.cache.timeToLiveInDays."
+        },
+        {
+            "name": "spring.devtools.livereload.enabled",
+            "type": "java.lang.String",
+            "description": "Description for spring.devtools.livereload.enabled."
+        },
+        {
+            "name": "spring.devtools.restart.enabled",
+            "type": "java.lang.String",
+            "description": "Description for spring.devtools.restart.enabled."
+        }
+    ] }

@@ -31,7 +31,7 @@ public class SwaggerConfiguration {
 
     private final Logger log = LoggerFactory.getLogger(SwaggerConfiguration.class);
 
-    public static final String DEFAULT_INCLUDE_PATTERN = "/api/.*";
+    private static final String DEFAULT_INCLUDE_PATTERN = "/api/.*";
 
     /**
      * Swagger Springfox configuration.

@@ -66,3 +66,5 @@ application/src/test/gatling/data/
 client/securityalarm-client.iml
 client/src/main/java/com/romif/securityalarm/service/
 securityalarm.iml
+/application/src/main/webapp/bower_components/
+application/src/main/webapp/bower_components/

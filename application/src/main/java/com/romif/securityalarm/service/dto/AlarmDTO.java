@@ -1,11 +1,9 @@
 package com.romif.securityalarm.service.dto;
 
-import com.romif.securityalarm.domain.Alarm;
 import com.romif.securityalarm.domain.NotificationType;
 import com.romif.securityalarm.domain.TrackingType;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.Set;
 

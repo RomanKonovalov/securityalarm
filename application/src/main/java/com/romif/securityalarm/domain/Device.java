@@ -1,14 +1,12 @@
 package com.romif.securityalarm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.romif.securityalarm.config.Constants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -18,7 +16,7 @@ import javax.validation.constraints.Size;
 @DiscriminatorValue(value = "device")
 @Data
 @ToString(exclude = {"alarm", "user"})
-@EqualsAndHashCode(callSuper = false, of = "login")
+@EqualsAndHashCode(of = "login")
 public class Device extends GenericUser {
 
     private static final long serialVersionUID = 1L;
@@ -27,10 +25,10 @@ public class Device extends GenericUser {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable = true)
+    @JoinColumn(name="user_id")
     private User user;
 
-    @OneToOne(optional=true, mappedBy="device")
+    @OneToOne(mappedBy="device")
     private Alarm alarm;
 
     @JsonIgnore

@@ -48,8 +48,8 @@ public class ProfileInfoResource {
 
     class ProfileInfoResponse {
 
-        public String[] activeProfiles;
-        public String ribbonEnv;
+        public final String[] activeProfiles;
+        public final String ribbonEnv;
 
         ProfileInfoResponse(String[] activeProfiles, String ribbonEnv) {
             this.activeProfiles = activeProfiles;

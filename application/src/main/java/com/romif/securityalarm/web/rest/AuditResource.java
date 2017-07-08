@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/management/audits")
 public class AuditResource {
 
-    private AuditEventService auditEventService;
+    private final AuditEventService auditEventService;
 
     @Inject
     public AuditResource(AuditEventService auditEventService) {

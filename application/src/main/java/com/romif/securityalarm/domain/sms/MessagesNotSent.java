@@ -27,7 +27,7 @@ public class MessagesNotSent {
     @JsonProperty("error")
     private Error error;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("unique_id")
     public String getUniqueId() {

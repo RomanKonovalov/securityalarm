@@ -17,7 +17,6 @@ public class App implements CommandLineRunner {
 
     public static void main(String[] args) throws Exception {
 
-        //disabled banner, don't want to see the spring logo
         SpringApplication app = new SpringApplication(App.class);
         app.setBannerMode(Banner.Mode.CONSOLE);
         app.run(args);
@@ -27,13 +26,6 @@ public class App implements CommandLineRunner {
     // Put your logic here.
     @Override
     public void run(String... args) throws Exception {
-
-        /*if (args.length > 0) {
-            System.out.println(helloService.getMessage(args[0].toString()));
-        } else {
-            System.out.println(helloService.getMessage());
-        }*/
-        System.out.println( "Hello World!" );
 
     }
 }

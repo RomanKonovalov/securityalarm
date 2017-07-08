@@ -44,7 +44,7 @@
             function onError(error) {
                 AlertService.error(error.data.message);
             }
-        }
+        };
 
         devices.$promise.then(function (result) {
             if (result.length > 0) {

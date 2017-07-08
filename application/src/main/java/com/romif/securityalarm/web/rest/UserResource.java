@@ -2,40 +2,29 @@ package com.romif.securityalarm.web.rest;
 
 import com.romif.securityalarm.config.Constants;
 import com.codahale.metrics.annotation.Timed;
-import com.romif.securityalarm.domain.*;
 import com.romif.securityalarm.domain.User;
-import com.romif.securityalarm.repository.AlarmRepository;
-import com.romif.securityalarm.repository.DeviceCredentialsRepository;
-import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
-import com.romif.securityalarm.service.DeviceService;
 import com.romif.securityalarm.service.MailService;
 import com.romif.securityalarm.service.UserService;
-import com.romif.securityalarm.service.dto.DeviceDTO;
-import com.romif.securityalarm.service.util.RandomUtil;
 import com.romif.securityalarm.web.rest.vm.ManagedUserVM;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import com.romif.securityalarm.web.rest.util.PaginationUtil;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**

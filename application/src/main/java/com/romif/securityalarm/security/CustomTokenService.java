@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Roman_Konovalov on 1/17/2017.
@@ -53,8 +54,8 @@ public class CustomTokenService extends DefaultTokenServices {
             .filter(device -> ((User)authentication.getPrincipal()).getUsername().equalsIgnoreCase(device.getLogin()))
             .findFirst()
             .map(device -> deviceCredentialsRepository.findOneByDevice(device))
-            .filter(optional -> optional.isPresent())
-            .map(optional -> optional.get())
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .ifPresent(deviceCredentials -> {
                 tokenStore.removeAccessToken(accessToken);
                 if (accessToken.getRefreshToken() != null) {

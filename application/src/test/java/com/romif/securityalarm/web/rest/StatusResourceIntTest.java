@@ -2,7 +2,7 @@ package com.romif.securityalarm.web.rest;
 
 import com.romif.securityalarm.SecurityalarmApp;
 
-import com.romif.securityalarm.domain.DeviceState;
+import com.romif.securityalarm.api.dto.DeviceState;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.repository.StatusRepository;
 import com.romif.securityalarm.service.StatusService;

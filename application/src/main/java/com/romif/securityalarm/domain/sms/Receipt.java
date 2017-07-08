@@ -1,6 +1,5 @@
 package com.romif.securityalarm.domain.sms;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 import java.util.Date;

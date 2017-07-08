@@ -1,5 +1,6 @@
 package com.romif.securityalarm.service;
 
+import com.romif.securityalarm.api.dto.DeviceState;
 import com.romif.securityalarm.config.ApplicationProperties;
 import com.romif.securityalarm.domain.*;
 import com.romif.securityalarm.repository.DeviceRepository;
@@ -62,9 +63,8 @@ public class StatusService {
     }
 
     @CachePut(value = "statusQueue", key = "#status.createdBy")
-    public Queue<Status> putInQueue(Status status, Queue<Status> statusQueue) {
+    public void putInQueue(Status status, Queue<Status> statusQueue) {
         statusQueue.add(status);
-        return statusQueue;
     }
 
     /**

@@ -1,7 +1,5 @@
 package com.romif.securityalarm.service.dto;
 
-import javax.persistence.Column;
-
 /**
  * Created by Roman_Konovalov on 1/19/2017.
  */

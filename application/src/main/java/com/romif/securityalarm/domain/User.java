@@ -1,20 +1,14 @@
 package com.romif.securityalarm.domain;
 
-import com.romif.securityalarm.config.Constants;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.time.ZonedDateTime;
 
@@ -70,7 +64,7 @@ public class User extends GenericUser {
     @Column(name = "reset_key", length = 20)
     private String resetKey;
 
-    @Column(name = "reset_date", nullable = true)
+    @Column(name = "reset_date")
     private ZonedDateTime resetDate = null;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
@@ -88,11 +82,7 @@ public class User extends GenericUser {
 
         User user = (User) o;
 
-        if (!getLogin().equals(user.getLogin())) {
-            return false;
-        }
-
-        return true;
+        return getLogin().equals(user.getLogin());
     }
 
     @Override

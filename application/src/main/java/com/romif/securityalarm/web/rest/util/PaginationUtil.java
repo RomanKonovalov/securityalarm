@@ -42,7 +42,7 @@ public final class PaginationUtil {
         return headers;
     }
 
-    private static String generateUri(String baseUrl, int page, int size) throws URISyntaxException {
+    private static String generateUri(String baseUrl, int page, int size) {
         return UriComponentsBuilder.fromUriString(baseUrl).queryParam("page", page).queryParam("size", size).toUriString();
     }
 }

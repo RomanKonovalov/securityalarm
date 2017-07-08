@@ -2,7 +2,6 @@ package com.romif.securityalarm.config;
 
 import com.romif.securityalarm.security.AjaxLogoutSuccessHandler;
 import com.romif.securityalarm.security.AuthoritiesConstants;
-import com.romif.securityalarm.security.CustomTokenService;
 import com.romif.securityalarm.security.Http401UnauthorizedEntryPoint;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;

@@ -1,6 +1,5 @@
 package com.romif.securityalarm.security;
 
-import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.GenericUser;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.DeviceRepository;

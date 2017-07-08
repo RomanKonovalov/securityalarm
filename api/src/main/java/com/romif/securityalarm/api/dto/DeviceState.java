@@ -1,4 +1,4 @@
-package com.romif.securityalarm.domain;
+package com.romif.securityalarm.api.dto;
 
 public enum DeviceState {
     OK, CONFIGURED

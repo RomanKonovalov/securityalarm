@@ -104,8 +104,7 @@ public class DeviceResource {
     @Secured(AuthoritiesConstants.ADMIN)
     public CompletableFuture<ConfigStatus> configDevice(@PathVariable String login) {
         log.debug("REST request to config Device: {}", login);
-        CompletableFuture<ConfigStatus> result = deviceService.configDevice(login);
-        return result;
+        return deviceService.configDevice(login);
         /*return result ? ResponseEntity.ok().headers(HeaderUtil.createAlert( "Config has been sent to device: " + login, login)).build() :
             ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("device", "deviceError", "Error while sending config"))
                 .body(null);*/

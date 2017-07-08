@@ -21,7 +21,7 @@ import java.io.IOException;
 public class AjaxLogoutSuccessHandler extends AbstractAuthenticationTargetUrlRequestHandler
     implements LogoutSuccessHandler {
 
-    public static final String BEARER_AUTHENTICATION = "Bearer ";
+    private static final String BEARER_AUTHENTICATION = "Bearer ";
 
     @Inject
     private TokenStore tokenStore;

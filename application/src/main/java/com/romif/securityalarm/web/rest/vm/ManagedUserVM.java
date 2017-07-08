@@ -2,13 +2,13 @@ package com.romif.securityalarm.web.rest.vm;
 
 import java.time.ZonedDateTime;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.service.dto.LocationDTO;
 import com.romif.securityalarm.service.dto.UserDTO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -17,6 +17,7 @@ import javax.validation.constraints.Size;
 /**
  * View Model extending the UserDTO, which is meant to be used in the user management UI.
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public class ManagedUserVM extends UserDTO {

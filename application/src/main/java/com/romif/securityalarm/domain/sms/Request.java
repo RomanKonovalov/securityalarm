@@ -29,7 +29,7 @@ public class Request {
     @JsonProperty("receiptUrl")
     private String receiptUrl;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("messages")
     public List<MessageRequest> getMessages() {

@@ -1,6 +1,5 @@
 package com.romif.securityalarm.repository;
 
-import com.romif.securityalarm.domain.Authority;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.DeviceCredentials;
 import org.springframework.data.jpa.repository.JpaRepository;

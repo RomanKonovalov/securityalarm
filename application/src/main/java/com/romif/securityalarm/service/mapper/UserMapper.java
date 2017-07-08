@@ -1,9 +1,7 @@
 package com.romif.securityalarm.service.mapper;
 
 import com.romif.securityalarm.domain.Authority;
-import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.User;
-import com.romif.securityalarm.service.dto.DeviceDTO;
 import com.romif.securityalarm.service.dto.UserDTO;
 import org.mapstruct.*;
 

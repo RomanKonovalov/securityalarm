@@ -3,7 +3,6 @@ package com.romif.securityalarm.service.dto;
 import com.romif.securityalarm.config.Constants;
 
 import com.romif.securityalarm.domain.Authority;
-import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.User;
 
 import lombok.Data;

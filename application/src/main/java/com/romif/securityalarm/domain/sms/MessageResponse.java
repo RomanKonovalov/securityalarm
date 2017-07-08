@@ -42,7 +42,7 @@ public class MessageResponse {
     @JsonProperty("messages")
     private List<MessageResponse__> messages = null;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("balance")
     public Integer getBalance() {

@@ -25,7 +25,7 @@ public class MessageResponse_ {
     @JsonProperty("content")
     private String content;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("num_parts")
     public Integer getNumParts() {

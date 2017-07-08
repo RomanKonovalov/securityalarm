@@ -1,17 +1,17 @@
 package com.romif.securityalarm.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.romif.securityalarm.api.dto.StatusDto;
 import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.service.ImageService;
 import com.romif.securityalarm.service.StatusService;
+import com.romif.securityalarm.service.mapper.StatusMapper;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import com.romif.securityalarm.web.rest.util.PaginationUtil;
 
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -45,26 +44,26 @@ public class StatusResource {
     @Inject
     private ImageService imageService;
 
+    @Inject
+    private StatusMapper statusMapper;
+
     /**
      * POST  /statuses : Create a new status.
      *
-     * @param status the status to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new status, or with status 400 (Bad Request) if the status has already an ID
-     * @throws URISyntaxException if the Location URI syntax is incorrect
+     * @param statusDto the status to create
+     * @return the ResponseEntity with status 201 (Created) and with body the new status
      */
     @Secured("ROLE_DEVICE")
     @PostMapping(Constants.SEND_LOCATION_PATH)
     @Timed
-    public ResponseEntity<?> saveStatus(@RequestBody Status status) throws URISyntaxException {
-        log.debug("REST request to save Status : {}", status);
-        if (status.getId() != null) {
+    public ResponseEntity<StatusDto> saveStatus(@RequestBody StatusDto statusDto) {
+        log.debug("REST request to save Status : {}", statusDto);
 
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("status", "indexists", "A new status cannot already have an ID")).body(null);
-        }
-        Status result = statusService.save(status);
-        Queue<Status> statuses =  statusService.getLast10StatusesCreatedBy(result.getCreatedBy());
-        statusService.putInQueue(result, statuses);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        Status status = statusService.save(statusMapper.statusDtoToStatus(statusDto));
+        StatusDto result = statusMapper.statusToStatusDto(status);
+        Queue<Status> statuses =  statusService.getLast10StatusesCreatedBy(status.getCreatedBy());
+        statusService.putInQueue(status, statuses);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @Secured("ROLE_DEVICE")

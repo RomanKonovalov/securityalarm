@@ -1,6 +1,5 @@
 package com.romif.securityalarm.web.controllers;
 
-import com.romif.securityalarm.config.Constants;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * Created by Roman_Konovalov on 3/1/2017.

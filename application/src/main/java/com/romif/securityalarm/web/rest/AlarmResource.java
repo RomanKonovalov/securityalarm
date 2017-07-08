@@ -9,11 +9,9 @@ import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.AlarmService;
 import com.romif.securityalarm.service.StatusService;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -26,8 +24,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 public class AlarmResource {
@@ -66,7 +62,7 @@ public class AlarmResource {
 
         Queue<Status> statuses = statusService.getLast10StatusesCreatedBy(alarm.getDevice().getLogin());
 
-        if (statuses.stream().count() < 10) {
+        if ((long) statuses.size() < 10) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("alarm", "notsufficientstatuses", "You don't have sufficient number of statuses. Please try again later")).body(null);
         }
 

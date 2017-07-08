@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.romif.securityalarm.config.Constants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.mapstruct.Named;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -23,7 +22,7 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type")
 @Data
-@EqualsAndHashCode(of = "login", callSuper = false)
+@EqualsAndHashCode(of = "login")
 public abstract class GenericUser extends AbstractAuditingEntity implements Serializable {
 
     @Id

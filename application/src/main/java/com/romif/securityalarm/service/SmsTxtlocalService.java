@@ -7,6 +7,7 @@ import com.romif.securityalarm.config.ApplicationProperties;
 import com.romif.securityalarm.domain.ConfigStatus;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.DeviceCredentials;
+import com.romif.securityalarm.domain.GenericUser;
 import com.romif.securityalarm.domain.sms.*;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.AuthoritiesConstants;
@@ -29,6 +30,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -44,7 +46,7 @@ public class SmsTxtlocalService {
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private ConcurrentMap<String, CompletableFuture<ConfigStatus>> reciepts = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, CompletableFuture<ConfigStatus>> reciepts = new ConcurrentHashMap<>();
 
     @Autowired
     private Environment environment;
@@ -57,37 +59,36 @@ public class SmsTxtlocalService {
 
     public CompletableFuture<ConfigStatus> sendConfig(Device device, DeviceCredentials deviceCredentials) {
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(deviceCredentials.getSecret());
-        stringBuilder.append(";");
-        stringBuilder.append(device.getApn());
-        stringBuilder.append(";");
-        stringBuilder.append(applicationProperties.getHttp().getHost());
-        stringBuilder.append(";");
-        stringBuilder.append(Constants.SEND_LOCATION_PATH);
-        stringBuilder.append(";");
-        stringBuilder.append(Constants.PAUSE_ALARM_PATH);
-        stringBuilder.append(";");
-        stringBuilder.append(Constants.RESUME_ALARM_PATH);
-        stringBuilder.append(";");
-        stringBuilder.append(deviceCredentials.getToken());
-        stringBuilder.append(";");
-        stringBuilder.append(StringUtils.remove(device.getUser().getPhone(), "+"));
-        stringBuilder.append(";");
+        String stringBuilder = deviceCredentials.getSecret() +
+            ";" +
+            device.getApn() +
+            ";" +
+            applicationProperties.getHttp().getHost() +
+            ";" +
+            Constants.SEND_LOCATION_PATH +
+            ";" +
+            Constants.PAUSE_ALARM_PATH +
+            ";" +
+            Constants.RESUME_ALARM_PATH +
+            ";" +
+            deviceCredentials.getToken() +
+            ";" +
+            StringUtils.remove(device.getUser().getPhone(), "+") +
+            ";";
 
         Request request = new Request();
         MessageRequest messageRequest = new MessageRequest();
         messageRequest.setNumber(device.getPhone());
-        messageRequest.setText(stringBuilder.toString());
-        request.setMessages(Arrays.asList(messageRequest));
-        request.setTest(Arrays.asList(environment.getActiveProfiles()).contains(Constants.SPRING_PROFILE_DEVELOPMENT) ? true : false);
+        messageRequest.setText(stringBuilder);
+        request.setMessages(Collections.singletonList(messageRequest));
+        request.setTest(Arrays.asList(environment.getActiveProfiles()).contains(Constants.SPRING_PROFILE_DEVELOPMENT));
 
         String receiptUrl = UriComponentsBuilder.fromUriString("/api" + Constants.HANDLE_RECEIPTS_PATH)
             .host(applicationProperties.getHttp().getHost()).scheme("http").toUriString();
 
         request.setReceiptUrl(receiptUrl);
 
-        MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<>();
         bodyMap.add("apikey", applicationProperties.getSecurity().getSms().getApikey());
         bodyMap.add("data", new Gson().toJson(request));
 
@@ -140,13 +141,13 @@ public class SmsTxtlocalService {
     public BigDecimal getBalance() {
         String login = SecurityUtils.getCurrentUserLogin();
 
-        String phone = userRepository.findOneByLogin(login).map(user -> user.getPhone()).orElse("1234567890");
+        String phone = userRepository.findOneByLogin(login).map(GenericUser::getPhone).orElse("1234567890");
 
         Request request = new Request();
         MessageRequest messageRequest = new MessageRequest();
         messageRequest.setNumber(phone);
         messageRequest.setText("text");
-        request.setMessages(Arrays.asList(messageRequest));
+        request.setMessages(Collections.singletonList(messageRequest));
         request.setTest(true);
 
         String receiptUrl = UriComponentsBuilder.fromUriString("/api" + Constants.HANDLE_RECEIPTS_PATH)
@@ -154,7 +155,7 @@ public class SmsTxtlocalService {
 
         request.setReceiptUrl(receiptUrl);
 
-        MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<>();
         bodyMap.add("apikey", applicationProperties.getSecurity().getSms().getApikey());
         bodyMap.add("data", new Gson().toJson(request));
 

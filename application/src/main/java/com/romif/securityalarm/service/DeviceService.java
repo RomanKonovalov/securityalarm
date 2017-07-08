@@ -59,7 +59,7 @@ public class DeviceService {
 
         Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(applicationProperties.getSecurity().getAuthentication().getOauth().getClientid());
 
-        List<DeviceManagementDTO> deviceDTOS = deviceCredentialsRepository.findAllByDeviceUserLogin(login).stream()
+        return deviceCredentialsRepository.findAllByDeviceUserLogin(login).stream()
             .map(deviceCredentials -> {
                 DeviceManagementDTO deviceDTO = deviceMapper.deviceToDeviceManagementDTO(deviceCredentials.getDevice());
                 deviceDTO.setAuthorized(tokens.stream().anyMatch(oAuth2AccessToken -> oAuth2AccessToken.getValue().equals(deviceCredentials.getToken())));
@@ -69,20 +69,14 @@ public class DeviceService {
                 return deviceDTO;
             })
             .collect(Collectors.toList());
-
-        return deviceDTOS;
     }
 
     public List<DeviceDTO> getAllLoggedDevices(String login) {
 
-        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(applicationProperties.getSecurity().getAuthentication().getOauth().getClientid());
-
-        List<DeviceDTO> deviceDTOS = getAllDevices(login).stream()
+        return getAllDevices(login).stream()
             .filter(DeviceManagementDTO::isAuthorized)
             .map(deviceManagementDTO -> deviceMapper.deviceManagementDTOToDeviceDTO(deviceManagementDTO))
             .collect(Collectors.toList());
-
-        return deviceDTOS;
     }
 
     public Device createDevice(Device device) {
@@ -125,11 +119,7 @@ public class DeviceService {
     public boolean loginDevice(String login) {
         Optional<DeviceCredentials> deviceCredentials = deviceCredentialsRepository.findOneByDeviceLogin(login);
 
-        if (deviceCredentials.isPresent()) {
-            return securityService.authenticate(deviceCredentials.get());
-        } else {
-            return false;
-        }
+        return deviceCredentials.filter(deviceCredentials1 -> securityService.authenticate(deviceCredentials1)).isPresent();
 
     }
 

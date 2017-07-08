@@ -3,16 +3,8 @@ package com.romif.securityalarm.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +12,7 @@ import java.util.Set;
 @Table(name = "alarm")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(of = "device", callSuper = false)
+@EqualsAndHashCode(of = "device")
 public class Alarm extends AbstractAuditingEntity {
 
     private static final long serialVersionUID = 1L;
