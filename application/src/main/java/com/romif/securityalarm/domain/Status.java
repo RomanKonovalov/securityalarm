@@ -41,8 +41,7 @@ public class Status extends AbstractAuditingEntity implements Serializable {
     @Column(name = "thumbnail")
     private byte[] thumbnail;
 
-    @Transient
-    @JsonProperty
+    @Column(name = "image")
     private byte[] image;
 
 }

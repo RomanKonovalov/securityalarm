@@ -17,4 +17,6 @@ public class StatusDto {
 
     private float longitude;
 
+    private byte[] image;
+
 }

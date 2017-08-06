@@ -42,9 +42,6 @@ public class StatusResource {
     private StatusService statusService;
 
     @Inject
-    private ImageService imageService;
-
-    @Inject
     private StatusMapper statusMapper;
 
     /**
@@ -64,27 +61,6 @@ public class StatusResource {
         Queue<Status> statuses =  statusService.getLast10StatusesCreatedBy(status.getCreatedBy());
         statusService.putInQueue(status, statuses);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
-    }
-
-    @Secured("ROLE_DEVICE")
-    @PostMapping(Constants.SEND_IMAGE_PATH)
-    @Timed
-    public ResponseEntity<?> saveImage(@RequestParam("file") MultipartFile file, @PathVariable Status status) throws URISyntaxException {
-        if (status == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        log.debug("REST request to save Image : {}", file.getOriginalFilename());
-
-        try {
-            imageService.saveImage(file, status);
-        } catch (IOException e) {
-            log.error("Error", e);
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("status", "saveimageerror", "Error while saving image")).body(null);
-
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**

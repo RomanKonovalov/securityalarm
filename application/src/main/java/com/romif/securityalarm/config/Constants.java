@@ -24,7 +24,6 @@ public final class Constants {
     public static final String SYSTEM_ACCOUNT = "system";
 
     public static final String SEND_LOCATION_PATH = "/api/statuses";
-    public static final String SEND_IMAGE_PATH = "/api/statuses/{status}/image";
     public static final String PAUSE_ALARM_PATH = "/api/alarms/pause";
     public static final String RESUME_ALARM_PATH = "/api/alarms/resume";
     public static final String HANDLE_RECEIPTS_PATH = "/devices/handleReceipts";

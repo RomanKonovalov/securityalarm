@@ -1,10 +1,8 @@
 package com.romif.securityalarm.service;
 
 import com.romif.securityalarm.config.ApplicationProperties;
-import com.romif.securityalarm.domain.Status;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -12,8 +10,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -25,17 +23,13 @@ public class ImageService {
     @Inject
     private ApplicationProperties applicationProperties;
 
-    @Inject
-    private StatusService statusService;
+    public byte[] getThumbnail(byte[] image) throws IOException {
 
-    public void saveImage(MultipartFile file, Status status) throws IOException {
+        if (image == null) {
+            return null;
+        }
 
-        File folder = new File(applicationProperties.getImage().getStoragePath() + File.separator + status.getCreatedBy());
-        folder.mkdirs();
-        File imageFile = new File(folder, File.separator + status.getId() + ".jpg");
-        file.transferTo(imageFile);
-
-        BufferedImage imgIn = ImageIO.read(imageFile);
+        BufferedImage imgIn = ImageIO.read(new ByteArrayInputStream(image));
 
         double scale;
         if (imgIn.getWidth() >= imgIn.getHeight()) {
@@ -58,9 +52,7 @@ public class ImageService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(thumbnailOut, "jpeg", baos);
 
-        status.setThumbnail(baos.toByteArray());
-
-        statusService.save(status);
+        return baos.toByteArray();
     }
 
 }

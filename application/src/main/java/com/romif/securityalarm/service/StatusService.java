@@ -42,6 +42,9 @@ public class StatusService {
     @Inject
     private ApplicationProperties applicationProperties;
 
+    @Inject
+    private ImageService imageService;
+
     /**
      * Save a status.
      *
@@ -51,6 +54,12 @@ public class StatusService {
     @CachePut(value = "status", key = "#result.createdBy")
     public Status save(Status status) {
         log.debug("Request to save Status : {}", status);
+        try {
+            status.setThumbnail(imageService.getThumbnail(status.getImage()));
+        } catch (IOException e) {
+            log.error("Error while making thumbnail for status {}", status);
+            e.printStackTrace();
+        }
         Status result = statusRepository.save(status);
         if (DeviceState.CONFIGURED.equals(status.getDeviceState())) {
             deviceRepository.findOneByLogin(result.getCreatedBy())
@@ -63,8 +72,9 @@ public class StatusService {
     }
 
     @CachePut(value = "statusQueue", key = "#status.createdBy")
-    public void putInQueue(Status status, Queue<Status> statusQueue) {
+    public Queue<Status> putInQueue(Status status, Queue<Status> statusQueue) {
         statusQueue.add(status);
+        return statusQueue;
     }
 
     /**
