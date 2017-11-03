@@ -1,13 +1,13 @@
 package com.romif.securityalarm;
 
+import com.romif.securityalarm.config.ApplicationProperties;
 import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.config.DefaultProfileUtil;
-import com.romif.securityalarm.config.ApplicationProperties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.autoconfigure.*;
+import org.springframework.boot.actuate.autoconfigure.MetricFilterAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.MetricRepositoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -60,6 +60,7 @@ public class SecurityalarmApp {
      * @throws UnknownHostException if the local host name could not be resolved into an address
      */
     public static void main(String[] args) throws UnknownHostException {
+
         SpringApplication app = new SpringApplication(SecurityalarmApp.class);
         app.addListeners(new ApplicationPidFileWriter("securityalarm.pid"));
         DefaultProfileUtil.addDefaultProfile(app);
@@ -72,6 +73,8 @@ public class SecurityalarmApp {
             env.getProperty("server.port"),
             InetAddress.getLocalHost().getHostAddress(),
             env.getProperty("server.port"));
+
+
 
     }
 }

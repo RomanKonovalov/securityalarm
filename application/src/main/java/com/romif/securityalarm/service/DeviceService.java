@@ -47,9 +47,6 @@ public class DeviceService {
     private DeviceRepository deviceRepository;
 
     @Inject
-    private SecurityService securityService;
-
-    @Inject
     private DeviceMapper deviceMapper;
 
     @Inject
@@ -114,13 +111,6 @@ public class DeviceService {
             deviceRepository.delete(device);
             log.debug("Deleted Device: {}", device);
         });
-    }
-
-    public boolean loginDevice(String login) {
-        Optional<DeviceCredentials> deviceCredentials = deviceCredentialsRepository.findOneByDeviceLogin(login);
-
-        return deviceCredentials.filter(deviceCredentials1 -> securityService.authenticate(deviceCredentials1)).isPresent();
-
     }
 
     public CompletableFuture<ConfigStatus> configDevice(String login) {

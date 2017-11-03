@@ -4,8 +4,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+
 @Data
-@ToString
+@ToString(exclude = "images")
 @NoArgsConstructor
 public class StatusDto {
 
@@ -13,10 +15,8 @@ public class StatusDto {
 
     private DeviceState deviceState;
 
-    private float latitude;
+    private LocationDto location;
 
-    private float longitude;
-
-    private byte[] image;
+    private List<ImageDto> images;
 
 }

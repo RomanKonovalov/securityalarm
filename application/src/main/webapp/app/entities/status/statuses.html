@@ -3,16 +3,30 @@
     <jhi-alert></jhi-alert>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-xs-4 no-padding-left">
-                <button class="btn btn-primary" ng-click="vm.refresh(vm.device)" >
-                    <span class="glyphicon glyphicon-refresh"></span>
-                    <span >
-                        Refresh
-                    </span>
-                </button>
-
+            <div class="col-md-7 no-padding-left">
+                <div
+                    rg-range-picker="myDatetimeRange"
+                    labels="myDatetimeLabels"
+                    on-time-change="whenTimeChange"
+                    super-max-date=""
+                    super-min-date=""
+                    max-range-date="10"></div>
             </div>
-            <div class="col-xs-offset-3 col-xs-5">
+            <div class="col-md-2 no-padding-left">
+                <div class="row" style="margin-bottom: 10px">
+                    <button class="btn btn-primary" ng-click="vm.playVideo(vm.device)" >
+                        <span class="glyphicon glyphicon-refresh"></span>
+                        <span >Play/Stop video</span>
+                    </button>
+                </div>
+                <div class="row" >
+                        <button class="btn btn-primary" ng-click="vm.refresh(vm.device)" >
+                            <span class="glyphicon glyphicon-refresh"></span>
+                            <span>Refresh</span>
+                        </button>
+                </div>
+            </div>
+            <div class="col-md-3">
                 <label for="device" class="col-xs-6 control-label text-right">Device:</label>
                 <div class="col-xs-6">
                     <select class="form-control" ng-model="vm.device" id="device"
@@ -22,6 +36,22 @@
             </div>
         </div>
     </div>
+    <div ng-if="config.sources[0].src" class="panel-body videogular-container">
+
+        <videogular vg-theme="config.theme">
+            <vg-media vg-src="config.sources"
+                      vg-tracks="config.tracks" vg-flash-player>
+            </vg-media>
+
+            <vg-controls>
+                <vg-play-pause-button></vg-play-pause-button>
+                <vg-fullscreen-button></vg-fullscreen-button>
+            </vg-controls>
+
+            <vg-overlay-play></vg-overlay-play>
+        </videogular>
+
+    </div>
     <br/>
     <div class="table-responsive">
         <table class="jh-table table table-striped">
@@ -29,8 +59,8 @@
                 <tr jh-sort="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
                     <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="deviceState"><span>Device State</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="latitude"><span>Latitude</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="longitude"><span>Longitude</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="location.latitude"><span>Latitude</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="location.longitude"><span>Longitude</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="createdDate"><span>Created Date</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="createdBy"><span>Created By</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th>Image</th>
@@ -41,8 +71,8 @@
                 <tr ng-repeat="status in vm.statuses track by status.id">
                     <td><a ui-sref="status-detail({id:status.id})">{{status.id}}</a></td>
                     <td>{{status.deviceState}}</td>
-                    <td>{{status.latitude}}</td>
-                    <td>{{status.longitude}}</td>
+                    <td>{{status.location.latitude}}</td>
+                    <td>{{status.location.longitude}}</td>
                     <td>{{status.createdDate | date:'dd/MM/yy HH:mm'}}</td>
                     <td>{{status.createdBy}}</td>
                     <td><img ng-src="data:image/JPEG;base64,{{status.thumbnail}}"></td>

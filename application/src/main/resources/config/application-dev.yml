@@ -79,5 +79,4 @@ jhipster:
             port: 5000
             queueSize: 512
     image:
-        storagePath: D:\Documents\workspaceJava\securityalarm\images
         maxLongSide: 50

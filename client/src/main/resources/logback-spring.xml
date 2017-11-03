@@ -46,6 +46,7 @@
     <logger name="sun.rmi" level="WARN"/>
     <logger name="sun.rmi.transport" level="WARN"/>
     <logger name="sun.net" level="WARN"/>
+    <logger name="de.taimos.gpsd4java.backend" level="INFO"/>
 
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>

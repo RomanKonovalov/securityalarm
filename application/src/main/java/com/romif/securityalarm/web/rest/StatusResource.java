@@ -5,12 +5,10 @@ import com.romif.securityalarm.api.dto.StatusDto;
 import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Status;
-import com.romif.securityalarm.service.ImageService;
 import com.romif.securityalarm.service.StatusService;
 import com.romif.securityalarm.service.mapper.StatusMapper;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import com.romif.securityalarm.web.rest.util.PaginationUtil;
-
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +20,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Queue;
 
 /**
  * REST controller for managing Status.
@@ -90,6 +93,34 @@ public class StatusResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @GetMapping("/api/statuses/video")
+    @Secured("ROLE_USER")
+    @Timed
+    @ResponseBody
+    public StreamingResponseBody getStatusVideo(@RequestParam ZonedDateTime startDate,
+                                                @RequestParam ZonedDateTime endDate,
+                                                @RequestParam Device device,
+                                                HttpServletResponse response) {
+        log.debug("REST request to get a page of Statuses");
+        String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+        /*if (device == null || !login.equals(device.getUser().getLogin())) {
+            HttpHeaders headers = HeaderUtil.createFailureAlert("device", "deviceNotFound", "Device not found");
+            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+        }*/
+
+        response.setContentType("video/x-flv");
+        response.setHeader("Content-Disposition", "attachment; filename=video.flv");
+        return outputStream -> {
+            try {
+                statusService.getStatusVideo(startDate, endDate, device, outputStream);
+            } catch (AWTException | InterruptedException | IOException e) {
+                log.error("Can't create video", e);
+            }
+        };
+
+    }
+
     /**
      * GET  /statuses/:id : get the "id" status.
      *
@@ -99,10 +130,15 @@ public class StatusResource {
     @Secured("ROLE_USER")
     @GetMapping("/api/statuses/{id}")
     @Timed
-    public ResponseEntity<Status> getStatus(@PathVariable Long id) {
+    public ResponseEntity<StatusDto> getStatus(@PathVariable Long id) {
         log.debug("REST request to get Status : {}", id);
         Optional<Status> status = statusService.findOne(id);
         return status
+            .map(s -> {
+                s.getImages().forEach(i -> i.getRawImage());
+
+                return statusMapper.statusToStatusDto(s);
+            })
             .map(result -> new ResponseEntity<>(
                 result,
                 HttpStatus.OK))

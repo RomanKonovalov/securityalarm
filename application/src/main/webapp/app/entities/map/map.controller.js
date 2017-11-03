@@ -51,7 +51,7 @@
             last6hours.setHours(last6hours.getHours() - 6);
             $scope.startDate = last6hours;
             $scope.endDate = new Date();
-            limit = 1000;
+            limit = 100;
             loadAll();
         };
 
@@ -82,7 +82,7 @@
 
         $scope.polylines = [];
 
-        var homePosition = { latitude: Account.location.latitude, longitude: Account.location.longitude };
+        var homePosition = Account.location;
 
         $scope.marker = {};
 
@@ -116,13 +116,17 @@
 
                 uiGmapGoogleMapApi.then(function() {
 
-                    var lastPosition = data[0] || homePosition;
+                    var newPosition = _.find(data, function(o) {
+                        return !isNaN(o.location.latitude) && !isNaN(o.location.longitude);
+                    });
 
-                    $scope.map.center = { latitude: lastPosition.latitude, longitude: lastPosition.longitude };
+                    var lastPosition = newPosition ? newPosition.location : homePosition;
+
+                    $scope.map.center = lastPosition;
 
                     $scope.marker.current = !data[0] ? undefined : {
                         id: 1,
-                        coords: {latitude: lastPosition.latitude, longitude: lastPosition.longitude},
+                        coords: lastPosition,
                         options: {
                             draggable: false ,
                             title: 'Current position',
@@ -131,13 +135,13 @@
 
                     var bounds = new google.maps.LatLngBounds();
                     for (var i in data) {
-                        if (data[i].latitude && data[i].longitude) {
-                            var position = new google.maps.LatLng(data[i].latitude, data[i].longitude);
+                        if (data[i].location && !isNaN(data[i].location.latitude) && !isNaN(data[i].location.longitude)) {
+                            var position = new google.maps.LatLng(data[i].location.latitude, data[i].location.longitude);
                             bounds.extend(position);
                         }
                     }
 
-                    $scope.map.bounds = !data[0] ? undefined : {
+                    $scope.map.bounds = !newPosition ? undefined : {
                         northeast: {
                             latitude: bounds.getNorthEast().lat(),
                             longitude: bounds.getNorthEast().lng()
@@ -148,12 +152,18 @@
                         }
                     };
 
-                    $scope.map.zoom = !data[0] ? 16 : undefined;
+                    $scope.map.zoom = !newPosition ? 16 : undefined;
+
+                    var path = _.filter(data, new function (el) {
+                        return el && el.location && !isNaN(el.location.latitude) && !isNaN(el.location.longitude);
+                    });
+
+                    path = _.map(path, 'location');
 
                     $scope.polylines = [
                         {
                             id: 1,
-                            path: data,
+                            path: path,
                             stroke: {
                                 color: '#6060FB',
                                 weight: 2

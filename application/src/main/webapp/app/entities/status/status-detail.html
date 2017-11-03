@@ -8,11 +8,14 @@
         <dd>
             <span>{{vm.status.deviceState}}</span>
         </dd>
-        <ui-gmap-google-map ng-if="vm.status.latitude && vm.status.longitude" center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" control="map.control">
+        <ui-gmap-google-map ng-if="vm.status.location.latitude && vm.status.location.longitude" center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" control="map.control">
             <ui-gmap-marker coords="marker.coords" options="marker.options" idkey="marker.id">
             </ui-gmap-marker>
         </ui-gmap-google-map>
-        <img ng-src="data:image/JPEG;base64,{{vm.status.image}}">
+        <div  ng-repeat="image in vm.status.images track by $index">
+            <img ng-src="data:image/JPEG;base64,{{image.rawImage}}">
+        </div>
+
     </dl>
 
     <button type="submit"

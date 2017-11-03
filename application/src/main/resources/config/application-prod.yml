@@ -19,10 +19,10 @@ spring:
             enabled: false
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:postgresql://securityalarmdb.ccoufwauhkrf.us-west-2.rds.amazonaws.com:5432/securityalarm
+        url: jdbc:postgresql://localhost:5432/securityalarm
         name:
         username: securityalarm
-        password: vQ5FzStcDucTrwPE5asUGHgU
+        password: securityalarm
     jpa:
         database-platform: com.romif.securityalarm.domain.util.FixedPostgreSQL82Dialect
         database: POSTGRESQL
@@ -81,5 +81,4 @@ jhipster:
             port: 5000
             queueSize: 512
     image:
-        storagePath: $HOME/images
         maxLongSide: 50

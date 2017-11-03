@@ -19,7 +19,16 @@
             'angular-jquery-locationpicker',
             'checklist-model',
             'uuid',
-            'betsol.intlTelInput'
+            'betsol.intlTelInput',
+            'ngTouch',
+            'ngAnimate',
+            'rgkevin.datetimeRangePicker',
+            'com.2fdevs.videogular',
+            'com.2fdevs.videogular.plugins.controls',
+            'com.2fdevs.videogular.plugins.overlayplay',
+            'com.2fdevs.videogular.plugins.poster',
+            'com.2fdevs.videogular.plugins.buffering',
+            'info.vietnamcode.nampnq.videogular.plugins.flash'
         ])
         .config(config)
         .run(run)

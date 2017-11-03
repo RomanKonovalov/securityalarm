@@ -25,14 +25,10 @@
             <column name="device_state" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="latitude" type="float">
-                <constraints nullable="true" />
-            </column>
-            <column name="longitude" type="float">
-                <constraints nullable="true" />
+            <column name="location_id" type="bigint">
+                <constraints nullable="true"/>
             </column>
             <column name="thumbnail" type="bytea"/>
-            <column name="image" type="bytea"/>
             <column name="created_by" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
@@ -43,6 +39,65 @@
             <column name="last_modified_date" type="timestamp"/>
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
+        </createTable>
+
+        <createTable tableName="image">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="status_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="raw_image" type="bytea"/>
+            <column name="date_time" type="timestamp"/>
+        </createTable>
+
+        <createTable tableName="location">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="timestamp" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="timestamp_error" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="latitude" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="longitude" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="altitude" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="latitude_error" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="longitude_error" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="altitude_error" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="course" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="speed" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="climb_rate" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="course_error" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="speed_error" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="climb_rate_error" type="double">
+                <constraints nullable="true" />
+            </column>
         </createTable>
 
         <createTable tableName="alarm">
@@ -107,6 +162,18 @@
                                  constraintName="fk_device_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="location_id"
+                                 baseTableName="status"
+                                 constraintName="fk_location_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="location"/>
+
+        <addForeignKeyConstraint baseColumnNames="status_id"
+                                 baseTableName="image"
+                                 constraintName="fk_image_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="status"/>
 
         <loadData encoding="UTF-8"
                   file="config/liquibase/statuses.csv"

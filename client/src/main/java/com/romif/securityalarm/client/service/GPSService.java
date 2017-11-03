@@ -1,5 +1,6 @@
 package com.romif.securityalarm.client.service;
 
+import com.romif.securityalarm.api.dto.LocationDto;
 import de.taimos.gpsd4java.api.IObjectListener;
 import de.taimos.gpsd4java.backend.GPSdEndpoint;
 import de.taimos.gpsd4java.backend.ResultParser;
@@ -9,9 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class GPSService {
@@ -32,7 +35,7 @@ public class GPSService {
     public void init() {
         try {
             gpSdEndpoint = new GPSdEndpoint(host, port, resultParser);
-            gpSdEndpoint.addListener(new IObjectListener() {
+            /*gpSdEndpoint.addListener(new IObjectListener() {
                 public void handleTPV(TPVObject tpv) {
                     System.out.println( "Hello World!" );
                 }
@@ -56,16 +59,25 @@ public class GPSService {
                 public void handleDevice(DeviceObject device) {
                     System.out.println( "Hello World!" );
                 }
-            });
+            });*/
             gpSdEndpoint.start();
+            gpSdEndpoint.watch(true, true);
         } catch (IOException e) {
             log.error("Unable to init gpSdEndpoint", e);
         }
     }
 
-    public void getLocation() throws IOException {
+    public LocationDto getLocation() throws IOException {
+        if (gpSdEndpoint == null) {
+            return null;
+        }
         PollObject pollObject = gpSdEndpoint.poll();
-        pollObject.getFixes();
+
+        if (pollObject != null && !CollectionUtils.isEmpty(pollObject.getFixes())) {
+            TPVObject tpvObject = pollObject.getFixes().get(0);
+            return new LocationDto(tpvObject.getTimestamp(), tpvObject.getTimestampError(), tpvObject.getLatitude(), tpvObject.getLongitude(), tpvObject.getAltitude(), tpvObject.getLatitudeError(), tpvObject.getLongitudeError(), tpvObject.getAltitudeError(), tpvObject.getCourse(), tpvObject.getSpeed(), tpvObject.getClimbRate(), tpvObject.getCourseError(), tpvObject.getSpeedError(), tpvObject.getClimbRateError());
+        }
+        return null;
     }
 
 

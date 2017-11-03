@@ -20,7 +20,8 @@
                     return data;
                 }
             },
-            'update': { method:'PUT' }
+            'update': { method:'PUT' },
+            'video': { method: 'GET',  params: {id: 'video'}}
         });
     }
 })();

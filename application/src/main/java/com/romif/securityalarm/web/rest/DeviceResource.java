@@ -77,17 +77,6 @@ public class DeviceResource {
         return new ResponseEntity<>(deviceDtos, HttpStatus.OK);
     }
 
-    @PostMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}/login")
-    @Timed
-    @Secured(AuthoritiesConstants.ADMIN)
-    public ResponseEntity<Void> loginDevice(@PathVariable String login) {
-        log.debug("REST request to login Device: {}", login);
-        boolean result = deviceService.loginDevice(login);
-        return result ? ResponseEntity.ok().headers(HeaderUtil.createAlert("A Device is logged with login " + login, login)).build() :
-            ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("device", "deviceError", "Error. Device is not logged"))
-                .body(null);
-    }
-
     @PostMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}/logout")
     @Timed
     @Secured(AuthoritiesConstants.ADMIN)

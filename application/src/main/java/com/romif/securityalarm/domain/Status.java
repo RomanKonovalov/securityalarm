@@ -7,9 +7,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * A Status.
@@ -18,7 +22,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "status")
 @Data
-@ToString(exclude = {"image", "thumbnail"})
+@ToString(exclude = {"images", "thumbnail"})
 @NoArgsConstructor
 public class Status extends AbstractAuditingEntity implements Serializable {
 
@@ -32,16 +36,14 @@ public class Status extends AbstractAuditingEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private DeviceState deviceState;
 
-    @Column(name = "latitude")
-    private float latitude;
-
-    @Column(name = "longitude")
-    private float longitude;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Location location;
 
     @Column(name = "thumbnail")
     private byte[] thumbnail;
 
-    @Column(name = "image")
-    private byte[] image;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "status_id")
+    private List<Image> images;
 
 }

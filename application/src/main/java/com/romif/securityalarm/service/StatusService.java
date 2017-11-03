@@ -1,25 +1,29 @@
 package com.romif.securityalarm.service;
 
 import com.romif.securityalarm.api.dto.DeviceState;
-import com.romif.securityalarm.config.ApplicationProperties;
-import com.romif.securityalarm.domain.*;
+import com.romif.securityalarm.domain.ConfigStatus;
+import com.romif.securityalarm.domain.Device;
+import com.romif.securityalarm.domain.Image;
+import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.repository.DeviceRepository;
+import com.romif.securityalarm.repository.ImageRepository;
 import com.romif.securityalarm.repository.StatusRepository;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.io.File;
+import java.awt.*;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -40,10 +44,13 @@ public class StatusService {
     private DeviceRepository deviceRepository;
 
     @Inject
-    private ApplicationProperties applicationProperties;
+    private VideoService videoService;
 
     @Inject
     private ImageService imageService;
+
+    @Inject
+    private ImageRepository imageRepository;
 
     /**
      * Save a status.
@@ -55,10 +62,9 @@ public class StatusService {
     public Status save(Status status) {
         log.debug("Request to save Status : {}", status);
         try {
-            status.setThumbnail(imageService.getThumbnail(status.getImage()));
+            status.setThumbnail(imageService.getThumbnail(status.getImages()));
         } catch (IOException e) {
             log.error("Error while making thumbnail for status {}", status);
-            e.printStackTrace();
         }
         Status result = statusRepository.save(status);
         if (DeviceState.CONFIGURED.equals(status.getDeviceState())) {
@@ -103,6 +109,14 @@ public class StatusService {
         return result;
     }
 
+    @Transactional(readOnly = true)
+    public void getStatusVideo(ZonedDateTime startDate, ZonedDateTime endDate, Device device, OutputStream outputStream) throws AWTException, InterruptedException, IOException {
+
+        List<Image> images = imageRepository.findByDateTimeAfterAndDateTimeBeforeAndStatusCreatedByOrderByDateTimeAsc(startDate, endDate, device.getLogin());
+
+        videoService.getVideo(images, outputStream);
+    }
+
     /**
      *  Get one status by id.
      *
@@ -113,18 +127,7 @@ public class StatusService {
     public Optional<Status> findOne(Long id) {
         log.debug("Request to get Status : {}", id);
         Optional<Status> status = statusRepository.findOneById(id);
-        return status.map(s -> {
-            File folder = new File(applicationProperties.getImage().getStoragePath() + File.separator + s.getCreatedBy());
-            File imageFile = new File(folder, File.separator + s.getId() + ".jpg");
-            try {
-                s.setImage(FileUtils.readFileToByteArray(imageFile));
-            } catch (IOException e) {
-                log.error("Error while reading image", e);
-            }
-            return s;
-
-        });
-
+        return status;
     }
 
     /**

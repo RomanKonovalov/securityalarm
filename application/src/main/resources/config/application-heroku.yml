@@ -82,5 +82,4 @@ jhipster:
             port: 5000
             queueSize: 512
     image:
-        storagePath: $HOME/images
         maxLongSide: 50

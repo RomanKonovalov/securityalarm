@@ -18,13 +18,13 @@
         });
         $scope.$on('$destroy', unsubscribe);
 
-        $scope.map = {center: { latitude: entity.latitude, longitude: entity.longitude }, zoom: 16};
+        $scope.map = entity.location ? {center: { latitude: entity.location.latitude, longitude: entity.location.longitude }, zoom: 16} : null;
 
-        $scope.marker = {
+        $scope.marker = entity.location ? {
             id: 1,
-            coords: {latitude: entity.latitude, longitude: entity.longitude},
+            coords: {latitude: entity.location.latitude, longitude: entity.location.longitude},
             options: { draggable: false , title: 'Current position'}
-        };
+        } : null;
 
     }
 })();

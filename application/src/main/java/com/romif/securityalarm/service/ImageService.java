@@ -1,6 +1,8 @@
 package com.romif.securityalarm.service;
 
 import com.romif.securityalarm.config.ApplicationProperties;
+import com.romif.securityalarm.domain.Image;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,7 @@ import java.awt.image.ImageObserver;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @Transactional
@@ -23,13 +26,13 @@ public class ImageService {
     @Inject
     private ApplicationProperties applicationProperties;
 
-    public byte[] getThumbnail(byte[] image) throws IOException {
+    public byte[] getThumbnail(List<Image> images) throws IOException {
 
-        if (image == null) {
+        if (CollectionUtils.isEmpty(images)) {
             return null;
         }
 
-        BufferedImage imgIn = ImageIO.read(new ByteArrayInputStream(image));
+        BufferedImage imgIn = ImageIO.read(new ByteArrayInputStream(images.get(0).getRawImage()));
 
         double scale;
         if (imgIn.getWidth() >= imgIn.getHeight()) {
