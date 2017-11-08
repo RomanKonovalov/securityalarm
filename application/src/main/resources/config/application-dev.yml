@@ -24,17 +24,18 @@ spring:
         serialization.indent_output: true
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
-        name: securityalarm
-        username:
-        password:
+        url: jdbc:postgresql://104.238.176.254:5432/securityalarm
+        name:
+        username: securityalarm
+        password: securityalarm
     jpa:
-        database-platform: com.romif.securityalarm.domain.util.FixedH2Dialect
-        database: H2
-        show-sql: true
+        database-platform: com.romif.securityalarm.domain.util.FixedPostgreSQL82Dialect
+        database: POSTGRESQL
+        show-sql: false
         properties:
             hibernate.cache.use_second_level_cache: false
             hibernate.cache.use_query_cache: false
-            hibernate.generate_statistics: true
+            hibernate.generate_statistics: false
     mail:
         host: localhost
         port: 25

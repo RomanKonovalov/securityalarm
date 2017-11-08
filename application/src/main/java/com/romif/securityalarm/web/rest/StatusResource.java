@@ -6,6 +6,7 @@ import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.service.StatusService;
+import com.romif.securityalarm.service.dto.LocationDTO;
 import com.romif.securityalarm.service.mapper.StatusMapper;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import com.romif.securityalarm.web.rest.util.PaginationUtil;
@@ -91,6 +92,25 @@ public class StatusResource {
         Page<Status> page = statusService.findAll(pageable, startDate, endDate, device);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/statuses");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/statuses/locations")
+    @Secured("ROLE_USER")
+    @Timed
+    public ResponseEntity<List<LocationDTO>> getLocations(@RequestParam(required = false) ZonedDateTime startDate,
+                                                       @RequestParam(required = false) ZonedDateTime endDate,
+                                                       @RequestParam Device device)
+        throws URISyntaxException {
+        log.debug("REST request to get Locations");
+        String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+        if (device == null || !login.equals(device.getUser().getLogin())) {
+            HttpHeaders headers = HeaderUtil.createFailureAlert("alarm", "deviceNotFound", "Device not found");
+            return new ResponseEntity<>(Collections.emptyList(), headers, HttpStatus.BAD_REQUEST);
+        }
+        List<LocationDTO> locations = statusService.getLocations(startDate, endDate, device);
+
+        return new ResponseEntity<>(locations, HttpStatus.OK);
     }
 
     @GetMapping("/api/statuses/video")

@@ -17,7 +17,7 @@
     <!--
         Added the entity Status.
     -->
-    <changeSet id="20170115205944-1" author="jhipster">
+    <changeSet id="20170115205944-1" author="romif">
         <createTable tableName="status">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
@@ -25,6 +25,7 @@
             <column name="device_state" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+            <column name="device_temperature" type="int"/>
             <column name="location_id" type="bigint">
                 <constraints nullable="true"/>
             </column>
@@ -186,4 +187,5 @@
                   tableName="device_credentials"/>
 
     </changeSet>
+
 </databaseChangeLog>

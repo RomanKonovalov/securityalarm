@@ -40,10 +40,10 @@ public class User extends GenericUser {
     private String additionalPhone;
 
     @Column
-    private float latitude;
+    private double latitude;
 
     @Column
-    private float longitude;
+    private double longitude;
 
     @Column(name = "notification_types")
     private EnumSet<NotificationType> notificationTypes;

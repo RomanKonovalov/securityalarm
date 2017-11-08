@@ -27,8 +27,8 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <label for="device" class="col-xs-6 control-label text-right">Device:</label>
-                <div class="col-xs-6">
+                <label for="device" class="col-md-4 control-label text-right">Device:</label>
+                <div class="col-md-8">
                     <select class="form-control" ng-model="vm.device" id="device"
                             ng-options="device as device.description for device in vm.devices" ng-change="vm.refresh(vm.device)">
                     </select>
@@ -59,45 +59,18 @@
                 <tr jh-sort="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
                     <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="deviceState"><span>Device State</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="location.latitude"><span>Latitude</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="location.longitude"><span>Longitude</span> <span class="glyphicon glyphicon-sort"></span></th>
+                    <th jh-sort-by="deviceTemperature"><span>Device Temperature</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="createdDate"><span>Created Date</span> <span class="glyphicon glyphicon-sort"></span></th>
-                    <th jh-sort-by="createdBy"><span>Created By</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th>Image</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="status in vm.statuses track by status.id">
+                <tr ng-repeat="status in vm.statuses track by status.id" ui-sref="status-detail({id:status.id})">
                     <td><a ui-sref="status-detail({id:status.id})">{{status.id}}</a></td>
                     <td>{{status.deviceState}}</td>
-                    <td>{{status.location.latitude}}</td>
-                    <td>{{status.location.longitude}}</td>
+                    <td>{{status.deviceTemperature}}</td>
                     <td>{{status.createdDate | date:'dd/MM/yy HH:mm'}}</td>
-                    <td>{{status.createdBy}}</td>
                     <td><img ng-src="data:image/JPEG;base64,{{status.thumbnail}}"></td>
-                    <td class="text-right">
-                        <div class="btn-group flex-btn-group-container">
-                            <button type="submit"
-                                    ui-sref="status-detail({id:status.id})"
-                                    class="btn btn-info btn-sm">
-                                <span class="glyphicon glyphicon-eye-open"></span>
-                                <span class="hidden-xs hidden-sm"></span>
-                            </button>
-                            <button type="submit"
-                                    ui-sref="status.edit({id:status.id})"
-                                    class="btn btn-primary btn-sm">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                                <span class="hidden-xs hidden-sm"></span>
-                            </button>
-                            <button type="submit"
-                                    ui-sref="status.delete({id:status.id})"
-                                    class="btn btn-danger btn-sm">
-                                <span class="glyphicon glyphicon-remove-circle"></span>
-                                <span class="hidden-xs hidden-sm"></span>
-                            </button>
-                        </div>
-                    </td>
                 </tr>
             </tbody>
         </table>

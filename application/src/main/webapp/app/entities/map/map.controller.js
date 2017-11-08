@@ -14,69 +14,67 @@
 
         var limit = 100;
 
+        var midnight = new Date();
+        midnight.setHours(0, 0, 0);
+
+        var startDate = new Date(new Date().getTime() - 60 * 1000 * 60);
+        var endDate = new Date();
+
+        $scope.myDatetimeRange = {
+            date: {
+                from: new Date(),
+                to: new Date(),
+                max: new Date(),
+                options: {
+                    from: {
+                        showWeeks: false
+                    },
+                    to: {
+                        showWeeks: false
+                    }
+                }
+            },
+            time: {
+                from: (startDate.getTime() - midnight.getTime()) / 1000 / 60, // default low value
+                to: (endDate.getTime() - midnight.getTime()) / 1000 / 60, // default high value
+                step: 1, // step width
+                minRange: 30, // min range
+                hours24: true // true for 24hrs based time | false for PM and AM
+            }
+        };
+        $scope.myDatetimeLabels = {
+            date: {
+                from: 'Start date',
+                to: 'End date'
+            }
+        };
+
+        $scope.whenTimeChange = function (data) {
+            if (data.date.from.toISOString().slice(0, 10) === data.date.to.toISOString().slice(0, 10)) {
+                $scope.myDatetimeRange.hasTimeSliders = true;
+            } else {
+                $scope.myDatetimeRange.hasTimeSliders = false;
+            }
+
+            startDate = data.date.from;
+            startDate.setHours(0, 0, 0);
+            startDate = new Date(startDate.getTime() + data.time.from * 1000 * 60);
+            endDate = data.date.to;
+            endDate.setHours(0, 0, 0);
+            endDate = new Date(endDate.getTime() + data.time.to * 1000 * 60);
+            if ($scope.device.id) {
+                loadAll();
+            }
+        };
+
         $scope.devices.$promise.then(function (result) {
             if (result.length > 0) {
                 $scope.device = result[0];
-                $scope.last6hours();
+                loadAll();
             }
         });
 
-        var minDate = function (date) {
-            date.setHours(0,0,0,0);
-            return date;
-        };
-        var maxDate = function (date) {
-            date.setHours(23,59,59,99);
-            return date;
-        };
 
-        $scope.today = function() {
-            $scope.startDate = minDate(new Date());
-            $scope.endDate = maxDate(new Date());
-            limit = 1440;
-            loadAll();
-        };
-
-        $scope.yesterday = function() {
-            $scope.startDate = minDate(new Date());
-            $scope.startDate.setDate($scope.startDate.getDate() - 1);
-            $scope.endDate = maxDate(new Date());
-            $scope.endDate.setDate($scope.endDate.getDate() - 1);
-            limit = 1440;
-            loadAll();
-        };
-
-        $scope.last6hours = function() {
-            var last6hours = new Date();
-            last6hours.setHours(last6hours.getHours() - 6);
-            $scope.startDate = last6hours;
-            $scope.endDate = new Date();
-            limit = 100;
-            loadAll();
-        };
-
-        $scope.dateRangeChange = function () {
-            $scope.startDate = minDate($scope.startDate);
-            $scope.endDate = maxDate($scope.endDate);
-            limit = 1440;
-            loadAll();
-        };
-
-        $scope.open1 = function() {
-            $scope.popup1.opened = true;
-        };
-
-        $scope.open2 = function() {
-            $scope.popup2.opened = true;
-        };
-
-        $scope.popup1 = {
-            opened: false
-        };
-
-        $scope.popup2 = {
-            opened: false
-        };
 
         $scope.map = {bounds: {}, control: {}};
 
@@ -99,12 +97,9 @@
         });
 
         function loadAll () {
-            Status.query({
-                page: 0,
-                size: limit,
-                sort: 'createdDate,desc',
-                startDate: DateUtils.convertLocalDateToServer($scope.startDate),
-                endDate: DateUtils.convertLocalDateToServer($scope.endDate),
+            Status.locations({
+                startDate: startDate,
+                endDate: endDate,
                 device: $scope.device.id
             }, onSuccess, onError);
 
@@ -117,16 +112,16 @@
                 uiGmapGoogleMapApi.then(function() {
 
                     var newPosition = _.find(data, function(o) {
-                        return !isNaN(o.location.latitude) && !isNaN(o.location.longitude);
+                        return !isNaN(o.latitude) && !isNaN(o.longitude);
                     });
 
-                    var lastPosition = newPosition ? newPosition.location : homePosition;
+                    var lastPosition = newPosition ? newPosition : homePosition;
 
-                    $scope.map.center = lastPosition;
+                    $scope.map.center = {latitude: lastPosition.latitude, longitude: lastPosition.longitude};
 
                     $scope.marker.current = !data[0] ? undefined : {
                         id: 1,
-                        coords: lastPosition,
+                        coords: {latitude: lastPosition.latitude, longitude: lastPosition.longitude},
                         options: {
                             draggable: false ,
                             title: 'Current position',
@@ -135,8 +130,8 @@
 
                     var bounds = new google.maps.LatLngBounds();
                     for (var i in data) {
-                        if (data[i].location && !isNaN(data[i].location.latitude) && !isNaN(data[i].location.longitude)) {
-                            var position = new google.maps.LatLng(data[i].location.latitude, data[i].location.longitude);
+                        if (data[i] && !isNaN(data[i].latitude) && !isNaN(data[i].longitude)) {
+                            var position = new google.maps.LatLng(data[i].latitude, data[i].longitude);
                             bounds.extend(position);
                         }
                     }
@@ -154,16 +149,10 @@
 
                     $scope.map.zoom = !newPosition ? 16 : undefined;
 
-                    var path = _.filter(data, new function (el) {
-                        return el && el.location && !isNaN(el.location.latitude) && !isNaN(el.location.longitude);
-                    });
-
-                    path = _.map(path, 'location');
-
                     $scope.polylines = [
                         {
                             id: 1,
-                            path: path,
+                            path: data,
                             stroke: {
                                 color: '#6060FB',
                                 weight: 2

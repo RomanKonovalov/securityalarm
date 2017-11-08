@@ -116,7 +116,9 @@
             endDate = data.date.to;
             endDate.setHours(0, 0, 0);
             endDate = new Date(endDate.getTime() + data.time.to * 1000 * 60);
-            vm.refresh(vm.device);
+            if (vm.device.id) {
+                vm.refresh(vm.device);
+            }
         };
 
         devices.$promise.then(function (result) {

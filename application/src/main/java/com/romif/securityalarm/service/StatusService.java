@@ -8,12 +8,15 @@ import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.ImageRepository;
 import com.romif.securityalarm.repository.StatusRepository;
+import com.romif.securityalarm.service.dto.LocationDTO;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +26,10 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Service Implementation for managing Status.
@@ -108,6 +111,21 @@ public class StatusService {
 
         return result;
     }
+
+    public List<LocationDTO> getLocations(ZonedDateTime startDate, ZonedDateTime endDate, Device device) {
+
+        List<Long> ids = statusRepository.findIds(startDate, endDate, device.getLogin(), new PageRequest(0,260000));
+        int nth = ids.size() > 100 ? ids.size() / 100 : 1;
+        List<Long> filteredIds = IntStream.range(0, ids.size())
+            .filter(n -> n % nth == 0)
+            .mapToObj(ids::get)
+            .collect(Collectors.toList());
+
+
+        List<LocationDTO> locationDTOs = CollectionUtils.isEmpty(filteredIds) ? Collections.EMPTY_LIST : statusRepository.findByIds(filteredIds);
+        return locationDTOs;
+    }
+
 
     @Transactional(readOnly = true)
     public void getStatusVideo(ZonedDateTime startDate, ZonedDateTime endDate, Device device, OutputStream outputStream) throws AWTException, InterruptedException, IOException {

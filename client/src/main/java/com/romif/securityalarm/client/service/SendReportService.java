@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
@@ -21,7 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class SendReportService implements ApplicationListener<WebCamService.DiviceMotionEvent> {
+public class SendReportService implements ApplicationListener<VideoService.DiviceMotionEvent> {
 
     private final Logger log = LoggerFactory.getLogger(SendReportService.class);
 
@@ -35,17 +34,17 @@ public class SendReportService implements ApplicationListener<WebCamService.Divi
     private GPSService gpsService;
 
     @Autowired
-    private WebCamService webCamService;
+    private VideoService videoService;
 
     private String statusUrl;
 
     private DeviceState deviceState;
 
     @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
+    private OAuth2RestTemplate restTemplate;
 
     @Autowired
-    private OAuth2RestTemplate restTemplate;
+    private SystemService systemService;
 
     @PostConstruct
     public void init() {
@@ -70,17 +69,20 @@ public class SendReportService implements ApplicationListener<WebCamService.Divi
 
             List<ImageDto> images = null;
             try {
-                images = webCamService.getImages();
+                images = videoService.getImages();
             } catch (IOException e) {
                 log.error("Can't get images", e);
             }
 
             log.debug("images");
 
+            Integer deviceTemperature = systemService.getDeviceTemperature();
+
             StatusDto statusDto = new StatusDto();
             statusDto.setDeviceState(deviceState != null ? deviceState : DeviceState.OK);
             statusDto.setImages(images);
             statusDto.setLocation(location);
+            statusDto.setDeviceTemperature(deviceTemperature);
             deviceState = null;
 
             try {
@@ -97,7 +99,7 @@ public class SendReportService implements ApplicationListener<WebCamService.Divi
     }
 
     @Override
-    public void onApplicationEvent(WebCamService.DiviceMotionEvent diviceMotionEvent) {
+    public void onApplicationEvent(VideoService.DiviceMotionEvent diviceMotionEvent) {
         deviceState = DeviceState.MOTION;
     }
 }

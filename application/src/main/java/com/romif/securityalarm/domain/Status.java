@@ -6,10 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -35,6 +31,9 @@ public class Status extends AbstractAuditingEntity implements Serializable {
     @Column(name = "device_state")
     @Enumerated(EnumType.STRING)
     private DeviceState deviceState;
+
+    @Column(name = "deviceTemperature")
+    private Integer deviceTemperature;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Location location;

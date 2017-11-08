@@ -61,6 +61,13 @@ public class VideoService {
             encoder.setFlag(Encoder.Flag.FLAG_GLOBAL_HEADER, true);
 
         /** Open the encoder. */
+        /*KeyValueBag keyValueBag = KeyValueBag.make();
+        keyValueBag.setValue("coder", "0");
+        keyValueBag.setValue("bf", "0");
+        keyValueBag.setValue("flags", "-loop");
+        keyValueBag.setValue("wpredp", "0");
+        KeyValueBag keyValueBag1 = KeyValueBag.make();
+        encoder.open(keyValueBag, keyValueBag1);*/
         encoder.open(null, null);
 
 

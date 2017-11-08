@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class WebCamService {
+public class VideoService {
 
-    private final Logger log = LoggerFactory.getLogger(WebCamService.class);
+    private final Logger log = LoggerFactory.getLogger(VideoService.class);
 
     @Value("${securityalarm.pictures.path}")
     private String path;

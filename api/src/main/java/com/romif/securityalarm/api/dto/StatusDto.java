@@ -15,6 +15,8 @@ public class StatusDto {
 
     private DeviceState deviceState;
 
+    private Integer deviceTemperature;
+
     private LocationDto location;
 
     private List<ImageDto> images;

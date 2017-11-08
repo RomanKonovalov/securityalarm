@@ -38,6 +38,7 @@ public class ViewController {
         "/my-devices",
         "/my-alarms",
         "/status",
+        "/statuses/**",
         "/map",
         "/settings",
         "/password",
