@@ -27,6 +27,7 @@ spring:
     jackson:
         serialization.write_dates_as_timestamps: false
         time-zone: GMT+3
+        date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
     cache:
             jcache:
                 config: config/ehcache.xml
@@ -45,6 +46,8 @@ spring:
     mvc:
         favicon:
             enabled: false
+        async:
+              request-timeout: -1
     thymeleaf:
         mode: XHTML
     http:

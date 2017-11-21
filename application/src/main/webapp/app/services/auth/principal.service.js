@@ -5,9 +5,9 @@
         .module('securityalarmApp')
         .factory('Principal', Principal);
 
-    Principal.$inject = ['$q', 'Account'];
+    Principal.$inject = ['$q', 'Account', 'JhiTrackerService', 'DeviceTracker'];
 
-    function Principal ($q, Account) {
+    function Principal ($q, Account, JhiTrackerService, DeviceTracker) {
         var _identity,
             _authenticated = false;
 
@@ -79,6 +79,8 @@
                 _identity = account.data;
                 _authenticated = true;
                 deferred.resolve(_identity);
+                JhiTrackerService.connect();
+                DeviceTracker.connect();
             }
 
             function getAccountCatch () {

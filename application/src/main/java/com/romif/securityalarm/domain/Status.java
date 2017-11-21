@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * A Status.
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, of = "deviceState")
 @Entity
 @Table(name = "status")
 @Data

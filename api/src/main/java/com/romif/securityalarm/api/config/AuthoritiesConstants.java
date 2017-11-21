@@ -1,4 +1,4 @@
-package com.romif.securityalarm.security;
+package com.romif.securityalarm.api.config;
 
 /**
  * Constants for Spring Security authorities.

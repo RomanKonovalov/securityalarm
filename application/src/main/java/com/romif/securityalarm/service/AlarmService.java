@@ -4,13 +4,11 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.romif.securityalarm.domain.*;
 import com.romif.securityalarm.repository.AlarmRepository;
-import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -35,12 +33,6 @@ public class AlarmService {
 
     @Inject
     private UserRepository userRepository;
-
-    @Inject
-    private DeviceRepository deviceRepository;
-
-    @Inject
-    private PasswordEncoder passwordEncoder;
 
     private final Cache<String, Alarm> emailsMoving = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
     private final Cache<Alarm, Object> emailsInaccessible = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
@@ -113,21 +105,13 @@ public class AlarmService {
         return true;
     }
 
-    public boolean pauseAlarm(String pauseToken) {
+    public boolean pauseAlarm() {
         String deviceLogin = SecurityUtils.getCurrentUserLogin();
-        Optional<Device> device = deviceRepository.findOneByLogin(deviceLogin);
-
-        if (device.isPresent() && passwordEncoder.matches(pauseToken, device.get().getPauseToken())) {
-            return alarmRepository.findOneByDeviceLogin(deviceLogin).map(alarm -> {
-                alarm.setPaused(true);
-                alarmRepository.save(alarm);
-                return true;
-            }).orElse(false);
-        } else {
-            log.warn("Pause token invalid for device: {}", device);
-            return false;
-        }
-
+        return alarmRepository.findOneByDeviceLogin(deviceLogin).map(alarm -> {
+            alarm.setPaused(true);
+            alarmRepository.save(alarm);
+            return true;
+        }).orElse(false);
     }
 
     public boolean resumeAlarm() {

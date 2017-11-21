@@ -1,7 +1,5 @@
 package com.romif.securityalarm.web.rest.errors;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -14,7 +12,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.List;
 
 /**
  * Controller advice to translate the server side exceptions to client-friendly json structures.
@@ -74,6 +77,10 @@ public class ExceptionTranslator {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorVM> processRuntimeException(Exception ex) {
+        if (ex.getClass().getName().equals("org.apache.catalina.connector.ClientAbortException")) {
+            log.error("Client abort connection");
+            return null;
+        }
         log.error("Not handled exception", ex);
         BodyBuilder builder;
         ErrorVM errorVM;

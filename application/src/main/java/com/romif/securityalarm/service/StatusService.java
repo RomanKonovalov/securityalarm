@@ -8,9 +8,12 @@ import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.ImageRepository;
 import com.romif.securityalarm.repository.StatusRepository;
+import com.romif.securityalarm.service.dto.ImagesDTO;
 import com.romif.securityalarm.service.dto.LocationDTO;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CachePut;
@@ -18,6 +21,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,7 @@ import java.io.OutputStream;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -38,6 +43,7 @@ import java.util.stream.IntStream;
 @Transactional
 public class StatusService {
 
+    public static final int MAX_VIDEO_FRAMES = 3701;
     private final Logger log = LoggerFactory.getLogger(StatusService.class);
 
     @Inject
@@ -112,7 +118,31 @@ public class StatusService {
         return result;
     }
 
-    public List<LocationDTO> getLocations(ZonedDateTime startDate, ZonedDateTime endDate, Device device) {
+    public List<ImagesDTO> getImagesDTO (ZonedDateTime startDate, ZonedDateTime endDate, Device device) {
+
+        List<Long> ids = imageRepository.findIds(startDate, endDate, device.getLogin(), new PageRequest(0, 260000));
+
+        if (ids.size() < MAX_VIDEO_FRAMES * 4) {
+            return ListUtils.partition(ids, MAX_VIDEO_FRAMES).stream().map(p -> getImagesDTO(p)).collect(Collectors.toList());
+        } else {
+            return Arrays.asList(getImagesDTO(ids));
+        }
+
+    }
+
+    @NotNull
+    private ImagesDTO getImagesDTO(List<Long> ids) {
+        Image start = imageRepository.findOne(ids.get(0));
+        Image end = imageRepository.findOne(ids.get(ids.size() - 1));
+        ImagesDTO imagesDTO = new ImagesDTO();
+        imagesDTO.setStartDate(start.getDateTime());
+        imagesDTO.setEndDate(end.getDateTime());
+        imagesDTO.setStart(start.getRawImage());
+        imagesDTO.setEnd(end.getRawImage());
+        return imagesDTO;
+    }
+
+    public List<LocationDTO> getLocationDTOs(ZonedDateTime startDate, ZonedDateTime endDate, Device device) {
 
         List<Long> ids = statusRepository.findIds(startDate, endDate, device.getLogin(), new PageRequest(0,260000));
         int nth = ids.size() > 100 ? ids.size() / 100 : 1;
@@ -130,9 +160,40 @@ public class StatusService {
     @Transactional(readOnly = true)
     public void getStatusVideo(ZonedDateTime startDate, ZonedDateTime endDate, Device device, OutputStream outputStream) throws AWTException, InterruptedException, IOException {
 
-        List<Image> images = imageRepository.findByDateTimeAfterAndDateTimeBeforeAndStatusCreatedByOrderByDateTimeAsc(startDate, endDate, device.getLogin());
+        List<Image> images = imageRepository.findByDateTimeAfterAndDateTimeBeforeAndStatusCreatedBy(startDate, endDate, device.getLogin(), new PageRequest(0, 1000, Sort.Direction.ASC, "dateTime"));
 
         videoService.getVideo(images, outputStream);
+    }
+
+    @Transactional(readOnly = true)
+    public void getVideoH264(ZonedDateTime startDate, ZonedDateTime endDate, Device device, OutputStream outputStream) {
+
+        List<Long> ids = imageRepository.findIds(startDate, endDate, device.getLogin(), new PageRequest(0, 260000));
+
+        int nth = ids.size() > MAX_VIDEO_FRAMES ? ids.size() / MAX_VIDEO_FRAMES : 1;
+        List<Long> filteredIds = IntStream.range(0, ids.size())
+            .filter(n -> n % nth == 0)
+            .mapToObj(ids::get)
+            .collect(Collectors.toList());
+
+        videoService.getVideoH264(filteredIds, outputStream);
+    }
+
+    @Transactional(readOnly = true)
+    public void getVideoMp4(ZonedDateTime startDate, ZonedDateTime endDate, Device device, OutputStream outputStream) {
+
+        //List<Image> images = imageRepository.findByDateTimeAfterAndDateTimeBeforeAndStatusCreatedBy(startDate, endDate, device.getLogin(), new PageRequest(0, 2000, Sort.Direction.ASC, "dateTime"));
+
+        List<Long> ids = imageRepository.findIds(startDate, endDate, device.getLogin(), new PageRequest(0, 260000));
+
+        int nth = ids.size() > 100 ? ids.size() / 100 : 1;
+        List<Long> filteredIds = IntStream.range(0, ids.size())
+            .filter(n -> n % nth == 0)
+            .mapToObj(ids::get)
+            .collect(Collectors.toList());
+
+
+        videoService.getVideoMp4(ids, outputStream);
     }
 
     /**

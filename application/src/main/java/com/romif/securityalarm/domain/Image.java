@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"status", "dateTime"})
 @Entity
 @Table(name = "image")
 @Data

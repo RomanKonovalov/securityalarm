@@ -6,6 +6,7 @@ import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.service.StatusService;
+import com.romif.securityalarm.service.dto.ImagesDTO;
 import com.romif.securityalarm.service.dto.LocationDTO;
 import com.romif.securityalarm.service.mapper.StatusMapper;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
@@ -25,10 +26,9 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -99,8 +99,7 @@ public class StatusResource {
     @Timed
     public ResponseEntity<List<LocationDTO>> getLocations(@RequestParam(required = false) ZonedDateTime startDate,
                                                        @RequestParam(required = false) ZonedDateTime endDate,
-                                                       @RequestParam Device device)
-        throws URISyntaxException {
+                                                       @RequestParam Device device) {
         log.debug("REST request to get Locations");
         String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
@@ -108,37 +107,64 @@ public class StatusResource {
             HttpHeaders headers = HeaderUtil.createFailureAlert("alarm", "deviceNotFound", "Device not found");
             return new ResponseEntity<>(Collections.emptyList(), headers, HttpStatus.BAD_REQUEST);
         }
-        List<LocationDTO> locations = statusService.getLocations(startDate, endDate, device);
+        List<LocationDTO> locations = statusService.getLocationDTOs(startDate, endDate, device);
 
         return new ResponseEntity<>(locations, HttpStatus.OK);
     }
 
-    @GetMapping("/api/statuses/video")
+    @GetMapping("/api/statuses/images")
+    @Secured("ROLE_USER")
+    @Timed
+    public ResponseEntity<List<ImagesDTO>> getImagesDTO(@RequestParam(required = false) ZonedDateTime startDate,
+                                                   @RequestParam(required = false) ZonedDateTime endDate,
+                                                   @RequestParam Device device) {
+        log.debug("REST request to get Locations");
+        String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+        if (device == null || !login.equals(device.getUser().getLogin())) {
+            HttpHeaders headers = HeaderUtil.createFailureAlert("alarm", "deviceNotFound", "Device not found");
+            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
+        }
+
+        List<ImagesDTO> imagesDTOList = statusService.getImagesDTO(startDate, endDate, device);
+
+        return new ResponseEntity<>(imagesDTOList, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/statuses/video.{videoType}")
     @Secured("ROLE_USER")
     @Timed
     @ResponseBody
-    public StreamingResponseBody getStatusVideo(@RequestParam ZonedDateTime startDate,
+    public StreamingResponseBody getVideoMp4(@RequestParam ZonedDateTime startDate,
                                                 @RequestParam ZonedDateTime endDate,
                                                 @RequestParam Device device,
+                                                @PathVariable String videoType,
                                                 HttpServletResponse response) {
-        log.debug("REST request to get a page of Statuses");
+        log.debug("REST request to get video");
+
         String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        if (device == null || !login.equals(device.getUser().getLogin())) {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            return null;
+        }
 
-        /*if (device == null || !login.equals(device.getUser().getLogin())) {
-            HttpHeaders headers = HeaderUtil.createFailureAlert("device", "deviceNotFound", "Device not found");
-            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
-        }*/
+        response.setContentType("video/" + videoType);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        response.setHeader("Content-Disposition", "attachment; filename=video" + startDate.format(dateTimeFormatter) + "-" + endDate.format(dateTimeFormatter) + "." + videoType);
 
-        response.setContentType("video/x-flv");
-        response.setHeader("Content-Disposition", "attachment; filename=video.flv");
-        return outputStream -> {
-            try {
-                statusService.getStatusVideo(startDate, endDate, device, outputStream);
-            } catch (AWTException | InterruptedException | IOException e) {
-                log.error("Can't create video", e);
-            }
-        };
 
+        if ("h264".equals(videoType)) {
+            return outputStream -> {
+                statusService.getVideoH264(startDate, endDate, device, outputStream);
+            };
+        } else if ("mp4".equals(videoType)) {
+            return outputStream -> {
+                statusService.getVideoMp4(startDate, endDate, device, outputStream);
+            };
+        }  else {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return null;
+        }
     }
 
     /**

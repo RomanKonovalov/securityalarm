@@ -3,8 +3,8 @@ package com.romif.securityalarm.config;
 import com.romif.securityalarm.aop.logging.LoggingAspect;
 import org.springframework.context.annotation.*;
 
-@Configuration
-@EnableAspectJAutoProxy
+//@Configuration
+//@EnableAspectJAutoProxy
 public class LoggingAspectConfiguration {
 
     @Bean

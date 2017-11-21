@@ -236,12 +236,12 @@
         </createTable>
 
         <createTable tableName="oauth_approvals">
-            <column name="userId" type="varchar(255)"/>
-            <column name="clientId" type="varchar(255)"/>
+            <column name="userid" type="varchar(255)"/>
+            <column name="clientid" type="varchar(255)"/>
             <column name="scope" type="varchar(255)"/>
             <column name="status" type="varchar(255)"/>
-            <column name="expiresAt" type="timestamp"/>
-            <column name="lastModifiedAt" type="timestamp"/>
+            <column name="expiresat" type="timestamp"/>
+            <column name="lastmodifiedat" type="timestamp"/>
         </createTable>
 
         <loadData encoding="UTF-8"

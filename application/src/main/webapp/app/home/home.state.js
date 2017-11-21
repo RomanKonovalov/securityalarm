@@ -20,7 +20,17 @@
                     controller: 'HomeController',
                     controllerAs: 'vm'
                 }
-            }
+            },
+            onEnter: ['DeviceTracker', 'Principal', function(DeviceTracker, Principal) {
+                /*if (Principal.isAuthenticated()) {
+                    DeviceTracker.subscribe();
+                }*/
+            }],
+            onExit: ['DeviceTracker', 'Principal', function(DeviceTracker, Principal) {
+                if (Principal.isAuthenticated()) {
+                    DeviceTracker.unsubscribe();
+                }
+            }]
         });
     }
 })();

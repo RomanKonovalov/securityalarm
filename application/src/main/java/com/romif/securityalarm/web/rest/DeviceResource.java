@@ -1,12 +1,12 @@
 package com.romif.securityalarm.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.romif.securityalarm.api.config.AuthoritiesConstants;
 import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.ConfigStatus;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.sms.DeliveryStatus;
 import com.romif.securityalarm.domain.sms.Receipt;
-import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.DeviceService;
 import com.romif.securityalarm.service.SmsTxtlocalService;
 import com.romif.securityalarm.service.dto.DeviceDTO;

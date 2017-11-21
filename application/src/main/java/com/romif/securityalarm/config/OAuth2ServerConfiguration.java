@@ -1,7 +1,7 @@
 package com.romif.securityalarm.config;
 
+import com.romif.securityalarm.api.config.AuthoritiesConstants;
 import com.romif.securityalarm.security.AjaxLogoutSuccessHandler;
-import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.security.Http401UnauthorizedEntryPoint;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -73,10 +73,14 @@ public class OAuth2ServerConfiguration {
             .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/api/authenticate").permitAll()
+                .antMatchers("/**").authenticated()
+                .antMatchers("/login").permitAll()
                 .antMatchers("/api/register").permitAll()
                 .antMatchers("/api/profile-info").permitAll()
                 .antMatchers("/api/**").authenticated()
+                .antMatchers("/websocket/tracker").hasAuthority(AuthoritiesConstants.ADMIN)
+                .antMatchers("/websocket/deviceTracker").hasAuthority(AuthoritiesConstants.USER)
+                .antMatchers("/websocket/**").permitAll()
                 .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
                 .antMatchers("/v2/api-docs/**").permitAll()
                 .antMatchers("/swagger-resources/configuration/ui").permitAll()

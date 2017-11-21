@@ -1,5 +1,6 @@
 package com.romif.securityalarm.security;
 
+import com.romif.securityalarm.api.config.AuthoritiesConstants;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;

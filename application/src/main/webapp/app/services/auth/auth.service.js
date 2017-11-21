@@ -5,9 +5,9 @@
         .module('securityalarmApp')
         .factory('Auth', Auth);
 
-    Auth.$inject = ['$rootScope', '$state', '$sessionStorage', '$q', 'Principal', 'AuthServerProvider', 'Account', 'LoginService', 'Register', 'Activate', 'Password', 'PasswordResetInit', 'PasswordResetFinish'];
+    Auth.$inject = ['$rootScope', '$state', '$sessionStorage', '$q', 'Principal', 'AuthServerProvider', 'Account', 'LoginService', 'Register', 'Activate', 'Password', 'PasswordResetInit', 'PasswordResetFinish', 'JhiTrackerService', 'DeviceTracker'];
 
-    function Auth ($rootScope, $state, $sessionStorage, $q, Principal, AuthServerProvider, Account, LoginService, Register, Activate, Password, PasswordResetInit, PasswordResetFinish) {
+    function Auth ($rootScope, $state, $sessionStorage, $q, Principal, AuthServerProvider, Account, LoginService, Register, Activate, Password, PasswordResetInit, PasswordResetFinish, JhiTrackerService, DeviceTracker) {
         var service = {
             activateAccount: activateAccount,
             authorize: authorize,
@@ -113,6 +113,7 @@
 
             function loginThen (data) {
                 Principal.identity(true).then(function(account) {
+                    JhiTrackerService.sendActivity();
                     deferred.resolve(data);
                 });
                 return cb();
@@ -125,6 +126,7 @@
         function logout () {
             AuthServerProvider.logout();
             Principal.authenticate(null);
+            DeviceTracker.disconnect ();
         }
 
         function resetPasswordFinish (keyAndPassword, callback) {

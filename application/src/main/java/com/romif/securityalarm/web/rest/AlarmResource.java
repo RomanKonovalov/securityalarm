@@ -1,11 +1,11 @@
 package com.romif.securityalarm.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.romif.securityalarm.api.config.AuthoritiesConstants;
 import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Alarm;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.repository.AlarmRepository;
-import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.AlarmService;
 import com.romif.securityalarm.service.StatusService;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
@@ -112,13 +112,13 @@ public class AlarmResource {
     }
 
     @Secured(AuthoritiesConstants.DEVICE)
-    @GetMapping(Constants.PAUSE_ALARM_PATH + "/{pauseToken}")
+    @GetMapping(Constants.PAUSE_ALARM_PATH)
     @Timed
     @CacheEvict(cacheNames = "alarms", allEntries = true)
-    public ResponseEntity<Void> pauseAlarm(@PathVariable String pauseToken) {
+    public ResponseEntity<Void> pauseAlarm() {
         log.debug("REST request to pause alarm");
 
-        if (alarmService.pauseAlarm(pauseToken)) {
+        if (alarmService.pauseAlarm()) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.badRequest().build();

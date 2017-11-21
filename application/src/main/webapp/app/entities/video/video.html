@@ -1,0 +1,54 @@
+<div>
+    <h2>Video</h2>
+    <jhi-alert></jhi-alert>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 no-padding-left">
+                <div
+                    rg-range-picker="myDatetimeRange"
+                    labels="myDatetimeLabels"
+                    on-time-change="whenTimeChange"
+                    super-max-date=""
+                    super-min-date=""
+                    max-range-date="10"></div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-7">
+                        <label for="device" class="col-md-4 control-label text-right">Device:</label>
+                        <div class="col-md-8">
+                            <select class="form-control" ng-model="vm.device" id="device"
+                                    ng-options="device as device.description for device in vm.devices" ng-change="vm.refresh(vm.device)">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" ng-if="vm.images" ng-repeat="images in vm.images" style="margin-top: 10px">
+                    <div class="col-md-12">
+                    <a target="_self" href="{{vm.videoSources[$index]}}" download="new_file_name.mp4">
+                        <button class="btn btn-primary">
+                            <span class="glyphicon glyphicon-save"></span>
+                            <span>Download {{images.startDate}} - {{images.endDate}}</span>
+                        </button>
+                    </a>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="#" class="thumbnail">
+                                <img ng-src="data:image/JPEG;base64,{{images.start}}">
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="#" class="thumbnail">
+                                <img ng-src="data:image/JPEG;base64,{{images.end}}">
+                            </a>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

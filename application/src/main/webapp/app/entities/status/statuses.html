@@ -12,46 +12,38 @@
                     super-min-date=""
                     max-range-date="10"></div>
             </div>
-            <div class="col-md-2 no-padding-left">
+            <div class="col-md-5">
                 <div class="row" style="margin-bottom: 10px">
-                    <button class="btn btn-primary" ng-click="vm.playVideo(vm.device)" >
-                        <span class="glyphicon glyphicon-refresh"></span>
-                        <span >Play/Stop video</span>
-                    </button>
+                    <div class="col-md-6">
+                        <img ng-src="data:image/JPEG;base64,{{vm.thumbnails.start}}" style="width: 100%">
+                    </div>
+                    <div class="col-md-6">
+                        <img ng-src="data:image/JPEG;base64,{{vm.thumbnails.end}}" style="width: 100%">
+                    </div>
                 </div>
-                <div class="row" >
-                        <button class="btn btn-primary" ng-click="vm.refresh(vm.device)" >
-                            <span class="glyphicon glyphicon-refresh"></span>
-                            <span>Refresh</span>
-                        </button>
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="row" >
+                            <button class="btn btn-primary" ng-click="vm.refresh(vm.device)" >
+                                <span class="glyphicon glyphicon-refresh"></span>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <label for="device" class="col-md-4 control-label text-right">Device:</label>
+                        <div class="col-md-8">
+                            <select class="form-control" ng-model="vm.device" id="device"
+                                    ng-options="device as device.description for device in vm.devices" ng-change="vm.refresh(vm.device)">
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <label for="device" class="col-md-4 control-label text-right">Device:</label>
-                <div class="col-md-8">
-                    <select class="form-control" ng-model="vm.device" id="device"
-                            ng-options="device as device.description for device in vm.devices" ng-change="vm.refresh(vm.device)">
-                    </select>
-                </div>
-            </div>
+
         </div>
     </div>
-    <div ng-if="config.sources[0].src" class="panel-body videogular-container">
 
-        <videogular vg-theme="config.theme">
-            <vg-media vg-src="config.sources"
-                      vg-tracks="config.tracks" vg-flash-player>
-            </vg-media>
-
-            <vg-controls>
-                <vg-play-pause-button></vg-play-pause-button>
-                <vg-fullscreen-button></vg-fullscreen-button>
-            </vg-controls>
-
-            <vg-overlay-play></vg-overlay-play>
-        </videogular>
-
-    </div>
     <br/>
     <div class="table-responsive">
         <table class="jh-table table table-striped">

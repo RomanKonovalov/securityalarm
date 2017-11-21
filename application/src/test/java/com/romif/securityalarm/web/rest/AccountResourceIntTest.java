@@ -1,11 +1,11 @@
 package com.romif.securityalarm.web.rest;
 
 import com.romif.securityalarm.SecurityalarmApp;
+import com.romif.securityalarm.api.config.AuthoritiesConstants;
 import com.romif.securityalarm.domain.Authority;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.AuthorityRepository;
 import com.romif.securityalarm.repository.UserRepository;
-import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.MailService;
 import com.romif.securityalarm.service.UserService;
 import com.romif.securityalarm.service.dto.LocationDTO;

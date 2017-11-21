@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -32,7 +33,17 @@ public class ImageService {
             return null;
         }
 
-        BufferedImage imgIn = ImageIO.read(new ByteArrayInputStream(images.get(0).getRawImage()));
+        Optional<ByteArrayInputStream> byteArrayInputStream = images.stream().filter(i -> i != null && i.getRawImage() != null).findFirst().map(i -> new ByteArrayInputStream(i.getRawImage()));
+
+        if (!byteArrayInputStream.isPresent()) {
+            return null;
+        }
+
+        BufferedImage imgIn = ImageIO.read(byteArrayInputStream.get());
+
+        if (imgIn == null) {
+            return null;
+        }
 
         double scale;
         if (imgIn.getWidth() >= imgIn.getHeight()) {

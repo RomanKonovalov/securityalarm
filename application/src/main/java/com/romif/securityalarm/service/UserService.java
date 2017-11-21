@@ -1,10 +1,10 @@
 package com.romif.securityalarm.service;
 
+import com.romif.securityalarm.api.config.AuthoritiesConstants;
 import com.romif.securityalarm.domain.Authority;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.AuthorityRepository;
 import com.romif.securityalarm.repository.UserRepository;
-import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.security.SecurityUtils;
 import com.romif.securityalarm.service.dto.LocationDTO;
 import com.romif.securityalarm.service.util.RandomUtil;
@@ -17,9 +17,12 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import javax.inject.Inject;
-import java.util.*;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service class for managing users.

@@ -1,15 +1,15 @@
 package com.romif.securityalarm.web.rest;
 
-import com.romif.securityalarm.config.Constants;
 import com.codahale.metrics.annotation.Timed;
+import com.romif.securityalarm.api.config.AuthoritiesConstants;
+import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.UserRepository;
-import com.romif.securityalarm.security.AuthoritiesConstants;
 import com.romif.securityalarm.service.MailService;
 import com.romif.securityalarm.service.UserService;
-import com.romif.securityalarm.web.rest.vm.ManagedUserVM;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import com.romif.securityalarm.web.rest.util.PaginationUtil;
+import com.romif.securityalarm.web.rest.vm.ManagedUserVM;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

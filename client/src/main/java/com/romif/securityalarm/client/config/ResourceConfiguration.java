@@ -18,13 +18,13 @@ import java.util.Arrays;
 @EnableOAuth2Client
 public class ResourceConfiguration {
 
-    @Value("${securityalarm.client.accessTokenUri}")
+    @Value("${security.oauth2.client.access-token-uri}")
     private String accessTokenUri;
 
-    @Value("${securityalarm.client.clientID}")
+    @Value("${security.oauth2.client.client-id}")
     private String clientID;
 
-    @Value("${securityalarm.client.clientSecret}")
+    @Value("${security.oauth2.client.client-secret}")
     private String clientSecret;
 
     @Value("${securityalarm.client.username}")

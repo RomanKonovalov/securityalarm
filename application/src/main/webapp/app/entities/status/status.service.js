@@ -21,7 +21,8 @@
                 }
             },
             'update': { method:'PUT' },
-            'video': { method: 'GET',  params: {id: 'video'}},
+            'video': { method: 'GET',  params: {id: 'video.mp4'}},
+            'images': { method: 'GET', isArray: true,  params: {id: 'images'}},
             'locations': { method: 'GET', isArray: true, params: {id: 'locations'}}
         });
     }

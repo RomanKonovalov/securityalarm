@@ -37,11 +37,11 @@ public class ViewController {
     @RequestMapping(value = {
         "/my-devices",
         "/my-alarms",
-        "/status",
-        "/statuses/**",
+        "/status/**",
         "/map",
         "/settings",
         "/password",
+        "/video",
         "/"
     },
         method = RequestMethod.GET,
