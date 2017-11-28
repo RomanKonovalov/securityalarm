@@ -1,7 +1,0 @@
-id;login;password_hash;pause_token_hash;first_name;last_name;email;activated;lang_key;created_by;last_modified_by;latitude;longitude;user_id;user_type;phone;apn
-1;system;$2a$10$mE.qmcV0mFU5NcKh73TZx.z4ueI/.bDWbj0T1BYyqP481kGGarKLG;;System;System;system@localhost;true;en;system;system;0;0;null;user;;
-2;anonymoususer;$2a$10$j8S5d7Sr7.8VTOYNviDPOeWX8KcYILUVJBsYV83Y5NtECayypx9lO;;Anonymous;User;anonymous@localhost;true;en;system;system;0;0;null;user;;
-3;admin;$2a$10$6ymrZeEXfo7wpDhEYxt0L.j08dTMwqe33sqC8/DMhtNqI9IHLvEeW;;Administrator;Administrator;romif@yandex.ru;true;en;system;system;53.878338;30.365049;null;user;+375445486323;
-4;user;$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K;;User;User;user@localhost;true;en;system;system;0;0;null;user;;
-5;village;$2a$10$RGaMHDSdKrnNiL/Knf6p8OKTfv4xjGvDI3z0hAu71B/5jhJCRn9G2;$2a$10$FhshhKZkGFMyZxBqAw64X.B0zraX5N6Qf58nHhqEiry6s/MytxWr2;village;village;village@localhost;true;en;system;system;0;0;3;device;+375445486323;internet.life.com.by
-6;car;$2a$10$djoyX8.qKNq/wxv.95069Okejv152tfTxYWTO4yb5lrr3pTdIu/7q;$2a$10$RyiEb/9DIqoWtp8rUo3qWO/Wg/XfGSxOdcrJxpOHCVml1xBR0rrXK;car;car;car@localhost;true;en;system;system;0;0;3;device;+375445486323;internet.life.com.by
