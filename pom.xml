@@ -90,7 +90,6 @@
         <module>api</module>
         <module>application</module>
         <module>client</module>
-        <!--<module>clientandroid</module>-->
     </modules>
 
 </project>
