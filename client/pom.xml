@@ -4,14 +4,14 @@
 
     <parent>
         <artifactId>securityalarm</artifactId>
-        <groupId>com.romif</groupId>
+        <groupId>com.romif.securityalarm</groupId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>securityalarm-client</artifactId>
+    <artifactId>client</artifactId>
     <packaging>jar</packaging>
-    <name>securityalarm-client</name>
+    <name>client</name>
 
     <prerequisites>
         <maven>3.0.0</maven>
@@ -19,8 +19,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.romif</groupId>
-            <artifactId>securityalarm-api</artifactId>
+            <groupId>com.romif.securityalarm</groupId>
+            <artifactId>api</artifactId>
             <version>${project.version}</version>
         </dependency>
 

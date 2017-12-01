@@ -8,7 +8,7 @@
         <version>1.5.8.RELEASE</version>
     </parent>
 
-    <groupId>com.romif</groupId>
+    <groupId>com.romif.securityalarm</groupId>
     <artifactId>securityalarm</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -90,7 +90,7 @@
         <module>api</module>
         <module>application</module>
         <module>client</module>
-        <module>clientandroid</module>
+        <!--<module>clientandroid</module>-->
     </modules>
 
 </project>
