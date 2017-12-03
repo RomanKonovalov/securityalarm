@@ -117,12 +117,8 @@ public class AlarmResource {
     @CacheEvict(cacheNames = "alarms", allEntries = true)
     public ResponseEntity<Void> pauseAlarm() {
         log.debug("REST request to pause alarm");
-
-        if (alarmService.pauseAlarm()) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        alarmService.pauseAlarm();
+        return ResponseEntity.ok().build();
     }
 
     @Secured(AuthoritiesConstants.DEVICE)
@@ -131,12 +127,8 @@ public class AlarmResource {
     @CacheEvict(cacheNames = "alarms", allEntries = true)
     public ResponseEntity<Void> resumeAlarm() {
         log.debug("REST request to resume alarm");
-
-        if (alarmService.resumeAlarm()) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        alarmService.resumeAlarm();
+        return ResponseEntity.ok().build();
     }
 
 }

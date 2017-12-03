@@ -57,7 +57,7 @@ public class VideoService {
                             dateTime = dateTime.plusNanos(Integer.parseInt(matcher.group(2)) * 10000000 + 1000000);
                             imageDto.setDateTime(dateTime);
 
-                            publisher.publishEvent(new DiviceMotionEvent(this));
+                            publisher.publishEvent(new DeviceMotionEvent(this));
                         } else {
                             matcher = patternSnapshot.matcher(fileName);
                             if (matcher.find()) {
@@ -75,8 +75,8 @@ public class VideoService {
                 .collect(Collectors.toList());
     }
 
-    static class DiviceMotionEvent extends ApplicationEvent {
-        public DiviceMotionEvent(Object source) {
+    static class DeviceMotionEvent extends ApplicationEvent {
+        public DeviceMotionEvent(Object source) {
             super(source);
         }
     }

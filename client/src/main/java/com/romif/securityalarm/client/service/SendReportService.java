@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.stereotype.Service;
@@ -17,10 +20,11 @@ import org.springframework.web.client.RestClientException;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-public class SendReportService implements ApplicationListener<VideoService.DiviceMotionEvent> {
+public class SendReportService implements ApplicationListener<VideoService.DeviceMotionEvent> {
 
     private final Logger log = LoggerFactory.getLogger(SendReportService.class);
 
@@ -40,11 +44,20 @@ public class SendReportService implements ApplicationListener<VideoService.Divic
 
     private DeviceState deviceState;
 
+    private BigDecimal balance;
+    private BigDecimal traffic;
+
     @Autowired
     private OAuth2RestTemplate restTemplate;
 
     @Autowired
     private SystemService systemService;
+
+    @Autowired
+    private AlarmService alarmService;
+
+    @Autowired
+    private ModemService modemService;
 
     @PostConstruct
     public void init() {
@@ -83,11 +96,20 @@ public class SendReportService implements ApplicationListener<VideoService.Divic
             statusDto.setImages(images);
             statusDto.setLocation(location);
             statusDto.setDeviceTemperature(deviceTemperature);
+            statusDto.setBalance(balance);
+            statusDto.setTraffic(traffic);
             deviceState = null;
 
             try {
                 log.debug("begin postForObject");
-                StatusDto savedStatus = restTemplate.postForObject(statusUrl, statusDto, StatusDto.class);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+
+                HttpEntity<StatusDto> entity = new HttpEntity<>(statusDto, headers);
+                StatusDto savedStatus = restTemplate.postForObject(statusUrl, entity, StatusDto.class);
+
+                alarmService.proceedStatus(savedStatus);
+
                 log.debug("savedStatus: " + savedStatus);
             } catch (RestClientException e) {
                 log.error("Can't send status", e);
@@ -98,8 +120,22 @@ public class SendReportService implements ApplicationListener<VideoService.Divic
 
     }
 
+    @Scheduled(fixedRate = 60 * 60 * 1000)
+    public void getBalance(){
+        modemService.login();
+        modemService.getBalance().thenAccept(balance -> {
+            this.balance = balance;
+        }).thenApply((a) -> {
+            return modemService.getTraffic().thenAccept(traffic -> {
+                this.traffic = traffic;
+                modemService.logout();
+            });
+        });
+
+    }
+
     @Override
-    public void onApplicationEvent(VideoService.DiviceMotionEvent diviceMotionEvent) {
+    public void onApplicationEvent(VideoService.DeviceMotionEvent deviceMotionEvent) {
         deviceState = DeviceState.MOTION;
     }
 }

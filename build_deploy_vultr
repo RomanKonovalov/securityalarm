@@ -2,6 +2,8 @@
 
 mvn -Pprod clean install -DskipTests
 
+ssh root@104.238.176.254 'systemctl stop crond.service'
 ssh root@104.238.176.254 '/etc/init.d/securityalarm stop'
 scp application/target/*.war root@104.238.176.254:/home/app/securityalarm.war
 ssh root@104.238.176.254 '/etc/init.d/securityalarm start'
+ssh root@104.238.176.254 'systemctl start crond.service'

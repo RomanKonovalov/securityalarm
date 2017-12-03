@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @ToString(exclude = "images")
@@ -20,5 +22,11 @@ public class StatusDto {
     private LocationDto location;
 
     private List<ImageDto> images;
+
+    private Set<String> macAddresses;
+
+    private BigDecimal balance;
+
+    private BigDecimal traffic;
 
 }

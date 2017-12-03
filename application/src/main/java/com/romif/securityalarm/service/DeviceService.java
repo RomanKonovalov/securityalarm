@@ -83,7 +83,6 @@ public class DeviceService {
         String secret = RandomStringUtils.randomAlphanumeric(8);
 
         device.setPassword(passwordEncoder.encode(rawPassword));
-        device.setPauseToken(passwordEncoder.encode(pauseToken));
 
         Device result = deviceRepository.save(device);
 

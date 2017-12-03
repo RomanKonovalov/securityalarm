@@ -2,10 +2,14 @@ package com.romif.securityalarm.service;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.romif.securityalarm.api.dto.StatusDto;
 import com.romif.securityalarm.domain.*;
 import com.romif.securityalarm.repository.AlarmRepository;
+import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.security.SecurityUtils;
+import com.romif.securityalarm.web.rest.AccountResource;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,7 +19,9 @@ import javax.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class AlarmService {
@@ -33,6 +39,9 @@ public class AlarmService {
 
     @Inject
     private UserRepository userRepository;
+
+    @Inject
+    private DeviceRepository deviceRepository;
 
     private final Cache<String, Alarm> emailsMoving = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
     private final Cache<Alarm, Object> emailsInaccessible = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.HOURS).build();
@@ -105,22 +114,20 @@ public class AlarmService {
         return true;
     }
 
-    public boolean pauseAlarm() {
+    public void pauseAlarm() {
         String deviceLogin = SecurityUtils.getCurrentUserLogin();
-        return alarmRepository.findOneByDeviceLogin(deviceLogin).map(alarm -> {
+        alarmRepository.findOneByDeviceLogin(deviceLogin).ifPresent(alarm -> {
             alarm.setPaused(true);
             alarmRepository.save(alarm);
-            return true;
-        }).orElse(false);
+        });
     }
 
-    public boolean resumeAlarm() {
+    public void resumeAlarm() {
         String deviceLogin = SecurityUtils.getCurrentUserLogin();
-        return alarmRepository.findOneByDeviceLogin(deviceLogin).map(alarm -> {
+        alarmRepository.findOneByDeviceLogin(deviceLogin).ifPresent(alarm -> {
             alarm.setPaused(false);
             alarmRepository.save(alarm);
-            return true;
-        }).orElse(false);
+        });
     }
 
 }
