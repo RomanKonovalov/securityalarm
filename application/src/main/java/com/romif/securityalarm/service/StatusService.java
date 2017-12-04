@@ -1,6 +1,7 @@
 package com.romif.securityalarm.service;
 
 import com.romif.securityalarm.api.dto.DeviceState;
+import com.romif.securityalarm.api.dto.ImageDto;
 import com.romif.securityalarm.domain.ConfigStatus;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Image;
@@ -8,22 +9,34 @@ import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.ImageRepository;
 import com.romif.securityalarm.repository.StatusRepository;
+import com.romif.securityalarm.security.SecurityUtils;
 import com.romif.securityalarm.service.dto.ImagesDTO;
 import com.romif.securityalarm.service.dto.LocationDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
+import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -60,6 +73,9 @@ public class StatusService {
 
     @Inject
     private ImageRepository imageRepository;
+
+    @Inject
+    private TokenStore tokenStore;
 
     /**
      * Save a status.
@@ -176,7 +192,39 @@ public class StatusService {
             .mapToObj(ids::get)
             .collect(Collectors.toList());
 
-        videoService.getVideoH264(filteredIds, outputStream);
+        //videoService.getVideoH264(filteredIds, outputStream);
+
+
+        String token = tokenStore.findTokensByClientIdAndUserName("securityalarmapp", SecurityUtils.getCurrentUserLogin())
+            .stream().findFirst().map(t -> t.getTokenType() + " " + t.getValue()).orElseThrow(() -> new AuthenticationCredentialsNotFoundException(SecurityUtils.getCurrentUserLogin() + "has no token"));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", token);
+
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        for (List<Long> partition : ListUtils.partition(filteredIds, 20)) {
+
+            List<byte[]> images = imageRepository.findByIds(partition).stream()
+                .map(Image::getRawImage)
+                .collect(Collectors.toList());
+            HttpEntity<List<byte[]>> request = new HttpEntity<>(images, headers);
+
+
+            ResponseEntity<Resource> exchange = restTemplate.exchange("https://securityalarm-videoservice.herokuapp.com/api/video", HttpMethod.POST, request, Resource.class);
+
+            try {
+                IOUtils.copy(exchange.getBody().getInputStream(), outputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
+
+
     }
 
     @Transactional(readOnly = true)
