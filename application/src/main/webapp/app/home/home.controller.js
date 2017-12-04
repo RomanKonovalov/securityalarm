@@ -29,7 +29,9 @@
                 DeviceTracker.subscribe();
 
                 DeviceTracker.receive().then(null, null, function(deviceActivity) {
-                    vm.deviceActivity = deviceActivity;
+                    if (deviceActivity.id === 5) {
+                        vm.deviceActivity = deviceActivity;
+                    }
                 });
             });
         }

@@ -3,6 +3,7 @@ package com.romif.securityalarm.web.websocket;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Image;
 import com.romif.securityalarm.domain.User;
+import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.ImageRepository;
 import com.romif.securityalarm.repository.UserRepository;
 import com.romif.securityalarm.web.websocket.dto.DeviceActivityDTO;
@@ -22,6 +23,7 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.simp.user.SimpSession;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
@@ -46,6 +48,8 @@ public class DeviceActivityService {
     @Inject
     private UserRepository userRepository;
     @Inject
+    private DeviceRepository deviceRepository;
+    @Inject
     private ImageRepository imageRepository;
     private Map<String, Map<Long, BlockingDeque<Image>>> userImagesMap = new ConcurrentHashMap<>();
 
@@ -65,7 +69,39 @@ public class DeviceActivityService {
             (subscription) -> "/user/queue/deviceTracker".equals(subscription.getDestination()) && login.equals(subscription.getSession().getUser().getName())));
     }
 
-    @EventListener
+    @Scheduled(fixedRate = 10000)
+    public void sendDeviceActivity() {
+        simpUserRegistry.findSubscriptions(
+            (subscription) -> "/user/queue/deviceTracker".equals(subscription.getDestination()))
+            .forEach(simpSubscription -> {
+                simpSubscription.getId();
+
+                String login = simpSubscription.getSession().getUser().getName();
+
+                List<Device> devices = deviceRepository.findAllByUserLogin(login);
+                for (Device device : devices) {
+                    List<Image> images = imageRepository.findFirst1ByStatusCreatedByOrderByDateTimeDesc(device.getLogin());
+                    DeviceActivityDTO deviceActivityDTO = new DeviceActivityDTO();
+                    deviceActivityDTO.setId(device.getId());
+                    if (CollectionUtils.isNotEmpty(images)) {
+                        deviceActivityDTO.setImage(images.get(0).getRawImage());
+                    }
+                    deviceActivityDTO.setBalance(device.getBalance());
+                    deviceActivityDTO.setTraffic(device.getTraffic());
+
+                    SimpMessageHeaderAccessor ha = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+                    ha.setSessionId(simpSubscription.getSession().getId());
+                    ha.setLeaveMutable(true);
+
+                    messagingTemplate.convertAndSendToUser(simpSubscription.getSession().getId(), "/queue/deviceTracker", deviceActivityDTO, ha.getMessageHeaders());
+
+                }
+
+
+            });
+    }
+
+    //@EventListener
     public void onApplicationEvent(SessionSubscribeEvent event) {
 
         String login = event.getUser().getName();
@@ -164,12 +200,12 @@ public class DeviceActivityService {
         };
     }
 
-    @EventListener
+    //@EventListener
     public void onApplicationEvent(SessionUnsubscribeEvent event) {
         userImagesMap.remove(event.getUser().getName());
     }
 
-    @EventListener
+    //@EventListener
     public void onApplicationEvent(SessionDisconnectEvent event) {
         userImagesMap.remove(event.getUser().getName());
     }

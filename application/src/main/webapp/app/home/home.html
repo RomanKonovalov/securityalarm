@@ -7,7 +7,8 @@
 
             <div ng-switch="vm.isAuthenticated()">
                 <div ng-switch-when="true">
-                    <h2>Welcome {{vm.account.login}}. Your device current state:</h2>
+                    <h3>Welcome {{vm.account.login}}</h3>
+                    <div>Balance: {{vm.deviceActivity.balance}}. Traffic: {{vm.deviceActivity.traffic}} Mb</div>
                     <div class="row" style="margin-bottom: 10px">
                         <div class="col-md-12">
                             <a href="#" class="thumbnail" ng-show="vm.deviceActivity.image">

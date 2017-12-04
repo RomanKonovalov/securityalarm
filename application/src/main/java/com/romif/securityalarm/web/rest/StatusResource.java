@@ -5,6 +5,9 @@ import com.romif.securityalarm.api.dto.StatusDto;
 import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Status;
+import com.romif.securityalarm.domain.User;
+import com.romif.securityalarm.repository.DeviceRepository;
+import com.romif.securityalarm.security.SecurityUtils;
 import com.romif.securityalarm.service.StatusService;
 import com.romif.securityalarm.service.dto.ImagesDTO;
 import com.romif.securityalarm.service.dto.LocationDTO;
@@ -48,6 +51,9 @@ public class StatusResource {
     @Inject
     private StatusMapper statusMapper;
 
+    @Inject
+    private DeviceRepository deviceRepository;
+
     /**
      * POST  /statuses : Create a new status.
      *
@@ -62,8 +68,29 @@ public class StatusResource {
 
         Status status = statusService.save(statusMapper.statusDtoToStatus(statusDto));
         StatusDto result = statusMapper.statusToStatusDto(status);
-        Queue<Status> statuses =  statusService.getLast10StatusesCreatedBy(status.getCreatedBy());
+        Queue<Status> statuses = statusService.getLast10StatusesCreatedBy(status.getCreatedBy());
         statusService.putInQueue(status, statuses);
+
+        Optional<Device> device = deviceRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
+
+        device
+            .map(Device::getUser)
+            .map(User::getMacAddresses)
+            .ifPresent(macAddresses -> {
+                result.setMacAddresses(macAddresses);
+            });
+
+        device.ifPresent(d -> {
+            if (statusDto.getBalance() != null) {
+                d.setBalance(statusDto.getBalance());
+            }
+            if (statusDto.getTraffic() != null) {
+                d.setTraffic(statusDto.getTraffic());
+            }
+            deviceRepository.save(d);
+        });
+        result.getMacAddresses().size();
+
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.time.ZonedDateTime;
 
@@ -70,6 +71,10 @@ public class User extends GenericUser {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     //@JoinColumn(name="device_id")
     private Set<Device> devices = new HashSet<>();
+
+    @ElementCollection(targetClass=String.class)
+    @CollectionTable(name = "mac_address")
+    private Set<String> macAddresses;
 
     @Override
     public boolean equals(Object o) {

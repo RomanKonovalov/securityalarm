@@ -8,6 +8,8 @@ import lombok.ToString;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by Roman_Konovalov on 1/24/2017.
@@ -31,18 +33,17 @@ public class Device extends GenericUser {
     @OneToOne(mappedBy="device")
     private Alarm alarm;
 
-    @JsonIgnore
-    @NotNull
-    @Size(min = 60, max = 60)
-    @Column(name = "pause_token_hash",length = 60)
-    private String pauseToken;
-
-
     @NotNull
     @Column(name = "apn", length = 50)
     private String apn;
 
     @Column(name = "config_status", length = 50)
     private ConfigStatus configStatus = ConfigStatus.NOT_CONFIGURED;
+
+    @Column(name = "balance")
+    private BigDecimal balance;
+
+    @Column(name = "traffic")
+    private BigDecimal traffic;
 
 }

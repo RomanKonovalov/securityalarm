@@ -43,10 +43,4 @@ public class AlarmResource {
         }
     }
 
-    @Secured(AuthoritiesConstants.USER)
-    @RequestMapping(Constants.PING_DEVICE_PATH)
-    public ResponseEntity<ZonedDateTime> devicePing() {
-        log.debug("ping");
-        return ResponseEntity.ok(alarmService.ping());
-    }
 }
