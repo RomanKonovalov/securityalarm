@@ -8,8 +8,8 @@
         <p th:text="#{email.alert.inaccessible.text1(${status.createdBy}, ${#temporals.format(status.createdDate, 'dd/MMM/yyyy HH:mm')})}">
         </p>
         <p>
-            Last position: <a th:href="@{|http://www.google.com/maps/place/${status.latitude},${status.longitude}|}"
-               th:text="|lat: ${status.latitude}, lng:${status.longitude}|"></a>
+            Last position: <a th:href="@{|http://www.google.com/maps/place/${status.location.latitude},${status.location.longitude}|}"
+               th:text="|lat: ${status.location.latitude}, lng:${status.location.longitude}|"></a>
         </p>
         <p>
             Check your device. This email will be resent in 2 hours.

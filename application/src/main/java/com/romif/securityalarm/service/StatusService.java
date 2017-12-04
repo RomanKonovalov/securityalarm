@@ -66,9 +66,6 @@ public class StatusService {
     private DeviceRepository deviceRepository;
 
     @Inject
-    private VideoService videoService;
-
-    @Inject
     private ImageService imageService;
 
     @Inject
@@ -172,15 +169,6 @@ public class StatusService {
         return locationDTOs;
     }
 
-
-    @Transactional(readOnly = true)
-    public void getStatusVideo(ZonedDateTime startDate, ZonedDateTime endDate, Device device, OutputStream outputStream) throws AWTException, InterruptedException, IOException {
-
-        List<Image> images = imageRepository.findByDateTimeAfterAndDateTimeBeforeAndStatusCreatedBy(startDate, endDate, device.getLogin(), new PageRequest(0, 1000, Sort.Direction.ASC, "dateTime"));
-
-        videoService.getVideo(images, outputStream);
-    }
-
     @Transactional(readOnly = true)
     public void getVideoH264(ZonedDateTime startDate, ZonedDateTime endDate, Device device, OutputStream outputStream) {
 
@@ -240,8 +228,6 @@ public class StatusService {
             .mapToObj(ids::get)
             .collect(Collectors.toList());
 
-
-        videoService.getVideoMp4(ids, outputStream);
     }
 
     /**

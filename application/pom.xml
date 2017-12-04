@@ -157,11 +157,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.humble</groupId>
-            <artifactId>humble-video-all</artifactId>
-            <version>0.2.1</version>
-        </dependency>
-        <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient</artifactId>
             <version>${prometheus-simpleclient.version}</version>
