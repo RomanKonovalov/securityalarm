@@ -8,12 +8,27 @@
             <div ng-switch="vm.isAuthenticated()">
                 <div ng-switch-when="true">
                     <h3>Welcome {{vm.account.login}}</h3>
-                    <div>Balance: {{vm.deviceActivity.balance}}. Traffic: {{vm.deviceActivity.traffic}} Mb</div>
-                    <div class="row" style="margin-bottom: 10px">
+                    <div class="row" style="padding-bottom: 10px">
+                        <div class="col-md-12">
+                            <span class="label" ng-show="vm.deviceActivity.balance" ng-class="vm.deviceActivity.balance < 5 ? 'label-danger' : 'label-success'">Balance: <span ng-bind-html="vm.deviceActivity.balance | currencyFormat:vm.isoCode"></span></span>
+                            <span class="label" ng-show="vm.deviceActivity.traffic" ng-class="vm.deviceActivity.traffic < 500 ? 'label-danger' : 'label-success'"> Traffic: {{vm.deviceActivity.traffic * 1000000 | filesize:2}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-12">
                             <a href="#" class="thumbnail" ng-show="vm.deviceActivity.image">
                                 <img ng-src="data:image/JPEG;base64,{{vm.deviceActivity.image}}">
                             </a>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom: 10px">
+                        <div class="col-md-12">
+                            <ui-gmap-google-map ng-if="vm.deviceActivity.location.latitude" center="vm.map.center" zoom="vm.map.zoom" draggable="true" options="options" bounds="vm.map.bounds" control="vm.map.control">
+                                <ui-gmap-marker coords="vm.marker.coords" options="vm.marker.options" idkey="vm.marker.id">
+                                </ui-gmap-marker>
+                                <ui-gmap-circle ng-repeat="c in vm.circles track by c.id" center="c.center" stroke="c.stroke" fill="c.fill" radius="c.radius"
+                                                visible="c.visible" geodesic="c.geodesic" editable="c.editable" draggable="c.draggable" clickable="c.clickable" control="c.control"></ui-gmap-circle>
+                            </ui-gmap-google-map>
                         </div>
                     </div>
                 </div>

@@ -2,14 +2,20 @@ package com.romif.securityalarm.web.websocket;
 
 import com.romif.securityalarm.domain.Device;
 import com.romif.securityalarm.domain.Image;
+import com.romif.securityalarm.domain.Location;
+import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.repository.ImageRepository;
+import com.romif.securityalarm.repository.StatusRepository;
 import com.romif.securityalarm.repository.UserRepository;
+import com.romif.securityalarm.service.dto.LocationDTO;
 import com.romif.securityalarm.web.websocket.dto.DeviceActivityDTO;
 import com.romif.securityalarm.web.websocket.dto.DeviceTrackingControlDTO;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -26,6 +32,7 @@ import javax.inject.Inject;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,6 +50,8 @@ public class DeviceActivityService {
     private DeviceRepository deviceRepository;
     @Inject
     private ImageRepository imageRepository;
+    @Inject
+    private StatusRepository statusRepository;
 
     public DeviceActivityService(SimpMessageSendingOperations messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -80,7 +89,8 @@ public class DeviceActivityService {
 
         List<Device> devices = deviceRepository.findAllByUserLogin(login);
         for (Device device : devices) {
-            Image image = imageRepository.findFirst1ByStatusCreatedByAndDateTimeIsNotNullOrderByDateTimeDesc(device.getLogin());
+            Image image = imageRepository.findFirstByStatusCreatedByAndDateTimeIsNotNullOrderByDateTimeDesc(device.getLogin());
+            Optional<Location> location = statusRepository.findFirstByCreatedByOrderByCreatedDateDesc(device.getLogin()).map(Status::getLocation);
             DeviceActivityDTO deviceActivityDTO = new DeviceActivityDTO();
             deviceActivityDTO.setId(device.getId());
             if (image != null) {
@@ -88,6 +98,9 @@ public class DeviceActivityService {
             }
             deviceActivityDTO.setBalance(device.getBalance());
             deviceActivityDTO.setTraffic(device.getTraffic());
+            if (location.isPresent()) {
+                deviceActivityDTO.setLocation(location.get());
+            }
 
             SimpMessageHeaderAccessor ha = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
             ha.setSessionId(simpSubscription.getSession().getId());

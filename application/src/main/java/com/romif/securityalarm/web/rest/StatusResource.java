@@ -1,6 +1,7 @@
 package com.romif.securityalarm.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.romif.securityalarm.api.dto.DeviceState;
 import com.romif.securityalarm.api.dto.StatusDto;
 import com.romif.securityalarm.config.Constants;
 import com.romif.securityalarm.domain.Device;
@@ -107,16 +108,17 @@ public class StatusResource {
     public ResponseEntity<List<Status>> getAllStatuses(@ApiParam Pageable pageable,
                                                        @RequestParam(required = false) ZonedDateTime startDate,
                                                        @RequestParam(required = false) ZonedDateTime endDate,
+                                                       @RequestParam(required = false) DeviceState deviceState,
                                                        @RequestParam Device device)
         throws URISyntaxException {
         log.debug("REST request to get a page of Statuses");
-        String login =  ((org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        String login = SecurityUtils.getCurrentUserLogin();
 
         if (device == null || !login.equals(device.getUser().getLogin())) {
             HttpHeaders headers = HeaderUtil.createFailureAlert("alarm", "deviceNotFound", "Device not found");
             return new ResponseEntity<>(Collections.emptyList(), headers, HttpStatus.BAD_REQUEST);
         }
-        Page<Status> page = statusService.findAll(pageable, startDate, endDate, device);
+        Page<Status> page = statusService.findAll(pageable, startDate, endDate, deviceState, device);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/statuses");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }

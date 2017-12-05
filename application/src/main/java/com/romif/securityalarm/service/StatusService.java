@@ -119,11 +119,12 @@ public class StatusService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Status> findAll(Pageable pageable, ZonedDateTime startDate, ZonedDateTime endDate, Device device) {
+    public Page<Status> findAll(Pageable pageable, ZonedDateTime startDate, ZonedDateTime endDate, DeviceState deviceState, Device device) {
         log.debug("Request to get all Statuses");
         Page<Status> result;
+        List<DeviceState> deviceStates = deviceState != null ? Arrays.asList(deviceState) : Arrays.asList(DeviceState.values());
         if (startDate != null && endDate != null) {
-            result = statusRepository.findByCreatedDateAfterAndCreatedDateBeforeAndCreatedBy(startDate, endDate, device.getLogin(), pageable);
+            result = statusRepository.findByCreatedDateAfterAndCreatedDateBeforeAndCreatedByAndDeviceStateIn(startDate, endDate, device.getLogin(), deviceStates, pageable);
         } else {
             result = statusRepository.findByCreatedBy(device.getLogin(), pageable);
         }
@@ -136,7 +137,7 @@ public class StatusService {
         List<Long> ids = imageRepository.findIds(startDate, endDate, device.getLogin(), new PageRequest(0, 260000));
 
         if (ids.size() < MAX_VIDEO_FRAMES * 4) {
-            return ListUtils.partition(ids, MAX_VIDEO_FRAMES).stream().map(p -> getImagesDTO(p)).collect(Collectors.toList());
+            return ListUtils.partition(ids, MAX_VIDEO_FRAMES).stream().map(this::getImagesDTO).collect(Collectors.toList());
         } else {
             return Arrays.asList(getImagesDTO(ids));
         }

@@ -21,6 +21,13 @@
         vm.devices = devices;
         vm.device = {};
 
+        vm.motion = false;
+
+        vm.motionFilter = function () {
+            vm.motion = !vm.motion;
+            vm.refresh(vm.device);
+        };
+
 
         vm.refresh = function loadAll (device) {
             //startDate = new Date(new Date().getTime() - 60 * 1000 * 60);
@@ -33,6 +40,7 @@
             Status.query({
                 startDate: startDate,
                 endDate: endDate,
+                deviceState: vm.motion ? "MOTION" : null,
                 page: pagingParams.page - 1,
                 size: vm.itemsPerPage,
                 sort: sort(),
@@ -57,11 +65,6 @@
             }
         };
 
-        vm.playVideo = function downloadVideo (device) {
-            var token = AuthServerProvider.getToken().access_token;
-            $scope.config.sources[0].src = $scope.config.sources[0].src ? null : '/api/statuses/video?device=' + device.id + '&endDate=' + endDate.toISOString() + '&startDate=' + startDate.toISOString() + '&access_token=' + token;
-
-        };
         var midnight = new Date();
         midnight.setHours(0, 0, 0);
         $scope.myDatetimeRange = {
@@ -123,7 +126,7 @@
 
         devices.$promise.then(function (result) {
             if (result.length > 0) {
-                vm.device = result[0];
+                vm.device = result[1];
                 vm.refresh(vm.device);
             }
         });

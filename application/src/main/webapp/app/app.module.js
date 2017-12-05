@@ -22,7 +22,9 @@
             'betsol.intlTelInput',
             'ngTouch',
             'ngAnimate',
-            'rgkevin.datetimeRangePicker'
+            'rgkevin.datetimeRangePicker',
+            'currencyFormat',
+            'ngFilesizeFilter'
         ])
         .config(config)
         .run(run)

@@ -55,6 +55,8 @@ module.exports = function (config) {
             'src/main/webapp/bower_components/angular-animate/angular-animate.js',
             'src/main/webapp/bower_components/angular-touch/angular-touch.js',
             'src/main/webapp/bower_components/venturocket-angular-slider/build/angular-slider.js',
+            'src/main/webapp/bower_components/angular-currency-format/dist/currency-format.js',
+            'src/main/webapp/bower_components/angular-filesize-filter/angular-filesize-filter.js',
             'src/main/webapp/bower_components/angular-mocks/angular-mocks.js',
             'src/main/webapp/bower_components/angular-google-maps/dist/angular-google-maps.js',
             'src/main/webapp/bower_components/datetimeRangePicker/range-picker.js',

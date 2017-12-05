@@ -1,5 +1,7 @@
 package com.romif.securityalarm.repository;
 
+import com.romif.securityalarm.api.dto.DeviceState;
+import com.romif.securityalarm.domain.Location;
 import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.service.dto.LocationDTO;
 import org.springframework.data.domain.Page;
@@ -18,7 +20,7 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public interface StatusRepository extends JpaRepository<Status, Long> {
 
-    Page<Status> findByCreatedDateAfterAndCreatedDateBeforeAndCreatedBy(ZonedDateTime startDate, ZonedDateTime endDate,  String createdBy, Pageable pageable);
+    Page<Status> findByCreatedDateAfterAndCreatedDateBeforeAndCreatedByAndDeviceStateIn(ZonedDateTime startDate, ZonedDateTime endDate, String createdBy, List<DeviceState> deviceStates, Pageable pageable);
 
     Page<Status> findByCreatedBy(String createdBy, Pageable pageable);
 
@@ -29,7 +31,7 @@ public interface StatusRepository extends JpaRepository<Status, Long> {
     Optional<Status> findOneById(Long id);
 
     @Query("select s.location.id from Status s where s.location is not null and cast(s.location.latitude as java.lang.String) <> 'NaN' and cast(s.location.longitude as java.lang.String) <> 'NaN' and s.createdDate > ?#{[0]} and s.createdDate < ?#{[1]} and s.createdBy = ?#{[2]} order by s.createdDate asc ")
-    List<Long> findIds(ZonedDateTime startDate, ZonedDateTime endDate,  String createdBy, Pageable pageable);
+    List<Long> findIds(ZonedDateTime startDate, ZonedDateTime endDate, String createdBy, Pageable pageable);
 
     @Query("select new com.romif.securityalarm.service.dto.LocationDTO(l.latitude, l.longitude) from Location l where l.id in ?#{[0]} order by l.id desc")
     List<LocationDTO> findByIds(List<Long> ids);

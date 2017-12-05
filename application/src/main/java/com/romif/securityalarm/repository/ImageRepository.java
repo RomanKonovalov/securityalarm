@@ -23,6 +23,6 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     @Query("select i from Image i where i.id in ?#{[0]} order by i.dateTime asc")
     List<Image> findByIds(List<Long> ids);
 
-    Image findFirst1ByStatusCreatedByAndDateTimeIsNotNullOrderByDateTimeDesc(String createdBy);
+    Image findFirstByStatusCreatedByAndDateTimeIsNotNullOrderByDateTimeDesc(String createdBy);
 
 }

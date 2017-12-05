@@ -1,6 +1,7 @@
 package com.romif.securityalarm.web.websocket.dto;
 
-import com.romif.securityalarm.api.dto.LocationDto;
+
+import com.romif.securityalarm.domain.Location;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ public class DeviceActivityDTO {
 
     private Long id;
     private byte[] image;
-    private LocationDto location;
+    private Location location;
     private BigDecimal balance;
     private BigDecimal traffic;
 
