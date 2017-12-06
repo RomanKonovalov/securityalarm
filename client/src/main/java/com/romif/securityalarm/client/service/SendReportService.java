@@ -109,6 +109,7 @@ public class SendReportService implements ApplicationListener<VideoService.Devic
                 StatusDto savedStatus = restTemplate.postForObject(statusUrl, entity, StatusDto.class);
 
                 alarmService.proceedStatus(savedStatus);
+                systemService.proceedStatus(savedStatus);
 
                 log.debug("savedStatus: " + savedStatus);
             } catch (RestClientException e) {

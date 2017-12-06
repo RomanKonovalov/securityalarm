@@ -29,4 +29,6 @@ public class StatusDto {
 
     private BigDecimal traffic;
 
+    private DeviceAction deviceAction;
+
 }

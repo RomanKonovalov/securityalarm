@@ -99,6 +99,22 @@ public class DeviceResource {
                 .body(null);*/
     }
 
+    @PostMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}/reboot")
+    @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
+    public CompletableFuture<Boolean> rebootDevice(@PathVariable String login) {
+        log.debug("REST request to config Device: {}", login);
+        return  deviceService.reboot(login);
+    }
+
+    @PostMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}/halt")
+    @Timed
+    @Secured(AuthoritiesConstants.ADMIN)
+    public CompletableFuture<Boolean> haltDevice(@PathVariable String login) {
+        log.debug("REST request to config Device: {}", login);
+        return deviceService.halt(login);
+    }
+
     @DeleteMapping("/devices/{login:" + Constants.LOGIN_REGEX + "}")
     @Timed
     @Secured(AuthoritiesConstants.ADMIN)

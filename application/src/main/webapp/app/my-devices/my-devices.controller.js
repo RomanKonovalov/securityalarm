@@ -21,5 +21,13 @@
             Device.config({'login': device.name});
         };
 
+        $scope.reboot = function (device) {
+            Device.reboot({'login': device.name});
+        };
+
+        $scope.halt = function (device) {
+            Device.halt({'login': device.name});
+        };
+
     }
 })();

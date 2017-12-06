@@ -1,6 +1,7 @@
 package com.romif.securityalarm.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.romif.securityalarm.api.dto.DeviceAction;
 import com.romif.securityalarm.api.dto.DeviceState;
 import com.romif.securityalarm.api.dto.StatusDto;
 import com.romif.securityalarm.config.Constants;
@@ -9,6 +10,7 @@ import com.romif.securityalarm.domain.Status;
 import com.romif.securityalarm.domain.User;
 import com.romif.securityalarm.repository.DeviceRepository;
 import com.romif.securityalarm.security.SecurityUtils;
+import com.romif.securityalarm.service.DeviceService;
 import com.romif.securityalarm.service.StatusService;
 import com.romif.securityalarm.service.dto.ImagesDTO;
 import com.romif.securityalarm.service.dto.LocationDTO;
@@ -16,6 +18,7 @@ import com.romif.securityalarm.service.mapper.StatusMapper;
 import com.romif.securityalarm.web.rest.util.HeaderUtil;
 import com.romif.securityalarm.web.rest.util.PaginationUtil;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -37,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * REST controller for managing Status.
@@ -54,6 +58,9 @@ public class StatusResource {
 
     @Inject
     private DeviceRepository deviceRepository;
+
+    @Inject
+    private DeviceService deviceService;
 
     /**
      * POST  /statuses : Create a new status.
@@ -89,8 +96,16 @@ public class StatusResource {
                 d.setTraffic(statusDto.getTraffic());
             }
             deviceRepository.save(d);
+            Pair<DeviceAction, CompletableFuture<Boolean>> deviceActionCompletableFuturePair = deviceService.completeDeviceAction(d.getLogin());
+            if (deviceActionCompletableFuturePair != null) {
+                result.setDeviceAction(deviceActionCompletableFuturePair.getKey());
+                deviceActionCompletableFuturePair.getValue().complete(true);
+            }
+
         });
         result.getMacAddresses().size();
+
+
 
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }

@@ -1,5 +1,8 @@
 package com.romif.securityalarm.service;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.romif.securityalarm.api.dto.DeviceAction;
 import com.romif.securityalarm.config.ApplicationProperties;
 import com.romif.securityalarm.domain.ConfigStatus;
 import com.romif.securityalarm.domain.Device;
@@ -11,6 +14,7 @@ import com.romif.securityalarm.service.dto.DeviceManagementDTO;
 import com.romif.securityalarm.service.mapper.DeviceMapper;
 import com.romif.securityalarm.service.util.RandomUtil;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,32 +27,31 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
 public class DeviceService {
 
-    private final Logger log = LoggerFactory.getLogger(DeviceService.class);
+    public static final int DEVICE_ACTION_TIMEOUT = 120;
 
+    private static final ScheduledExecutorService schedulerExecutor = Executors.newScheduledThreadPool(20);
+    private final Logger log = LoggerFactory.getLogger(DeviceService.class);
+    private final Cache<String, Pair<DeviceAction, CompletableFuture<Boolean>>> deviceActions = CacheBuilder.newBuilder()
+        .expireAfterWrite(DEVICE_ACTION_TIMEOUT, TimeUnit.SECONDS)
+        .build();
     @Inject
     private JdbcTokenStore tokenStore;
-
     @Inject
     private ApplicationProperties applicationProperties;
-
     @Inject
     private DeviceCredentialsRepository deviceCredentialsRepository;
-
     @Inject
     private PasswordEncoder passwordEncoder;
-
     @Inject
     private DeviceRepository deviceRepository;
-
     @Inject
     private DeviceMapper deviceMapper;
-
     @Inject
     private SmsTxtlocalService smsService;
 
@@ -135,4 +138,27 @@ public class DeviceService {
         return tokenStore.findTokensByUserName(login).isEmpty();
 
     }
+
+    public CompletableFuture<Boolean> reboot(String login) {
+        CompletableFuture<Boolean> result = new CompletableFuture<>();
+        deviceActions.put(login, Pair.of(DeviceAction.REBOOT, result));
+        schedulerExecutor.schedule(() -> result.complete(false), DEVICE_ACTION_TIMEOUT, TimeUnit.SECONDS);
+        return result;
+    }
+
+    public CompletableFuture<Boolean> halt(String login) {
+        CompletableFuture<Boolean> result = new CompletableFuture<>();
+        deviceActions.put(login, Pair.of(DeviceAction.HALT, result));
+        schedulerExecutor.schedule(() -> result.complete(false), DEVICE_ACTION_TIMEOUT, TimeUnit.SECONDS);
+        return result;
+    }
+
+    public Pair<DeviceAction, CompletableFuture<Boolean>> completeDeviceAction(String login) {
+        Pair<DeviceAction, CompletableFuture<Boolean>> result = deviceActions.getIfPresent(login);
+        if (result != null) {
+            deviceActions.invalidate(login);
+        }
+        return result;
+    }
+
 }

@@ -41,7 +41,7 @@ public class VideoService {
 
         return Files.list(Paths.get(path))
                 .filter(p -> !p.endsWith("lastsnap.jpg"))
-                .limit(50)
+                .limit(5)
                 .map(p -> {
                     try {
                         byte[] file = Files.readAllBytes(p);

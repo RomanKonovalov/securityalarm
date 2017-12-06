@@ -15,7 +15,9 @@
             'delete':{ method:'DELETE'},
             'login': { method:'POST', params: {'login': '@login', action: 'login'} },
             'logout': { method:'POST', params: {'login': '@login', action: 'logout'} },
-            'config': { method:'POST', params: {'login': '@login', action: 'config'} }
+            'config': { method:'POST', params: {'login': '@login', action: 'config'} },
+            'reboot': { method:'POST', params: {'login': '@login', action: 'reboot'} },
+            'halt': { method:'POST', params: {'login': '@login', action: 'halt'} }
         });
 
         return service;
