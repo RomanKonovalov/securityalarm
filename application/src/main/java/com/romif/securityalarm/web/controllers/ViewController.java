@@ -42,6 +42,7 @@ public class ViewController {
         "/settings",
         "/password",
         "/video",
+        "/metrics/**",
         "/"
     },
         method = RequestMethod.GET,
